@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>备忘录系统 - 登录</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="login-page">
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-header">
+                <h1 class="login-title">
+                    <span class="icon">📝</span>
+                    备忘录系统
+                </h1>
+                <p class="login-subtitle">请输入访问密码</p>
+            </div>
+            <form id="loginForm" class="login-form">
+                <div class="input-group">
+                    <input type="password" id="password" class="password-input" placeholder="" required>
+                    <label for="password" class="input-label">访问密码</label>
+                </div>
+                <button type="submit" class="login-btn">
+                    <span class="btn-text">进入系统</span>
+                    <span class="btn-icon">→</span>
+                </button>
+            </form>
+            <div id="errorMsg" class="error-msg" style="display: none;">
+                密码错误，请重试
+            </div>
+        </div>
+        <div class="decoration">
+            <div class="circle circle-1"></div>
+            <div class="circle circle-2"></div>
+            <div class="circle circle-3"></div>
+        </div>
+    </div>
+    <script src="/static/js/login.js"></script>
+</body>
+</html>

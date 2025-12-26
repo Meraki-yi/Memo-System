@@ -1,0 +1,687 @@
+/* 详情页面样式 - 可爱主题 */
+
+/* 心情配色方案 */
+:root {
+    --mood-happy-bg: #FFF9E6;
+    --mood-happy-border: #FFD93D;
+    --mood-angry-bg: #FFEBEE;
+    --mood-angry-border: #FF6B6B;
+    --mood-confused-bg: #F3E5F5;
+    --mood-confused-border: #BA68C8;
+    --mood-normal-bg: #E8F5E9;
+    --mood-normal-border: #81C784;
+}
+
+/* 详情页面容器 */
+.detail-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #FFE5EC 0%, #FFF4E6 50%, #E8F5E9 100%);
+    padding-bottom: 40px;
+}
+
+/* 详情页头部 */
+.detail-header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.back-btn {
+    background: linear-gradient(135deg, #FFE5EC, #FFF4E6);
+    border: 2px solid #FFB6C1;
+    padding: 10px 18px;
+    border-radius: 25px;
+    font-weight: 600;
+    color: #555;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.95rem;
+}
+
+.back-btn:hover {
+    transform: translateX(-3px) scale(1.02);
+    box-shadow: 0 4px 12px rgba(255, 182, 193, 0.4);
+}
+
+.detail-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #555;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.header-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.header-actions .btn-icon {
+    width: 42px;
+    height: 42px;
+    background: linear-gradient(135deg, #FFE5EC, #FFF4E6);
+    border: 2px solid #FFB6C1;
+}
+
+.header-actions .btn-icon:hover {
+    transform: scale(1.1);
+}
+
+/* 主内容区 */
+.detail-main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 25px 20px;
+}
+
+/* 详情页布局 */
+.detail-layout {
+    display: flex;
+    gap: 20px;
+    position: relative;
+}
+
+/* 内容区域 */
+.content-area {
+    flex: 1;
+    min-width: 0;
+}
+
+/* 侧边操作区域（固定） */
+.sidebar-actions {
+    position: sticky;
+    top: 85px;
+    width: 200px;
+    flex-shrink: 0;
+    align-self: flex-start;
+}
+
+.sidebar-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    padding: 25px 20px;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-card:hover {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+}
+
+/* 侧边栏时间信息 */
+.content-meta-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px dashed #FFE5EC;
+}
+
+.content-meta-sidebar .meta-item {
+    font-size: 0.85rem;
+    color: #888;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #FFF4E6, #FFE5EC);
+    padding: 8px 12px;
+    border-radius: 15px;
+}
+
+.content-meta-sidebar .meta-item .icon {
+    font-size: 0.95rem;
+}
+
+/* 详情卡片通用样式 */
+.detail-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+.detail-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+}
+
+.card-body {
+    padding: 30px;
+}
+
+/* 内容和心情并排布局 (已弃用) */
+.content-mood-layout {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+}
+
+.content-section {
+    flex: 1;
+}
+
+.mood-section {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    background: linear-gradient(135deg, #FFF9F0, #FFF4F8);
+    border-radius: 20px;
+    min-width: 150px;
+}
+
+/* 操作按钮组 */
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.action-buttons .btn {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 24px;
+    font-size: 0.95rem;
+}
+
+/* 次要按钮样式 */
+.btn-secondary {
+    background: linear-gradient(135deg, #F5F5F5, #EEEEEE);
+    border: 2px solid #DDD;
+    color: #666;
+}
+
+.btn-secondary:hover {
+    background: linear-gradient(135deg, #EEEEEE, #E5E5E5);
+    border-color: #CCC;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 内容卡片 */
+.content-text {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: #444;
+    margin-bottom: 20px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.content-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding-top: 15px;
+    border-top: 2px dashed #FFE5EC;
+}
+
+.meta-item {
+    font-size: 0.9rem;
+    color: #888;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #FFF4E6, #FFE5EC);
+    padding: 8px 15px;
+    border-radius: 20px;
+}
+
+.meta-item .icon {
+    font-size: 1rem;
+}
+
+/* 心情显示 */
+.mood-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 20px;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+.mood-display.mood-happy {
+    background: var(--mood-happy-bg);
+    border: 3px solid var(--mood-happy-border);
+    color: #F9A825;
+}
+
+.mood-display.mood-angry {
+    background: var(--mood-angry-bg);
+    border: 3px solid var(--mood-angry-border);
+    color: #D32F2F;
+}
+
+.mood-display.mood-confused {
+    background: var(--mood-confused-bg);
+    border: 3px solid var(--mood-confused-border);
+    color: #7B1FA2;
+}
+
+.mood-display.mood-normal {
+    background: var(--mood-normal-bg);
+    border: 3px solid var(--mood-normal-border);
+    color: #388E3C;
+}
+
+.mood-icon {
+    font-size: 3rem;
+}
+
+.mood-text {
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+/* 更换心情按钮样式 */
+.btn-change-mood {
+    background: linear-gradient(135deg, #FFE5EC, #FFF4E6);
+    border: 2px solid #FFB6C1;
+    color: #555;
+}
+
+.btn-change-mood:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 182, 193, 0.4);
+}
+
+/* 模态框样式 */
+.modal-content.modal-mood,
+.modal-content.modal-history {
+    max-width: 500px;
+}
+
+.modal-content.modal-history {
+    max-width: 600px;
+}
+
+.modal-content.modal-history .modal-body {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+/* 心情选择器模态框 */
+.mood-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.mood-option {
+    background: white;
+    border: 3px solid #EEE;
+    border-radius: 20px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.mood-option:hover {
+    transform: translateY(-5px) scale(1.03);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.mood-option:active {
+    transform: scale(0.98);
+}
+
+.mood-option[data-mood="happy"]:hover {
+    border-color: var(--mood-happy-border);
+    background: var(--mood-happy-bg);
+}
+
+.mood-option[data-mood="angry"]:hover {
+    border-color: var(--mood-angry-border);
+    background: var(--mood-angry-bg);
+}
+
+.mood-option[data-mood="confused"]:hover {
+    border-color: var(--mood-confused-border);
+    background: var(--mood-confused-bg);
+}
+
+.mood-option[data-mood="normal"]:hover {
+    border-color: var(--mood-normal-border);
+    background: var(--mood-normal-bg);
+}
+
+.mood-emoji {
+    font-size: 2.5rem;
+}
+
+.mood-label-text {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #555;
+}
+
+/* 历史记录样式 */
+.mood-history {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.history-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 20px;
+    background: linear-gradient(135deg, #FFF9F0, #FFF4F8);
+    border-radius: 18px;
+    border-left: 5px solid;
+    transition: all 0.3s ease;
+}
+
+.history-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.history-item.mood-happy {
+    border-left-color: var(--mood-happy-border);
+}
+
+.history-item.mood-angry {
+    border-left-color: var(--mood-angry-border);
+}
+
+.history-item.mood-confused {
+    border-left-color: var(--mood-confused-border);
+}
+
+.history-item.mood-normal {
+    border-left-color: var(--mood-normal-border);
+}
+
+.history-mood-change {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.history-arrow {
+    color: #AAA;
+    font-size: 1.1rem;
+}
+
+.history-info {
+    flex: 1;
+}
+
+.history-text {
+    font-size: 0.95rem;
+    color: #555;
+}
+
+.history-time {
+    font-size: 0.85rem;
+    color: #888;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.history-time .icon {
+    font-size: 0.9rem;
+}
+
+.empty-history {
+    text-align: center;
+    padding: 40px 20px;
+    color: #AAA;
+}
+
+.empty-history .icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    display: block;
+    opacity: 0.5;
+}
+
+/* 模态框样式覆盖 */
+.modal-content {
+    border-radius: 24px;
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #FFE5EC, #FFF4E6);
+    border-bottom: 2px solid #FFB6C1;
+    padding: 18px 25px;
+}
+
+.modal-header h3 {
+    color: #555;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.modal-header .icon {
+    font-size: 1.3rem;
+}
+
+/* 按钮样式 */
+.btn {
+    border-radius: 20px;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: var(--bg-light);
+    border: 2px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.btn-icon:hover {
+    transform: scale(1.1);
+    background: var(--primary-light);
+}
+
+/* 动画 */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    /* 移动端改为上下布局 */
+    .detail-layout {
+        flex-direction: column-reverse;
+        gap: 15px;
+    }
+
+    .sidebar-actions {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        top: auto;
+        width: 100%;
+        z-index: 99;
+        background: linear-gradient(to top, rgba(255, 255, 255, 0.98) 85%, transparent);
+        padding: 0 15px 15px;
+    }
+
+    .sidebar-card {
+        border-radius: 20px 20px 0 0;
+        padding: 15px;
+        margin: 0 -15px;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .content-area {
+        padding-bottom: 220px;
+    }
+
+    .action-buttons {
+        flex-direction: row;
+        gap: 8px;
+        margin-top: 12px;
+    }
+
+    .action-buttons .btn {
+        flex: 1;
+        padding: 10px 12px;
+        font-size: 0.8rem;
+    }
+
+    .action-buttons .btn .icon {
+        display: none;
+    }
+
+    .mood-display {
+        flex-direction: row;
+        justify-content: center;
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .mood-icon {
+        font-size: 1.8rem;
+    }
+
+    .mood-text {
+        font-size: 0.95rem;
+    }
+
+    .content-meta-sidebar {
+        flex-direction: row;
+        gap: 8px;
+        margin-top: 15px;
+        padding-top: 15px;
+    }
+
+    .content-meta-sidebar .meta-item {
+        flex: 1;
+        font-size: 0.75rem;
+        padding: 6px 10px;
+        justify-content: center;
+        white-space: nowrap;
+    }
+
+    .content-meta-sidebar .meta-item .icon {
+        font-size: 0.85rem;
+    }
+
+    .detail-main {
+        padding: 20px 15px;
+    }
+
+    .card-body {
+        padding: 20px;
+    }
+
+    .detail-title {
+        font-size: 1rem;
+    }
+
+    .back-btn {
+        padding: 8px 14px;
+        font-size: 0.9rem;
+    }
+
+    .mood-options {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .mood-option {
+        padding: 15px;
+    }
+
+    .mood-emoji {
+        font-size: 2rem;
+    }
+
+    .history-item {
+        flex-wrap: wrap;
+        padding: 12px 15px;
+    }
+
+    .history-time {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 10px;
+        padding-left: 55px;
+    }
+}
+
+@media (max-width: 480px) {
+    .content-area {
+        padding-bottom: 240px;
+    }
+
+    .mood-options {
+        grid-template-columns: 1fr;
+    }
+
+    .content-meta {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .meta-item {
+        width: 100%;
+    }
+
+    .mood-section {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .mood-display {
+        flex-direction: column;
+    }
+
+    .header-actions .btn-icon {
+        width: 38px;
+        height: 38px;
+    }
+}

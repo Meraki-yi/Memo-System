@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>复盘详情 - 备忘录系统</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/detail.css">
+</head>
+<body>
+    <div class="detail-page">
+        <!-- 顶部导航 -->
+        <header class="detail-header">
+            <button class="back-btn" onclick="goBack()">
+                <span class="icon">←</span>
+                返回
+            </button>
+            <h1 class="detail-title">复盘详情</h1>
+            <div class="header-actions">
+                <button class="btn-icon btn-edit" onclick="editContent()" title="编辑内容">
+                    <span>✏️</span>
+                </button>
+                <button class="btn-icon btn-history" onclick="showHistoryModal()" title="查看历史">
+                    <span>📜</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- 主内容区 -->
+        <main class="detail-main">
+            <div class="detail-layout">
+                <!-- 内容区域 -->
+                <div class="content-area">
+                    <div class="detail-card content-card">
+                        <div class="card-body">
+                            <p class="content-text" id="contentText">加载中...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 侧边操作区域（固定） -->
+                <aside class="sidebar-actions">
+                    <div class="sidebar-card">
+                        <!-- 心情显示 -->
+                        <div class="mood-display" id="currentMoodDisplay">
+                            <span class="mood-icon" id="moodIcon">🤔</span>
+                            <span class="mood-text" id="moodText">反省</span>
+                        </div>
+
+                        <!-- 操作按钮组 -->
+                        <div class="action-buttons">
+                            <button class="btn btn-primary btn-change-mood" onclick="showMoodSelector()">
+                                <span class="icon">🎨</span>
+                                更换心情
+                            </button>
+                            <button class="btn btn-secondary btn-edit" onclick="editContent()">
+                                <span class="icon">✏️</span>
+                                编辑内容
+                            </button>
+                            <button class="btn btn-secondary btn-history" onclick="showHistoryModal()">
+                                <span class="icon">📜</span>
+                                查看历史
+                            </button>
+                        </div>
+
+                        <!-- 时间信息 -->
+                        <div class="content-meta-sidebar">
+                            <span class="meta-item" id="createdAt">
+                                <span class="icon">📅</span>
+                                创建: --
+                            </span>
+                            <span class="meta-item" id="updatedAt">
+                                <span class="icon">🔄</span>
+                                更新: --
+                            </span>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </main>
+    </div>
+
+    <!-- 编辑内容模态框 -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>编辑反思内容</h3>
+                <button class="close-btn" onclick="closeEditModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <textarea id="editContent" placeholder="请输入反思内容..." rows="6"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" onclick="closeEditModal()">取消</button>
+                <button class="btn btn-primary" onclick="saveContent()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 心情选择模态框 -->
+    <div class="modal" id="moodSelectorModal">
+        <div class="modal-content modal-mood">
+            <div class="modal-header">
+                <h3>选择心情</h3>
+                <button class="close-btn" onclick="closeMoodSelector()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="mood-options">
+                    <button class="mood-option" data-mood="happy" onclick="selectMood('happy')">
+                        <span class="mood-emoji">😄</span>
+                        <span class="mood-label-text">开心</span>
+                    </button>
+                    <button class="mood-option" data-mood="angry" onclick="selectMood('angry')">
+                        <span class="mood-emoji">😠</span>
+                        <span class="mood-label-text">愤怒</span>
+                    </button>
+                    <button class="mood-option" data-mood="confused" onclick="selectMood('confused')">
+                        <span class="mood-emoji">😕</span>
+                        <span class="mood-label-text">迷茫</span>
+                    </button>
+                    <button class="mood-option" data-mood="normal" onclick="selectMood('normal')">
+                        <span class="mood-emoji">🤔</span>
+                        <span class="mood-label-text">反省</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 历史记录模态框 -->
+    <div class="modal" id="historyModal">
+        <div class="modal-content modal-history">
+            <div class="modal-header">
+                <h3>
+                    <span class="icon">📜</span>
+                    心情变更记录
+                </h3>
+                <button class="close-btn" onclick="closeHistoryModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="mood-history" id="moodHistory">
+                    <!-- 动态加载历史记录 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast提示 -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Loading遮罩 -->
+    <div class="loading-overlay" id="loading">
+        <div class="spinner"></div>
+    </div>
+
+    <script src="/static/js/detail.js"></script>
+</body>
+</html>

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>记一笔 - 备忘录系统</title>
+    <link rel="stylesheet" href="/static/css/accounting.css">
+</head>
+<body>
+    <div class="accounting-container">
+        <!-- 顶部导航栏 -->
+        <header class="accounting-header">
+            <button class="back-btn" onclick="goBack()">
+                <span class="icon">←</span>
+            </button>
+            <h1 class="page-title">记一笔</h1>
+            <button class="save-top-btn" onclick="saveRecord()">保存</button>
+        </header>
+
+        <!-- 标签切换栏 -->
+        <div class="record-tabs">
+            <button class="record-tab-btn" data-type="income" onclick="switchRecordType('income')">
+                <span class="icon">💰</span>
+                收入
+            </button>
+            <button class="record-tab-btn active" data-type="expense" onclick="switchRecordType('expense')">
+                <span class="icon">💸</span>
+                支出
+            </button>
+            <button class="record-tab-btn" data-type="template" onclick="showTemplatesModal()">
+                <span class="icon">📋</span>
+                模板
+            </button>
+            <button class="settings-btn" onclick="showCategoriesSettings()">
+                <span class="icon">⚙️</span>
+            </button>
+        </div>
+
+        <!-- 核心输入区域 -->
+        <div class="record-input-area">
+            <!-- 金额输入区 -->
+            <div class="amount-input-section">
+                <div class="amount-display">
+                    <span class="currency-symbol">¥</span>
+                    <input type="text" class="amount-input" id="amountInput" placeholder="0.0" inputmode="decimal">
+                </div>
+            </div>
+
+            <div class="divider-line"></div>
+
+            <!-- 分类选择区 -->
+            <div class="input-row" onclick="showCategorySelector()">
+                <div class="input-row-left">
+                    <span class="input-icon">📁</span>
+                    <span class="input-label">分类</span>
+                </div>
+                <div class="input-row-right">
+                    <span class="input-value" id="categoryDisplay">请选择分类</span>
+                    <span class="arrow-icon">›</span>
+                </div>
+            </div>
+
+            <!-- 时间选择区 -->
+            <div class="input-row" onclick="showDatePicker()">
+                <div class="input-row-left">
+                    <span class="input-icon">🕐</span>
+                    <span class="input-label">时间</span>
+                </div>
+                <div class="input-row-right">
+                    <span class="input-value" id="dateDisplay">今天</span>
+                    <button class="reset-btn" onclick="event.stopPropagation(); resetDate()">×</button>
+                </div>
+            </div>
+
+            <!-- 备注输入区 -->
+            <div class="note-input-section">
+                <div class="note-header">
+                    <div class="note-label">
+                        <span class="input-icon">📝</span>
+                        <span>备注</span>
+                    </div>
+                    <button class="voice-btn" onclick="startVoiceInput()" title="语音输入">
+                        <span class="icon">🎤</span>
+                    </button>
+                </div>
+                <textarea class="note-input" id="noteInput" placeholder="添加备注..."></textarea>
+            </div>
+        </div>
+
+        <!-- 底部操作按钮 -->
+        <div class="bottom-actions">
+            <button class="action-btn danger" id="deleteBtn" onclick="showDeleteConfirm()" style="display: none;">
+                <span class="icon">🗑️</span>
+                删除
+            </button>
+            <button class="action-btn secondary" onclick="saveAsTemplate()">
+                <span class="icon">📋</span>
+                存为模板
+            </button>
+            <button class="action-btn secondary" onclick="recordAnother()">
+                <span class="icon">🔄</span>
+                再记一笔
+            </button>
+            <button class="action-btn primary" onclick="saveRecord()">
+                <span class="icon">💾</span>
+                保存
+            </button>
+        </div>
+
+        <!-- 悬浮添加按钮 -->
+        <button class="fab-btn" onclick="quickAdd()">
+            <span class="icon">+</span>
+        </button>
+    </div>
+
+    <!-- 分类选择模态框 -->
+    <div class="modal" id="categoryModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>选择分类</h3>
+                <button class="close-btn" onclick="closeCategoryModal()">&times;</button>
+            </div>
+            <div class="modal-body category-selector-body">
+                <div class="category-level" id="categoryLevel1">
+                    <!-- 一级类目列表 -->
+                </div>
+                <div class="category-level" id="categoryLevel2" style="display: none;">
+                    <!-- 二级类目列表 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模板列表模态框 -->
+    <div class="modal" id="templatesModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>选择模板</h3>
+                <button class="close-btn" onclick="closeTemplatesModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="templates-list" id="templatesList">
+                    <!-- 模板列表 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 类目设置模态框 -->
+    <div class="modal" id="categoriesSettingsModal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3>类目管理</h3>
+                <button class="close-btn" onclick="closeCategoriesSettings()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="category-settings-tabs">
+                    <button class="cat-settings-tab active" data-type="expense" onclick="switchSettingsTab('expense')">支出类目</button>
+                    <button class="cat-settings-tab" data-type="income" onclick="switchSettingsTab('income')">收入类目</button>
+                </div>
+                <div class="category-management" id="categoryManagement">
+                    <!-- 类目管理内容 -->
+                </div>
+                <button class="add-category-btn" onclick="showAddCategoryModal()">
+                    <span class="icon">+</span>
+                    添加一级类目
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加类目模态框 -->
+    <div class="modal" id="addCategoryModal">
+        <div class="modal-content small">
+            <div class="modal-header">
+                <h3>添加类目</h3>
+                <button class="close-btn" onclick="closeAddCategoryModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="text" class="text-input" id="newCategoryName" placeholder="类目名称">
+                <div class="icon-selector" id="iconSelector">
+                    <!-- 图标选择 -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" onclick="closeAddCategoryModal()">取消</button>
+                <button class="btn btn-primary" onclick="addNewCategory()">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 日期选择器 -->
+    <div class="modal" id="datePickerModal">
+        <div class="modal-content small">
+            <div class="modal-header">
+                <h3>选择日期</h3>
+                <button class="close-btn" onclick="closeDatePicker()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="date" class="date-input" id="dateInput">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" onclick="closeDatePicker()">取消</button>
+                <button class="btn btn-primary" onclick="selectDate()">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast提示 -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Loading遮罩 -->
+    <div class="loading-overlay" id="loading">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- 删除确认对话框 -->
+    <div class="modal" id="deleteConfirmModal">
+        <div class="modal-content small">
+            <div class="modal-header">
+                <h3>确认删除</h3>
+                <button class="close-btn" onclick="closeDeleteConfirm()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="text-align: center; margin: 20px 0; font-size: 1rem;">确定要删除此条记录吗？</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" onclick="closeDeleteConfirm()">取消</button>
+                <button class="btn btn-danger" onclick="confirmDelete()">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/accounting.js"></script>
+</body>
+</html>

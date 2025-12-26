@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>备忘录系统</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 顶部标题栏 -->
+        <header class="app-header">
+            <h1 class="app-title">
+                <span class="icon">📝</span>
+                我的备忘录
+            </h1>
+            <button class="logout-btn" onclick="logout()">
+                <span class="icon">🚪</span>
+                退出
+            </button>
+        </header>
+
+        <!-- 主内容区 -->
+        <main class="app-main">
+            <!-- 标签页 -->
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="accounting">
+                    <span class="icon">💰</span>
+                    记一笔
+                </button>
+                <button class="tab-btn" data-tab="reflections">
+                    <span class="icon">💭</span>
+                    复盘反思
+                </button>
+                <button class="tab-btn" data-tab="memos">
+                    <span class="icon">📌</span>
+                    备忘录
+                </button>
+                <button class="tab-btn-export" onclick="exportCurrentTabData()">
+                    <span class="icon">📥</span>
+                    导出数据
+                </button>
+            </div>
+
+            <!-- 标签页内容 -->
+            <div class="tab-contents">
+                <!-- 记账标签 -->
+                <div class="tab-content active" id="accounting-tab">
+                    <div class="content-header">
+                        <h2>记一笔</h2>
+                        <div class="header-actions">
+                            <button class="add-btn" onclick="window.location.href='/accounting'">
+                                <span class="icon">➕</span>
+                                去记账
+                            </button>
+                        </div>
+                    </div>
+                    <div class="accounting-summary" id="accountingSummary">
+                        <!-- 快速统计 -->
+                    </div>
+                    <div class="items-list" id="recent-records">
+                        <!-- 最近记录 -->
+                    </div>
+                </div>
+
+                <!-- 复盘反思标签 -->
+                <div class="tab-content" id="reflections-tab">
+                    <div class="content-header">
+                        <h2>复盘反思</h2>
+                        <div class="header-actions">
+                            <button class="add-btn" onclick="showAddModal('reflection')">
+                                <span class="icon">➕</span>
+                                添加反思
+                            </button>
+                        </div>
+                    </div>
+                    <div class="items-list" id="reflections-list">
+                        <!-- 动态加载内容 -->
+                    </div>
+                </div>
+
+                <!-- 备忘录标签 -->
+                <div class="tab-content" id="memos-tab">
+                    <div class="content-header">
+                        <h2>备忘录</h2>
+                        <div class="header-actions">
+                            <button class="add-btn" onclick="showAddModal('memo')">
+                                <span class="icon">➕</span>
+                                添加备忘
+                            </button>
+                        </div>
+                    </div>
+                    <div class="items-list" id="memos-list">
+                        <!-- 动态加载内容 -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 添加/编辑模态框 -->
+    <div class="modal" id="itemModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">添加新内容</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <textarea id="itemContent" placeholder="请输入内容..." rows="5"></textarea>
+
+                <!-- 心情选择器（仅反思显示） -->
+                <div class="mood-selector-group" id="moodSelectorGroup" style="display: none;">
+                    <label class="mood-selector-label">
+                        <span class="icon">💝</span>
+                        选择心情
+                    </label>
+                    <div class="mood-options-inline">
+                        <button type="button" class="mood-btn" data-mood="happy" onclick="selectMood('happy')">
+                            <span class="mood-emoji">😄</span>
+                            <span class="mood-name">开心</span>
+                        </button>
+                        <button type="button" class="mood-btn" data-mood="angry" onclick="selectMood('angry')">
+                            <span class="mood-emoji">😠</span>
+                            <span class="mood-name">愤怒</span>
+                        </button>
+                        <button type="button" class="mood-btn" data-mood="confused" onclick="selectMood('confused')">
+                            <span class="mood-emoji">😕</span>
+                            <span class="mood-name">迷茫</span>
+                        </button>
+                        <button type="button" class="mood-btn active" data-mood="normal" onclick="selectMood('normal')">
+                            <span class="mood-emoji">🤔</span>
+                            <span class="mood-name">反省</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="checkbox-group" id="memoCheckboxGroup" style="display: none;">
+                    <label>
+                        <input type="checkbox" id="isCompleted">
+                        <span>已完成</span>
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary" onclick="saveItem()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 删除确认模态框 -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content small">
+            <div class="modal-header">
+                <h3>确认删除</h3>
+            </div>
+            <div class="modal-body">
+                <p>确定要删除这条记录吗？</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" onclick="closeDeleteModal()">取消</button>
+                <button class="btn btn-danger" onclick="confirmDelete()">删除</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 导出格式选择模态框 -->
+    <div class="modal" id="exportModal">
+        <div class="modal-content small">
+            <div class="modal-header">
+                <h3>选择导出格式</h3>
+                <button class="close-btn" onclick="closeExportModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 20px;">请选择要导出的文件格式：</p>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <button class="export-format-btn" onclick="exportData('csv')">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span style="font-size: 1.5rem;">📊</span>
+                            <div style="text-align: left;">
+                                <div style="font-weight: 600; font-size: 1rem;">CSV 文件</div>
+                                <div style="font-size: 0.85rem; opacity: 0.7;">适合 Excel 等表格软件打开</div>
+                            </div>
+                        </div>
+                    </button>
+                    <button class="export-format-btn" onclick="exportData('sql')">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span style="font-size: 1.5rem;">🗄️</span>
+                            <div style="text-align: left;">
+                                <div style="font-weight: 600; font-size: 1rem;">SQL 文件</div>
+                                <div style="font-size: 0.85rem; opacity: 0.7;">包含 INSERT 语句，可用于数据库恢复</div>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" onclick="closeExportModal()">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast提示 -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Loading遮罩 -->
+    <div class="loading-overlay" id="loading">
+        <div class="spinner"></div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
