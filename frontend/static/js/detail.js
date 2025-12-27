@@ -85,7 +85,9 @@ function formatHistoryTime(dateString) {
 
 // 返回上一页
 function goBack() {
-    // 直接导航到主页，避免触发pageshow事件导致的刷新
+    // 保存当前标签页信息到 sessionStorage，确保返回到复盘反思标签页
+    sessionStorage.setItem('memoSystem_return_tab', 'reflections');
+    // 直接导航到主页
     window.location.href = '/app';
 }
 
@@ -239,7 +241,6 @@ async function selectMood(mood) {
         currentMood = mood;
 
         // 添加到历史记录（前端临时显示）
-        const oldMoodConfig = MOOD_CONFIG[reflectionData.mood];
         const newMoodConfig = MOOD_CONFIG[mood];
 
         if (!reflectionData.mood_history) {

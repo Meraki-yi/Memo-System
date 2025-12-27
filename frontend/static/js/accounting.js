@@ -22,14 +22,18 @@ const CATEGORY_ICONS = [
 // 初始化
 document.addEventListener('DOMContentLoaded', async function() {
     initDateDisplay();
-    // 先加载分类数据，再检查是否需要加载编辑记录
-    await loadCategories();
 
     // 检查URL参数，是否有edit参数
     const urlParams = new URLSearchParams(window.location.search);
     const editId = urlParams.get('edit');
+    console.log('URL参数 editId:', editId);
+
+    // 先加载分类数据，再检查是否需要加载编辑记录
+    await loadCategories();
+
     if (editId) {
         editingRecordId = parseInt(editId);
+        console.log('开始加载编辑记录, ID:', editingRecordId);
         await loadRecordForEdit(editingRecordId);
     }
 
@@ -105,18 +109,26 @@ function goBack() {
 async function loadRecordForEdit(recordId) {
     toggleLoading(true);
     try {
-        // 获取所有记录（这里需要优化，最好有一个获取单条记录的API）
-        const response = await fetch(`${API_BASE}/records`, getAuthOptions());
+        console.log('正在获取记录, ID:', recordId, 'URL:', `${API_BASE}/records/${recordId}`);
+        // 使用新的单条记录API
+        const response = await fetch(`${API_BASE}/records/${recordId}`, getAuthOptions());
+        console.log('响应状态:', response.status);
+
         if (!response.ok) {
             if (response.status === 401) {
                 window.location.href = '/';
                 return;
             }
+            if (response.status === 404) {
+                showToast('记录不存在', 'error');
+                window.location.href = '/app';
+                return;
+            }
             throw new Error('加载记录失败');
         }
 
-        const records = await response.json();
-        const record = records.find(r => r.id === recordId);
+        const record = await response.json();
+        console.log('获取到的记录数据:', record);
 
         if (!record) {
             showToast('记录不存在', 'error');
@@ -128,26 +140,35 @@ async function loadRecordForEdit(recordId) {
         // 先保存类目ID（在切换类型之前保存，避免被重置）
         selectedCategoryId = record.category_id;
         selectedSubcategoryId = record.subcategory_id;
+        console.log('设置类目 ID:', { category_id: selectedCategoryId, subcategory_id: selectedSubcategoryId });
 
         // 设置记录类型（传入编辑模式标记，防止分类被重置）
         setRecordTypeForEdit(record.record_type);
+        console.log('设置记录类型:', record.record_type);
 
         // 填充数据 - 金额保留一位小数，确保显示格式与输入时一致
         document.getElementById('amountInput').value = parseFloat(record.amount).toFixed(1);
         document.getElementById('noteInput').value = record.note || '';
+        console.log('填充金额和备注');
 
         // 设置日期 - 使用本地时区避免日期偏移
         const [year, month, day] = record.record_date.split('-');
         selectedDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
         updateDateDisplay();
+        console.log('设置日期:', record.record_date);
 
         // 更新分类显示（分类数据已在初始化时加载完成）
         updateCategoryDisplay();
+        console.log('更新分类显示完成');
 
         // 显示删除按钮（编辑模式）
         document.getElementById('deleteBtn').style.display = 'inline-flex';
+        // 隐藏"再记一笔"按钮（编辑模式）
+        document.getElementById('recordAnotherBtn').style.display = 'none';
+        console.log('按钮状态已更新');
 
     } catch (error) {
+        console.error('加载记录出错:', error);
         showToast(error.message, 'error');
     } finally {
         toggleLoading(false);
@@ -629,6 +650,8 @@ function clearForm() {
     document.getElementById('noteInput').value = '';
     // 隐藏删除按钮（新增模式）
     document.getElementById('deleteBtn').style.display = 'none';
+    // 显示"再记一笔"按钮（新增模式）
+    document.getElementById('recordAnotherBtn').style.display = 'inline-flex';
 }
 
 // 快速添加

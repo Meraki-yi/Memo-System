@@ -46,20 +46,40 @@
             <div class="tab-contents">
                 <!-- 记账标签 -->
                 <div class="tab-content active" id="accounting-tab">
-                    <div class="content-header">
-                        <h2>记一笔</h2>
-                        <div class="header-actions">
-                            <button class="add-btn" onclick="window.location.href='/accounting'">
-                                <span class="icon">➕</span>
-                                去记账
-                            </button>
-                        </div>
-                    </div>
                     <div class="accounting-summary" id="accountingSummary">
                         <!-- 快速统计 -->
                     </div>
                     <div class="items-list" id="recent-records">
                         <!-- 最近记录 -->
+                    </div>
+                    <!-- 记账分页组件 -->
+                    <div class="pagination-container" id="accounting-pagination">
+                        <div class="pagination">
+                            <!-- 周日期范围显示（左侧） -->
+                            <div class="week-range-display" id="weekRangeDisplay" style="display: none;">
+                                <span class="week-range-icon">📅</span>
+                                <span class="week-range-text" id="weekRangeText"></span>
+                            </div>
+
+                            <button class="pagination-btn" id="accounting-prev-btn" onclick="changeAccountingPage(-1)" disabled>
+                                <span class="icon">‹</span>
+                                上一页
+                            </button>
+                            <div class="pagination-info">
+                                <span class="pagination-current">第 <span id="accounting-current-page">1</span> 页</span>
+                                <span class="pagination-divider">/</span>
+                                <span class="pagination-total">共 <span id="accounting-total-pages">1</span> 页</span>
+                                <span class="pagination-items">（<span id="accounting-total-items">0</span> 条记录）</span>
+                            </div>
+                            <button class="pagination-btn" id="accounting-next-btn" onclick="changeAccountingPage(1)">
+                                下一页
+                                <span class="icon">›</span>
+                            </button>
+                            <button class="pagination-btn accounting-btn" onclick="window.location.href='/accounting'">
+                                <span class="icon">➕</span>
+                                去记账
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -77,6 +97,25 @@
                     <div class="items-list" id="reflections-list">
                         <!-- 动态加载内容 -->
                     </div>
+                    <!-- 反思分页组件 -->
+                    <div class="pagination-container" id="reflections-pagination">
+                        <div class="pagination">
+                            <button class="pagination-btn" id="reflections-prev-btn" onclick="changeReflectionsPage(-1)" disabled>
+                                <span class="icon">‹</span>
+                                上一页
+                            </button>
+                            <div class="pagination-info">
+                                <span class="pagination-current">第 <span id="reflections-current-page">1</span> 页</span>
+                                <span class="pagination-divider">/</span>
+                                <span class="pagination-total">共 <span id="reflections-total-pages">1</span> 页</span>
+                                <span class="pagination-items">（<span id="reflections-total-items">0</span> 条记录）</span>
+                            </div>
+                            <button class="pagination-btn" id="reflections-next-btn" onclick="changeReflectionsPage(1)">
+                                下一页
+                                <span class="icon">›</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- 备忘录标签 -->
@@ -92,6 +131,25 @@
                     </div>
                     <div class="items-list" id="memos-list">
                         <!-- 动态加载内容 -->
+                    </div>
+                    <!-- 备忘录分页组件 -->
+                    <div class="pagination-container" id="memos-pagination">
+                        <div class="pagination">
+                            <button class="pagination-btn" id="memos-prev-btn" onclick="changeMemosPage(-1)" disabled>
+                                <span class="icon">‹</span>
+                                上一页
+                            </button>
+                            <div class="pagination-info">
+                                <span class="pagination-current">第 <span id="memos-current-page">1</span> 页</span>
+                                <span class="pagination-divider">/</span>
+                                <span class="pagination-total">共 <span id="memos-total-pages">1</span> 页</span>
+                                <span class="pagination-items">（<span id="memos-total-items">0</span> 条记录）</span>
+                            </div>
+                            <button class="pagination-btn" id="memos-next-btn" onclick="changeMemosPage(1)">
+                                下一页
+                                <span class="icon">›</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

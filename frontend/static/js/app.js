@@ -5,6 +5,29 @@ let deleteItemId = null;
 let deleteItemType = null;
 let selectedMood = 'normal';  // 当前选中的心情
 
+// 分页状态管理 - 每个标签页独立的分页状态
+const paginationState = {
+    accounting: {
+        currentPage: 1,
+        totalPages: 1,
+        totalItems: 0,
+        pageSize: 20,
+        useWeekPagination: true  // 记账使用周分页
+    },
+    reflections: {
+        currentPage: 1,
+        totalPages: 1,
+        totalItems: 0,
+        pageSize: 10
+    },
+    memos: {
+        currentPage: 1,
+        totalPages: 1,
+        totalItems: 0,
+        pageSize: 10
+    }
+};
+
 // API请求基础配置
 const API_BASE = '/api';
 const ACCOUNTING_API_BASE = '/api/accounting';
@@ -106,6 +129,8 @@ function setupTabs() {
             document.getElementById(`${tabName}-tab`).classList.add('active');
 
             currentTab = tabName;
+            // 切换标签页时重置到第一页
+            paginationState[currentTab].currentPage = 1;
             loadItems();
         });
     });
@@ -120,8 +145,12 @@ async function loadItems() {
             return;
         }
 
+        const state = paginationState[currentTab];
         const endpoint = currentTab === 'reflections' ? '/reflections' : '/memos';
-        const response = await fetch(`${API_BASE}${endpoint}`, getAuthOptions());
+        const response = await fetch(
+            `${API_BASE}${endpoint}?page=${state.currentPage}&page_size=${state.pageSize}`,
+            getAuthOptions()
+        );
 
         if (!response.ok) {
             if (response.status === 401) {
@@ -132,8 +161,14 @@ async function loadItems() {
             throw new Error('加载数据失败');
         }
 
-        const items = await response.json();
-        renderItems(items);
+        const data = await response.json();
+        // 更新分页状态
+        state.totalPages = data.pagination.total_pages;
+        state.totalItems = data.pagination.total;
+        state.currentPage = data.pagination.page;
+
+        renderItems(data.items);
+        updatePaginationUI(currentTab);
     } catch (error) {
         showToast(error.message, 'error');
         // 如果是网络错误或401，也重定向到登录页
@@ -154,10 +189,20 @@ async function loadAccountingData() {
         const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
         const monthStartStr = monthStart.toISOString().split('T')[0];
 
+        const state = paginationState.accounting;
+
+        // 根据分页模式构建请求 URL
+        let recordsUrl;
+        if (state.useWeekPagination) {
+            recordsUrl = `${ACCOUNTING_API_BASE}/records?start_date=${monthStartStr}&end_date=${todayStr}&week_page=${state.currentPage}`;
+        } else {
+            recordsUrl = `${ACCOUNTING_API_BASE}/records?start_date=${monthStartStr}&end_date=${todayStr}&page=${state.currentPage}&page_size=${state.pageSize}`;
+        }
+
         // 并行请求汇总和最近记录
         const [summaryResponse, recordsResponse] = await Promise.all([
             fetch(`${ACCOUNTING_API_BASE}/summary?start_date=${monthStartStr}&end_date=${todayStr}`, getAuthOptions()),
-            fetch(`${ACCOUNTING_API_BASE}/records?start_date=${monthStartStr}&end_date=${todayStr}`, getAuthOptions())
+            fetch(recordsUrl, getAuthOptions())
         ]);
 
         // 检查认证状态
@@ -171,10 +216,24 @@ async function loadAccountingData() {
         }
 
         const summary = await summaryResponse.json();
-        const records = await recordsResponse.json();
+        const recordsData = await recordsResponse.json();
+
+        // 更新分页状态
+        state.totalPages = recordsData.pagination.total_pages;
+        state.totalItems = recordsData.pagination.total;
+        state.currentPage = recordsData.pagination.page;
 
         renderAccountingSummary(summary);
-        renderRecentRecords(records);
+        renderRecentRecords(recordsData.items);
+
+        // 如果有周信息，显示周范围
+        if (recordsData.week_info) {
+            updateWeekRangeHeader(recordsData.week_info);
+        } else {
+            hideWeekRangeHeader();
+        }
+
+        updatePaginationUI('accounting');
     } catch (error) {
         console.error('加载记账数据失败:', error);
         showToast(error.message, 'error');
@@ -413,7 +472,8 @@ async function editItem(id) {
 
         if (!response.ok) throw new Error('获取数据失败');
 
-        const items = await response.json();
+        const data = await response.json();
+        const items = data.items || [];
         const item = items.find(i => i.id === id);
 
         if (!item) throw new Error('项目不存在');
@@ -499,6 +559,10 @@ async function saveItem() {
         if (!response.ok) throw new Error('保存失败');
 
         closeModal();
+        // 新建项目后重置到第一页
+        if (!isEditing) {
+            paginationState[currentTab].currentPage = 1;
+        }
         loadItems();
         showToast('保存成功');
     } catch (error) {
@@ -513,7 +577,8 @@ async function toggleMemoComplete(id) {
 
         if (!response.ok) throw new Error('获取数据失败');
 
-        const memos = await response.json();
+        const data = await response.json();
+        const memos = data.items || [];
         const memo = memos.find(m => m.id === id);
 
         if (!memo) throw new Error('备忘录不存在');
@@ -747,10 +812,40 @@ async function exportMemosData(format = 'csv') {
     }
 }
 
+// 切换到指定标签页
+function switchToTab(tabName) {
+    const tabBtn = document.querySelector(`.tab-btn[data-tab="${tabName}"]`);
+    if (tabBtn) {
+        // 移除所有活动状态
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+        // 设置当前活动状态
+        tabBtn.classList.add('active');
+        document.getElementById(`${tabName}-tab`).classList.add('active');
+
+        currentTab = tabName;
+        // 重置到第一页
+        paginationState[currentTab].currentPage = 1;
+        loadItems();
+    }
+}
+
 // 初始化
 document.addEventListener('DOMContentLoaded', function() {
     setupTabs();
-    loadItems();
+
+    // 检查是否有返回标签页的请求
+    const returnTab = sessionStorage.getItem('memoSystem_return_tab');
+    if (returnTab) {
+        // 清除标记
+        sessionStorage.removeItem('memoSystem_return_tab');
+        // 切换到指定标签页
+        switchToTab(returnTab);
+    } else {
+        // 默认加载当前标签页的数据
+        loadItems();
+    }
 
     // 点击模态框外部关闭
     document.querySelectorAll('.modal').forEach(modal => {
@@ -811,3 +906,89 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+// ==================== 分页功能 ====================
+
+// 更新分页 UI
+function updatePaginationUI(tab) {
+    const state = paginationState[tab];
+    const prefix = tab === 'accounting' ? 'accounting' : (tab === 'reflections' ? 'reflections' : 'memos');
+
+    // 更新页码信息
+    document.getElementById(`${prefix}-current-page`).textContent = state.currentPage;
+    document.getElementById(`${prefix}-total-pages`).textContent = state.totalPages;
+    document.getElementById(`${prefix}-total-items`).textContent = state.totalItems;
+
+    // 更新按钮状态
+    const prevBtn = document.getElementById(`${prefix}-prev-btn`);
+    const nextBtn = document.getElementById(`${prefix}-next-btn`);
+
+    prevBtn.disabled = state.currentPage <= 1;
+    nextBtn.disabled = state.currentPage >= state.totalPages;
+
+    // 显示/隐藏分页容器（如果没有数据，隐藏分页）
+    const paginationContainer = document.getElementById(`${prefix}-pagination`);
+    if (state.totalItems === 0) {
+        paginationContainer.style.display = 'none';
+    } else {
+        paginationContainer.style.display = 'block';
+    }
+}
+
+// 记账分页切换
+function changeAccountingPage(delta) {
+    const state = paginationState.accounting;
+    const newPage = state.currentPage + delta;
+
+    if (newPage >= 1 && newPage <= state.totalPages) {
+        state.currentPage = newPage;
+        loadAccountingData();
+        // 平滑滚动到顶部
+        document.getElementById('recent-records').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+// 反思分页切换
+function changeReflectionsPage(delta) {
+    const state = paginationState.reflections;
+    const newPage = state.currentPage + delta;
+
+    if (newPage >= 1 && newPage <= state.totalPages) {
+        state.currentPage = newPage;
+        loadItems();
+        // 平滑滚动到顶部
+        document.getElementById('reflections-list').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+// 备忘录分页切换
+function changeMemosPage(delta) {
+    const state = paginationState.memos;
+    const newPage = state.currentPage + delta;
+
+    if (newPage >= 1 && newPage <= state.totalPages) {
+        state.currentPage = newPage;
+        loadItems();
+        // 平滑滚动到顶部
+        document.getElementById('memos-list').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+// ==================== 周分页相关功能 ====================
+
+// 更新周范围显示
+function updateWeekRangeHeader(weekInfo) {
+    const display = document.getElementById('weekRangeDisplay');
+    const text = document.getElementById('weekRangeText');
+
+    if (weekInfo) {
+        text.textContent = `${weekInfo.start_display} - ${weekInfo.end_display}`;
+        display.style.display = 'flex';
+    }
+}
+
+// 隐藏周范围显示
+function hideWeekRangeHeader() {
+    const display = document.getElementById('weekRangeDisplay');
+    display.style.display = 'none';
+}

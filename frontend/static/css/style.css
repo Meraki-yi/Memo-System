@@ -1071,3 +1071,192 @@ body {
 .export-format-btn:active {
     transform: translateY(0);
 }
+
+/* 周日期范围显示样式 */
+.week-range-display {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #FFE5EC, #FFF0E6);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 182, 193, 0.3);
+    margin-right: auto;
+}
+
+.week-range-icon {
+    font-size: 1.5rem;
+}
+
+.week-range-text {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+/* 分页组件样式 */
+.pagination-container {
+    margin-top: 30px;
+    padding: 20px;
+    background: var(--bg-white);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.pagination-btn {
+    background: var(--bg-white);
+    border: 2px solid var(--border-color);
+    color: var(--text-dark);
+    padding: 10px 20px;
+    border-radius: var(--radius-sm);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 100px;
+    justify-content: center;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background: var(--primary-light);
+    border-color: var(--primary-light);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+.pagination-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: var(--bg-gray);
+}
+
+.pagination-btn .icon {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+/* 记账按钮特殊样式 */
+.pagination-btn.accounting-btn {
+    background: var(--primary-gradient);
+    border-color: var(--primary-dark);
+    color: var(--text-dark);
+}
+
+.pagination-btn.accounting-btn:hover {
+    background: linear-gradient(135deg, #FFE066, #9ACD32);
+    border-color: var(--primary-dark);
+    box-shadow: var(--shadow-md);
+}
+
+.pagination-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.95rem;
+    color: var(--text-light);
+    min-width: 200px;
+}
+
+.pagination-current {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.pagination-current span {
+    color: var(--primary-dark);
+    font-size: 1.05rem;
+}
+
+.pagination-divider {
+    color: var(--text-muted);
+}
+
+.pagination-total span {
+    color: var(--text-dark);
+    font-weight: 600;
+}
+
+.pagination-items {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.pagination-items span {
+    color: var(--primary-dark);
+    font-weight: 600;
+}
+
+/* 响应式分页 */
+@media (max-width: 768px) {
+    .pagination {
+        flex-direction: row;
+        gap: 10px;
+        justify-content: center;
+    }
+
+    .pagination-btn {
+        padding: 10px 16px;
+        font-size: 0.9rem;
+        min-width: 80px;
+    }
+
+    .pagination-info {
+        font-size: 0.85rem;
+        gap: 8px;
+        order: 2;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .pagination-btn:first-child {
+        order: 1;
+    }
+
+    .pagination-btn:nth-child(2) {
+        order: 3;
+    }
+
+    .pagination-btn.accounting-btn {
+        order: 4;
+    }
+}
+
+@media (max-width: 480px) {
+    .pagination-container {
+        padding: 15px;
+        margin-top: 20px;
+    }
+
+    .pagination {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .pagination-btn {
+        width: 100%;
+        max-width: 200px;
+        padding: 10px 20px;
+    }
+
+    .pagination-info {
+        font-size: 0.85rem;
+        gap: 6px;
+        width: auto;
+    }
+
+    .pagination-items {
+        display: none;
+    }
+}

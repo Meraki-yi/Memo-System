@@ -268,19 +268,38 @@ def check_auth(request: Request):
 
 # Reflection相关API
 @app.get("/api/reflections")
-async def get_reflections(request: Request, db: Session = Depends(get_db)):
+async def get_reflections(
+    request: Request,
+    page: int = 1,
+    page_size: int = 10,
+    db: Session = Depends(get_db)
+):
     check_auth(request)
-    reflections = db.query(Reflection).order_by(Reflection.created_at.desc()).all()
-    return [
-        {
-            "id": r.id,
-            "content": r.content,
-            "mood": r.mood,
-            "created_at": r.created_at.isoformat(),
-            "updated_at": r.updated_at.isoformat()
+    # 计算总数
+    total = db.query(Reflection).count()
+    # 计算总页数
+    total_pages = (total + page_size - 1) // page_size if total > 0 else 1
+    # 分页查询
+    offset = (page - 1) * page_size
+    reflections = db.query(Reflection).order_by(Reflection.created_at.desc()).offset(offset).limit(page_size).all()
+    return {
+        "items": [
+            {
+                "id": r.id,
+                "content": r.content,
+                "mood": r.mood,
+                "created_at": r.created_at.isoformat(),
+                "updated_at": r.updated_at.isoformat()
+            }
+            for r in reflections
+        ],
+        "pagination": {
+            "page": page,
+            "page_size": page_size,
+            "total": total,
+            "total_pages": total_pages
         }
-        for r in reflections
-    ]
+    }
 
 @app.get("/api/reflections/{reflection_id}")
 async def get_reflection(request: Request, reflection_id: int, db: Session = Depends(get_db)):
@@ -384,19 +403,38 @@ async def delete_reflection(
 
 # Memo相关API
 @app.get("/api/memos")
-async def get_memos(request: Request, db: Session = Depends(get_db)):
+async def get_memos(
+    request: Request,
+    page: int = 1,
+    page_size: int = 10,
+    db: Session = Depends(get_db)
+):
     check_auth(request)
-    memos = db.query(Memo).order_by(Memo.created_at.desc()).all()
-    return [
-        {
-            "id": m.id,
-            "content": m.content,
-            "is_completed": m.is_completed,
-            "created_at": m.created_at.isoformat(),
-            "updated_at": m.updated_at.isoformat()
+    # 计算总数
+    total = db.query(Memo).count()
+    # 计算总页数
+    total_pages = (total + page_size - 1) // page_size if total > 0 else 1
+    # 分页查询
+    offset = (page - 1) * page_size
+    memos = db.query(Memo).order_by(Memo.created_at.desc()).offset(offset).limit(page_size).all()
+    return {
+        "items": [
+            {
+                "id": m.id,
+                "content": m.content,
+                "is_completed": m.is_completed,
+                "created_at": m.created_at.isoformat(),
+                "updated_at": m.updated_at.isoformat()
+            }
+            for m in memos
+        ],
+        "pagination": {
+            "page": page,
+            "page_size": page_size,
+            "total": total,
+            "total_pages": total_pages
         }
-        for m in memos
-    ]
+    }
 
 @app.post("/api/memos")
 async def create_memo(
@@ -587,9 +625,137 @@ async def get_records(
     request: Request,
     start_date: Optional[str] = None,
     end_date: Optional[str] = None,
+    page: int = 1,
+    page_size: int = 20,
+    week_page: Optional[int] = None,
     db: Session = Depends(get_db)
 ):
     check_auth(request)
+
+    # 如果使用周分页
+    if week_page is not None:
+        query = db.query(DailyRecord).order_by(DailyRecord.record_date.desc(), DailyRecord.created_at.desc())
+
+        if start_date:
+            query = query.filter(DailyRecord.record_date >= start_date)
+        if end_date:
+            query = query.filter(DailyRecord.record_date <= end_date)
+
+        # 获取所有记录
+        all_records = query.all()
+
+        if not all_records:
+            return {
+                "items": [],
+                "week_info": None,
+                "pagination": {
+                    "page": week_page,
+                    "total_pages": 0,
+                    "total": 0
+                }
+            }
+
+        # 按日期分组
+        from collections import defaultdict
+        records_by_date = defaultdict(list)
+        for record in all_records:
+            records_by_date[record.record_date].append(record)
+
+        # 获取所有有记录的日期，按降序排列
+        all_dates = sorted(records_by_date.keys(), reverse=True)
+
+        # 计算周分组
+        weeks = []
+        current_week = []
+
+        for date in enumerate(all_dates):
+            # 将日期转换为周一（周的第一天）
+            from datetime import timedelta
+            monday = date[1] - timedelta(days=date[1].weekday())
+
+            if not current_week:
+                current_week = [date[1]]
+                current_monday = monday
+            elif monday == current_monday:
+                # 同一周
+                current_week.append(date[1])
+            else:
+                # 新的一周
+                weeks.append(current_week)
+                current_week = [date[1]]
+                current_monday = monday
+
+        # 添加最后一周
+        if current_week:
+            weeks.append(current_week)
+
+        # 计算总周数
+        total_weeks = len(weeks)
+
+        # 获取请求的周（week_page 从 1 开始）
+        week_index = week_page - 1
+        if week_index < 0 or week_index >= total_weeks:
+            return {
+                "items": [],
+                "week_info": None,
+                "pagination": {
+                    "page": week_page,
+                    "total_pages": total_weeks,
+                    "total": len(all_records)
+                }
+            }
+
+        # 获取当前周的日期范围
+        week_dates = weeks[week_index]
+        week_start = min(week_dates)
+
+        # 获取该周的所有记录
+        week_records = []
+        for date in week_dates:
+            week_records.extend(records_by_date[date])
+
+        # 按日期降序、创建时间降序排序
+        week_records.sort(key=lambda x: (x.record_date, x.created_at), reverse=True)
+
+        result = []
+        for record in week_records:
+            category = db.query(Category).filter(Category.id == record.category_id).first()
+            subcategory = db.query(SubCategory).filter(SubCategory.id == record.subcategory_id).first()
+
+            result.append({
+                "id": record.id,
+                "record_type": record.record_type,
+                "category_id": record.category_id,
+                "category_name": category.name if category else "",
+                "category_icon": category.icon if category else "📁",
+                "subcategory_id": record.subcategory_id,
+                "subcategory_name": subcategory.name if subcategory else "",
+                "amount": record.amount,
+                "record_date": record.record_date.isoformat(),
+                "note": record.note,
+                "created_at": record.created_at.isoformat()
+            })
+
+        # 计算该周的周一和周日
+        week_monday = week_start - timedelta(days=week_start.weekday())
+        week_sunday = week_monday + timedelta(days=6)
+
+        return {
+            "items": result,
+            "week_info": {
+                "start_date": week_monday.isoformat(),
+                "end_date": week_sunday.isoformat(),
+                "start_display": week_monday.strftime("%m月%d日"),
+                "end_display": week_sunday.strftime("%m月%d日")
+            },
+            "pagination": {
+                "page": week_page,
+                "total_pages": total_weeks,
+                "total": len(all_records)
+            }
+        }
+
+    # 原有的按条数分页逻辑
     query = db.query(DailyRecord).order_by(DailyRecord.record_date.desc(), DailyRecord.created_at.desc())
 
     if start_date:
@@ -597,7 +763,13 @@ async def get_records(
     if end_date:
         query = query.filter(DailyRecord.record_date <= end_date)
 
-    records = query.all()
+    # 计算总数
+    total = query.count()
+    # 计算总页数
+    total_pages = (total + page_size - 1) // page_size if total > 0 else 1
+    # 分页查询
+    offset = (page - 1) * page_size
+    records = query.offset(offset).limit(page_size).all()
 
     result = []
     for record in records:
@@ -618,7 +790,15 @@ async def get_records(
             "created_at": record.created_at.isoformat()
         })
 
-    return result
+    return {
+        "items": result,
+        "pagination": {
+            "page": page,
+            "page_size": page_size,
+            "total": total,
+            "total_pages": total_pages
+        }
+    }
 
 # 创建记账记录
 @app.post("/api/accounting/records")
@@ -651,6 +831,32 @@ async def create_record(request: Request, record: DailyRecordCreate, db: Session
     return {
         "id": db_record.id,
         "message": "记账记录创建成功"
+    }
+
+# 获取单条记账记录
+@app.get("/api/accounting/records/{record_id}")
+async def get_record(request: Request, record_id: int, db: Session = Depends(get_db)):
+    """获取单条记账记录的详细信息"""
+    check_auth(request)
+    record = db.query(DailyRecord).filter(DailyRecord.id == record_id).first()
+    if not record:
+        raise HTTPException(status_code=404, detail="记录不存在")
+
+    category = db.query(Category).filter(Category.id == record.category_id).first()
+    subcategory = db.query(SubCategory).filter(SubCategory.id == record.subcategory_id).first()
+
+    return {
+        "id": record.id,
+        "record_type": record.record_type,
+        "category_id": record.category_id,
+        "category_name": category.name if category else "",
+        "category_icon": category.icon if category else "📁",
+        "subcategory_id": record.subcategory_id,
+        "subcategory_name": subcategory.name if subcategory else "",
+        "amount": record.amount,
+        "record_date": record.record_date.isoformat(),
+        "note": record.note,
+        "created_at": record.created_at.isoformat()
     }
 
 # 更新记账记录
