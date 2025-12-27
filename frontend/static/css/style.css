@@ -37,6 +37,13 @@ body {
         radial-gradient(circle at 20% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
         radial-gradient(circle at 80% 20%, rgba(154, 205, 50, 0.1) 0%, transparent 50%),
         radial-gradient(circle at 40% 40%, rgba(255, 182, 193, 0.05) 0%, transparent 50%);
+    /* 禁止body滚动 - 确保唯一滚动上下文在数据区域 */
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    /* 支持移动端安全区域（如iPhone刘海屏） */
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
 /* 登录页面样式 */
@@ -47,6 +54,12 @@ body {
     min-height: 100vh;
     position: relative;
     overflow: hidden;
+    /* 登录页面恢复滚动能力 */
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
 }
 
 .login-container {
@@ -234,6 +247,9 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    /* 禁止app-container滚动 - 确保唯一滚动上下文在数据区域 */
+    overflow: hidden;
+    height: 100vh;
 }
 
 .app-header {
@@ -243,9 +259,13 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    position: sticky;
+    /* 固定顶部，禁止滚动 */
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
     z-index: 100;
+    flex-shrink: 0;
 }
 
 .app-title {
@@ -285,6 +305,13 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     width: 100%;
+    /* 固定布局，为顶部header、标签栏和底部分页栏留出空间 */
+    padding-top: 170px; /* header(80px) + tabs(60px) + 间距(30px) */
+    padding-bottom: 120px; /* 为固定底部分页导航栏留出空间 */
+    /* 禁止app-main滚动 - 滚动仅在tab-content-scrollable中 */
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 /* 标签页样式 */
@@ -294,6 +321,16 @@ body {
     margin-bottom: 30px;
     border-bottom: 2px solid var(--border-color);
     align-items: center;
+    /* 固定标签栏，确保始终可见 */
+    position: fixed;
+    top: 80px; /* header高度 */
+    left: 0;
+    right: 0;
+    z-index: 99;
+    background: var(--bg-light);
+    padding: 0 30px;
+    /* 禁止标签栏滚动 */
+    flex-shrink: 0;
 }
 
 .tab-btn {
@@ -359,11 +396,75 @@ body {
 
 .tab-content {
     display: none;
-    animation: fadeIn 0.3s ease;
+    /* 确保标签页内容容器不滚动 */
+    overflow: hidden;
 }
 
 .tab-content.active {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    /* 使用固定高度，内部scrollable区域滚动 */
+    height: calc(100vh - 290px); /* 减去header(80px) + tabs(60px) + padding(150px) */
+}
+
+/* 标签页内容可滚动区域 - 唯一的滚动上下文 */
+.tab-content-scrollable {
+    overflow-y: auto;
+    /* 自适应剩余高度，确保是唯一滚动区域 */
+    flex: 1;
+    /* 移除max-height，使用flex自动填充 */
+    padding-right: 5px;
+    padding-bottom: 20px; /* 底部留出空间，确保最后一条记录不被遮挡 */
+    /* 确保滚动行为流畅 */
+    -webkit-overflow-scrolling: touch;
+    /* 防止滚动穿透和下拉刷新 */
+    overscroll-behavior: contain;
+    /* 防止内容回弹效果（iOS） */
+    overscroll-behavior-y: contain;
+    /* 确保最小高度，即使内容很少也能滚动 */
+    min-height: 200px;
+}
+
+/* 自定义滚动条样式 */
+.tab-content-scrollable::-webkit-scrollbar {
+    width: 6px;
+}
+
+.tab-content-scrollable::-webkit-scrollbar-track {
+    background: var(--bg-light);
+    border-radius: 3px;
+}
+
+.tab-content-scrollable::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 3px;
+}
+
+.tab-content-scrollable::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}
+
+/* 移动端隐藏滚动条但保持滚动功能 */
+@media (max-width: 768px) {
+    .tab-content-scrollable::-webkit-scrollbar {
+        width: 0;
+        background: transparent;
+    }
+
+    .tab-content-scrollable {
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
+    }
+}
+
+/* 固定顶部记账汇总栏 - 在scrollable区域内固定 */
+.accounting-summary.fixed-top {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    margin-bottom: 15px;
+    /* 确保背景不透明 */
+    background: var(--bg-white);
 }
 
 .content-header {
@@ -371,6 +472,8 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 25px;
+    /* 确保header不破坏滚动上下文 */
+    flex-shrink: 0;
 }
 
 .content-header h2 {
@@ -431,6 +534,8 @@ body {
 .items-list {
     display: grid;
     gap: 20px;
+    /* 确保列表不破坏滚动上下文 */
+    overflow: visible;
 }
 
 .item-card {
@@ -858,6 +963,29 @@ body {
 @media (max-width: 768px) {
     .app-main {
         padding: 20px;
+        padding-top: 150px; /* 移动端header + tabs + 间距 */
+        padding-bottom: 110px; /* 移动端底部空间稍小 */
+    }
+
+    /* 移动端标签栏位置调整 */
+    .tabs {
+        top: 70px; /* 移动端header较小 */
+        padding: 0 20px;
+    }
+
+    /* 移动端标签页高度调整 */
+    .tab-content.active {
+        height: calc(100vh - 260px); /* 移动端高度调整 */
+    }
+
+    /* 移动端固定顶部汇总栏样式调整 */
+    .accounting-summary.fixed-top {
+        margin-bottom: 10px;
+    }
+
+    /* 移动端固定分页栏样式调整 */
+    .pagination-container.fixed-bottom {
+        padding: 12px 15px;
     }
 
     .login-box {
@@ -871,6 +999,8 @@ body {
 
     .tabs {
         overflow-x: auto;
+        /* 禁止标签栏滚动穿透 */
+        overscroll-behavior: contain;
     }
 
     .tab-btn {
@@ -914,6 +1044,28 @@ body {
     .logout-btn {
         padding: 8px 15px;
         font-size: 0.9rem;
+    }
+
+    .app-main {
+        padding: 15px;
+        padding-top: 140px; /* 小屏幕header + tabs + 间距 */
+        padding-bottom: 100px; /* 小屏幕底部空间更小 */
+    }
+
+    /* 小屏幕标签栏位置调整 */
+    .tabs {
+        top: 65px; /* 小屏幕header更小 */
+        padding: 0 15px;
+    }
+
+    /* 小屏幕标签页高度调整 */
+    .tab-content.active {
+        height: calc(100vh - 240px); /* 小屏幕高度调整 */
+    }
+
+    /* 小屏幕固定顶部汇总栏样式调整 */
+    .accounting-summary.fixed-top {
+        margin-bottom: 8px;
     }
 
     .item-meta {
@@ -1097,11 +1249,23 @@ body {
 
 /* 分页组件样式 */
 .pagination-container {
-    margin-top: 30px;
     padding: 20px;
     background: var(--bg-white);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-sm);
+}
+
+/* 固定底部分页导航栏 */
+.pagination-container.fixed-bottom {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 99;
+    margin: 0;
+    border-top: 2px solid var(--border-color);
+    border-radius: 0;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .pagination {

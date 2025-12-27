@@ -46,14 +46,17 @@
             <div class="tab-contents">
                 <!-- 记账标签 -->
                 <div class="tab-content active" id="accounting-tab">
-                    <div class="accounting-summary" id="accountingSummary">
-                        <!-- 快速统计 -->
-                    </div>
-                    <div class="items-list" id="recent-records">
-                        <!-- 最近记录 -->
+                    <div class="tab-content-scrollable">
+                        <!-- 记账汇总固定在可滚动区域内顶部 -->
+                        <div class="accounting-summary fixed-top" id="accountingSummary">
+                            <!-- 快速统计 -->
+                        </div>
+                        <div class="items-list" id="recent-records">
+                            <!-- 最近记录 -->
+                        </div>
                     </div>
                     <!-- 记账分页组件 -->
-                    <div class="pagination-container" id="accounting-pagination">
+                    <div class="pagination-container fixed-bottom" id="accounting-pagination">
                         <div class="pagination">
                             <!-- 周日期范围显示（左侧） -->
                             <div class="week-range-display" id="weekRangeDisplay" style="display: none;">
@@ -85,20 +88,22 @@
 
                 <!-- 复盘反思标签 -->
                 <div class="tab-content" id="reflections-tab">
-                    <div class="content-header">
-                        <h2>复盘反思</h2>
-                        <div class="header-actions">
-                            <button class="add-btn" onclick="showAddModal('reflection')">
-                                <span class="icon">➕</span>
-                                添加反思
-                            </button>
+                    <div class="tab-content-scrollable">
+                        <div class="content-header">
+                            <h2>复盘反思</h2>
+                            <div class="header-actions">
+                                <button class="add-btn" onclick="showAddModal('reflection')">
+                                    <span class="icon">➕</span>
+                                    添加反思
+                                </button>
+                            </div>
+                        </div>
+                        <div class="items-list" id="reflections-list">
+                            <!-- 动态加载内容 -->
                         </div>
                     </div>
-                    <div class="items-list" id="reflections-list">
-                        <!-- 动态加载内容 -->
-                    </div>
                     <!-- 反思分页组件 -->
-                    <div class="pagination-container" id="reflections-pagination">
+                    <div class="pagination-container fixed-bottom" id="reflections-pagination">
                         <div class="pagination">
                             <button class="pagination-btn" id="reflections-prev-btn" onclick="changeReflectionsPage(-1)" disabled>
                                 <span class="icon">‹</span>
@@ -120,20 +125,22 @@
 
                 <!-- 备忘录标签 -->
                 <div class="tab-content" id="memos-tab">
-                    <div class="content-header">
-                        <h2>备忘录</h2>
-                        <div class="header-actions">
-                            <button class="add-btn" onclick="showAddModal('memo')">
-                                <span class="icon">➕</span>
-                                添加备忘
-                            </button>
+                    <div class="tab-content-scrollable">
+                        <div class="content-header">
+                            <h2>备忘录</h2>
+                            <div class="header-actions">
+                                <button class="add-btn" onclick="showAddModal('memo')">
+                                    <span class="icon">➕</span>
+                                    添加备忘
+                                </button>
+                            </div>
+                        </div>
+                        <div class="items-list" id="memos-list">
+                            <!-- 动态加载内容 -->
                         </div>
                     </div>
-                    <div class="items-list" id="memos-list">
-                        <!-- 动态加载内容 -->
-                    </div>
                     <!-- 备忘录分页组件 -->
-                    <div class="pagination-container" id="memos-pagination">
+                    <div class="pagination-container fixed-bottom" id="memos-pagination">
                         <div class="pagination">
                             <button class="pagination-btn" id="memos-prev-btn" onclick="changeMemosPage(-1)" disabled>
                                 <span class="icon">‹</span>
