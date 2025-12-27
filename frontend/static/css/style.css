@@ -450,6 +450,31 @@ body {
     min-height: 200px;
 }
 
+/* 记账标签页特殊布局：固定统计区 */
+#accounting-tab .tab-content-scrollable {
+    display: flex;
+    flex-direction: column;
+}
+
+/* 统计区域固定在顶部 */
+#accounting-tab .stats-area {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--bg-white);
+    margin: 0 0 15px 0;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    overflow: visible;
+    flex-shrink: 0;
+}
+
+/* 移除底部margin，使用padding代替避免滚动时的跳动 */
+#accounting-tab .stats-area > *:last-child {
+    margin-bottom: 0;
+    padding-bottom: 15px;
+}
+
 /* 自定义滚动条样式 */
 .tab-content-scrollable::-webkit-scrollbar {
     width: 6px;
@@ -1159,11 +1184,36 @@ body {
     z-index: 2000;
     min-width: 200px;
     text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 
 .toast.show {
     transform: translateX(-50%) translateY(0);
     opacity: 1;
+}
+
+.toast.success {
+    background: #E8F5E9;
+    color: #2E7D32;
+    border: 2px solid #4CAF50;
+}
+
+.toast.success::before {
+    content: '✓';
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    background: #4CAF50;
+    color: white;
+    border-radius: 50%;
+    font-size: 0.9rem;
+    font-weight: bold;
+    flex-shrink: 0;
 }
 
 .toast.error {
@@ -1317,6 +1367,14 @@ body {
         display: none;
     }
 
+    /* 移动端统计区域固定 */
+    #accounting-tab .stats-area {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: var(--bg-white);
+    }
+
     .week-report-cards {
         gap: 8px;
     }
@@ -1421,6 +1479,14 @@ body {
 
     .bottom-bar-info .pagination-items {
         display: none;
+    }
+
+    /* 小屏幕统计区域固定 */
+    #accounting-tab .stats-area {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: var(--bg-white);
     }
 
     .week-date-range {
