@@ -6,6 +6,30 @@ let currentYear = new Date().getFullYear();
 let currentMonth = new Date().getMonth() + 1; // 1-12
 let categoryStatsData = null;
 
+// 类目颜色池 - 鲜艳的绿色系、青色系、蓝色系等
+const CATEGORY_COLORS = [
+    '#1B5E20',  // 深绿
+    '#2E7D32',  // 绿色
+    '#43A047',  // 鲜绿
+    '#66BB6A',  // 浅绿
+    '#009688',  // 青色
+    '#00BCD4',  // 青蓝
+    '#03A9F4',  // 天蓝
+    '#2196F3',  // 蓝色
+    '#3F51B5',  // 靛蓝
+    '#5E35B1',  // 深紫
+    '#9C27B0',  // 紫色
+    '#E91E63',  // 粉红
+    '#F44336',  // 红色
+    '#FF5722',  // 橙红
+    '#FF9800'   // 橙色
+];
+
+// 根据索引获取颜色
+function getCategoryColor(index) {
+    return CATEGORY_COLORS[index % CATEGORY_COLORS.length];
+}
+
 // 初始化
 document.addEventListener('DOMContentLoaded', async function() {
     await loadCategoryStats();
@@ -113,9 +137,10 @@ function renderCategoryStats(data) {
     categoryListEl.style.display = 'block';
 
     // 渲染分类列表
-    categoryListEl.innerHTML = data.categories.map(category => {
+    categoryListEl.innerHTML = data.categories.map((category, index) => {
         const percent = category.percent.toFixed(2);
         const amount = category.amount.toFixed(2);
+        const color = getCategoryColor(index);
 
         return `
             <div class="category-item" onclick="goToCategoryDetail(${category.id})">
@@ -123,12 +148,12 @@ function renderCategoryStats(data) {
                     <div class="category-name-section">
                         <span class="category-icon">${category.icon}</span>
                         <span class="category-name">${category.name}</span>
-                        <span class="category-percent">${percent}%</span>
+                        <span class="category-percent" style="color: ${color}">${percent}%</span>
                     </div>
-                    <span class="category-amount">¥${amount}</span>
+                    <span class="category-amount" style="color: ${color}">¥${amount}</span>
                 </div>
                 <div class="progress-bar">
-                    <div class="progress-fill" style="width: ${percent}%"></div>
+                    <div class="progress-fill" style="width: ${percent}%; background: ${color}"></div>
                 </div>
                 <div class="category-detail-row">
                     <div class="category-detail-info">

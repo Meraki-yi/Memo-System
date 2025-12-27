@@ -18,13 +18,13 @@ const paginationState = {
         currentPage: 1,
         totalPages: 1,
         totalItems: 0,
-        pageSize: 10
+        pageSize: 5
     },
     memos: {
         currentPage: 1,
         totalPages: 1,
         totalItems: 0,
-        pageSize: 10
+        pageSize: 5
     }
 };
 
@@ -423,7 +423,12 @@ function renderItems(items) {
                             <span class="mood-icon-small">${moodConfig.icon}</span>
                             ${moodConfig.text}
                         </span>
+                    </div>
+                    <div class="item-meta">
                         <span class="time">创建: ${createdFull}</span>
+                    </div>
+                    <div class="item-meta">
+                        <span class="time">更新: ${updatedFull}</span>
                     </div>
                     <div class="item-actions" onclick="event.stopPropagation()">
                         <button class="btn-icon btn-edit" onclick="editItem(${item.id})" title="编辑">

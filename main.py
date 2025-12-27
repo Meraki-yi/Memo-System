@@ -288,7 +288,7 @@ def check_auth(request: Request):
 async def get_reflections(
     request: Request,
     page: int = 1,
-    page_size: int = 10,
+    page_size: int = 5,
     db: Session = Depends(get_db)
 ):
     check_auth(request)
@@ -423,7 +423,7 @@ async def delete_reflection(
 async def get_memos(
     request: Request,
     page: int = 1,
-    page_size: int = 10,
+    page_size: int = 5,
     db: Session = Depends(get_db)
 ):
     check_auth(request)

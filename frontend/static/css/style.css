@@ -569,18 +569,18 @@ body {
 }
 
 .week-card.income {
-    background: linear-gradient(135deg, #FF8A80, #FF5252);
-    color: white;
+    background: #FFEBEE;
+    color: #D32F2F;
 }
 
 .week-card.expense {
-    background: linear-gradient(135deg, #81C784, #4CAF50);
-    color: white;
+    background: #E8F5E9;
+    color: #388E3C;
 }
 
 .week-card.net {
-    background: linear-gradient(135deg, #BA68C8, #9C27B0);
-    color: white;
+    background: #E3F2FD;
+    color: #1976D2;
 }
 
 .week-card-label {
@@ -621,9 +621,17 @@ body {
     transform: scale(0.98);
 }
 
+.month-entrance-card.income {
+    border-color: #FFCDD2;
+}
+
 .month-entrance-card.income:hover {
     border-color: #FF5252;
     background: #FFEBEE;
+}
+
+.month-entrance-card.expense {
+    border-color: #C8E6C9;
 }
 
 .month-entrance-card.expense:hover {
@@ -939,8 +947,17 @@ body {
 
 .item-meta {
     display: flex;
-    gap: 20px;
-    margin-bottom: 10px;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 8px;
+    align-items: center;
+}
+
+/* 反思卡片中的元数据独占一行 */
+.reflection-card .item-meta {
+    width: 100%;
+    flex-direction: row;
+    justify-content: flex-start;
 }
 
 .time {

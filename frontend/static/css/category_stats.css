@@ -85,20 +85,20 @@ body {
 .total-expense-section {
     padding: 40px 20px 30px;
     text-align: center;
-    background: linear-gradient(135deg, #81C784, #4CAF50);
+    background: #C8E6C9;
     margin: 0;
 }
 
 .total-label {
     font-size: 1rem;
-    color: rgba(255, 255, 255, 0.9);
+    color: #000000;
     margin-bottom: 12px;
 }
 
 .total-amount {
     font-size: 2.5rem;
     font-weight: 700;
-    color: white;
+    color: #000000;
     letter-spacing: -0.5px;
 }
 
@@ -178,7 +178,6 @@ body {
 
 .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, var(--expense-light), var(--expense-color));
     border-radius: 4px;
     transition: width 0.5s ease;
 }
