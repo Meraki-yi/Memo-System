@@ -47,9 +47,9 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (parts.length > 2) {
             value = parts[0] + '.' + parts.slice(1).join('');
         }
-        // 限制小数点后一位
-        if (parts.length === 2 && parts[1].length > 1) {
-            value = parts[0] + '.' + parts[1].substring(0, 1);
+        // 限制小数点后两位
+        if (parts.length === 2 && parts[1].length > 2) {
+            value = parts[0] + '.' + parts[1].substring(0, 2);
         }
         e.target.value = value;
     });
@@ -146,8 +146,8 @@ async function loadRecordForEdit(recordId) {
         setRecordTypeForEdit(record.record_type);
         console.log('设置记录类型:', record.record_type);
 
-        // 填充数据 - 金额保留一位小数，确保显示格式与输入时一致
-        document.getElementById('amountInput').value = parseFloat(record.amount).toFixed(1);
+        // 填充数据 - 金额保留两位小数，确保显示格式与输入时一致
+        document.getElementById('amountInput').value = parseFloat(record.amount).toFixed(2);
         document.getElementById('noteInput').value = record.note || '';
         console.log('填充金额和备注');
 
@@ -687,7 +687,7 @@ async function showTemplatesModal() {
                         <div class="template-name">${template.name}</div>
                         <div class="template-details">
                             <span>${template.category_name} > ${template.subcategory_name}</span>
-                            <span class="template-amount ${template.record_type}">¥${template.amount}</span>
+                            <span class="template-amount ${template.record_type}">¥${parseFloat(template.amount).toFixed(2)}</span>
                         </div>
                     </div>
                     <button class="template-delete-btn" onclick="event.stopPropagation(); deleteTemplate(${template.id})">
@@ -751,8 +751,8 @@ async function applyTemplate(templateId) {
                 `${template.category_name} > ${template.subcategory_name}`;
             document.getElementById('categoryDisplay').classList.add('selected');
 
-            // 设置金额
-            document.getElementById('amountInput').value = template.amount;
+            // 设置金额 - 确保保留两位小数
+            document.getElementById('amountInput').value = parseFloat(template.amount).toFixed(2);
 
             // 设置备注
             document.getElementById('noteInput').value = template.note || '';

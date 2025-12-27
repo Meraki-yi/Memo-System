@@ -3,16 +3,17 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, Response
 from fastapi.templating import Jinja2Templates
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional
 from datetime import datetime
+from decimal import Decimal
 from zoneinfo import ZoneInfo
 import csv
 from io import StringIO
 
 # 本地时区配置（根据需要修改）
 LOCAL_TZ = ZoneInfo("Asia/Shanghai")  # 中国时区，如需其他时区请修改
-from sqlalchemy import create_engine, Column, Integer, String, Text, Boolean, DateTime, ForeignKey, Date, Numeric, Float
+from sqlalchemy import create_engine, Column, Integer, String, Text, Boolean, DateTime, ForeignKey, Date, Numeric
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session, relationship
 
@@ -135,7 +136,7 @@ class DailyRecord(Base):
     record_type = Column(String(10), nullable=False)  # 'income' 或 'expense'
     category_id = Column(Integer, ForeignKey("categories.id"), nullable=False)
     subcategory_id = Column(Integer, ForeignKey("subcategories.id"), nullable=False)
-    amount = Column(Float, nullable=False)  # 金额
+    amount = Column(Numeric(10, 2), nullable=False)  # 金额：保留两位小数
     record_date = Column(Date, nullable=False)  # 记账日期
     note = Column(Text, nullable=True)  # 备注
     created_at = Column(DateTime, nullable=False, default=lambda: datetime.now(LOCAL_TZ))
@@ -152,13 +153,29 @@ class RecordTemplate(Base):
     record_type = Column(String(10), nullable=False)  # 'income' 或 'expense'
     category_id = Column(Integer, ForeignKey("categories.id"), nullable=False)
     subcategory_id = Column(Integer, ForeignKey("subcategories.id"), nullable=False)
-    amount = Column(Float, nullable=False)
+    amount = Column(Numeric(10, 2), nullable=False)  # 金额：保留两位小数
     note = Column(Text, nullable=True)
     name = Column(String(100), nullable=False)  # 模板名称
     created_at = Column(DateTime, nullable=False, default=lambda: datetime.now(LOCAL_TZ))
 
 # 创建数据库表
 Base.metadata.create_all(bind=engine)
+
+
+# 辅助函数：格式化金额为两位小数的字符串
+def format_amount(amount) -> str:
+    """将金额格式化为保留两位小数的字符串"""
+    if amount is None:
+        return "0.00"
+    return f"{float(amount):.2f}"
+
+
+# 辅助函数：格式化金额为浮点数（保留两位小数精度）
+def format_amount_float(amount) -> float:
+    """将金额格式化为保留两位小数的浮点数"""
+    if amount is None:
+        return 0.0
+    return round(float(amount), 2)
 
 # 数据库依赖
 def get_db():
@@ -201,12 +218,12 @@ class DailyRecordCreate(BaseModel):
     record_type: str  # 'income' 或 'expense'
     category_id: int
     subcategory_id: int
-    amount: float
+    amount: Decimal  # 使用 Decimal 确保精度
     record_date: str  # YYYY-MM-DD格式
     note: Optional[str] = None
 
 class DailyRecordUpdate(BaseModel):
-    amount: Optional[float] = None
+    amount: Optional[Decimal] = None
     record_date: Optional[str] = None
     note: Optional[str] = None
 
@@ -215,7 +232,7 @@ class TemplateCreate(BaseModel):
     record_type: str
     category_id: int
     subcategory_id: int
-    amount: float
+    amount: Decimal  # 使用 Decimal 确保精度
     note: Optional[str] = None
 
 # 路由
@@ -730,7 +747,7 @@ async def get_records(
                 "category_icon": category.icon if category else "📁",
                 "subcategory_id": record.subcategory_id,
                 "subcategory_name": subcategory.name if subcategory else "",
-                "amount": record.amount,
+                "amount": format_amount_float(record.amount),
                 "record_date": record.record_date.isoformat(),
                 "note": record.note,
                 "created_at": record.created_at.isoformat()
@@ -784,7 +801,7 @@ async def get_records(
             "category_icon": category.icon if category else "📁",
             "subcategory_id": record.subcategory_id,
             "subcategory_name": subcategory.name if subcategory else "",
-            "amount": record.amount,
+            "amount": format_amount_float(record.amount),
             "record_date": record.record_date.isoformat(),
             "note": record.note,
             "created_at": record.created_at.isoformat()
@@ -821,7 +838,7 @@ async def create_record(request: Request, record: DailyRecordCreate, db: Session
         record_type=record.record_type,
         category_id=record.category_id,
         subcategory_id=record.subcategory_id,
-        amount=round(record.amount, 1),
+        amount=round(record.amount, 2),
         record_date=record_date,
         note=record.note
     )
@@ -853,7 +870,7 @@ async def get_record(request: Request, record_id: int, db: Session = Depends(get
         "category_icon": category.icon if category else "📁",
         "subcategory_id": record.subcategory_id,
         "subcategory_name": subcategory.name if subcategory else "",
-        "amount": record.amount,
+        "amount": format_amount_float(record.amount),
         "record_date": record.record_date.isoformat(),
         "note": record.note,
         "created_at": record.created_at.isoformat()
@@ -882,7 +899,7 @@ async def update_record(request: Request, record_id: int, record: DailyRecordCre
     db_record.record_type = record.record_type
     db_record.category_id = record.category_id
     db_record.subcategory_id = record.subcategory_id
-    db_record.amount = round(record.amount, 1)
+    db_record.amount = round(record.amount, 2)
     db_record.record_date = record_date
     db_record.note = record.note
 
@@ -921,9 +938,9 @@ async def get_summary(
     total_expense = sum(r.amount for r in records if r.record_type == "expense")
 
     return {
-        "total_income": round(total_income, 1),
-        "total_expense": round(total_expense, 1),
-        "net_amount": round(total_income - total_expense, 1)
+        "total_income": round(total_income, 2),
+        "total_expense": round(total_expense, 2),
+        "net_amount": round(total_income - total_expense, 2)
     }
 
 # 获取每日汇总
@@ -995,7 +1012,7 @@ async def get_templates(request: Request, db: Session = Depends(get_db)):
             "category_name": category.name if category else "",
             "subcategory_id": template.subcategory_id,
             "subcategory_name": subcategory.name if subcategory else "",
-            "amount": template.amount,
+            "amount": format_amount_float(template.amount),
             "note": template.note
         })
 
@@ -1167,7 +1184,7 @@ async def get_category_detail(
         records_detail.append({
             "id": record.id,
             "record_date": record.record_date.isoformat(),
-            "amount": record.amount,
+            "amount": format_amount_float(record.amount),
             "note": record.note,
             "subcategory_name": subcategory.name if subcategory else ""
         })
@@ -1176,9 +1193,9 @@ async def get_category_detail(
         "category_id": category_id,
         "category_name": category.name,
         "category_icon": category.icon,
-        "total_amount": round(total_amount, 2),
+        "total_amount": format_amount_float(total_amount),
         "record_count": record_count,
-        "avg_amount": round(avg_amount, 2),
+        "avg_amount": format_amount_float(avg_amount),
         "records": records_detail
     }
 
@@ -1208,7 +1225,7 @@ async def export_accounting_csv(request: Request, db: Session = Depends(get_db))
             type_name,
             category_name,
             subcategory_name,
-            record.amount,
+            f"{record.amount:.2f}",
             record.note or '',
             record.created_at.strftime('%Y-%m-%d %H:%M:%S')
         ])
@@ -1339,7 +1356,7 @@ async def export_accounting_sql(request: Request, db: Session = Depends(get_db))
         insert_statements.append(
             f"INSERT INTO daily_records (id, user_id, record_type, category_id, subcategory_id, amount, record_date, note, created_at) VALUES "
             f"({record.id}, {record.user_id}, '{record.record_type}', {record.category_id}, {record.subcategory_id}, "
-            f"{record.amount}, '{record.record_date}', {escape_sql_string(record.note) if record.note else 'NULL'}, "
+            f"{record.amount:.2f}, '{record.record_date}', {escape_sql_string(record.note) if record.note else 'NULL'}, "
             f"'{record.created_at.strftime('%Y-%m-%d %H:%M:%S')}');"
         )
 

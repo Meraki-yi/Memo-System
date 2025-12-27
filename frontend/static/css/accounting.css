@@ -11,8 +11,8 @@
     --primary-dark: #7CB342;
     --secondary-color: #87CEEB;
     --accent-color: #FFB6C1;
-    --income-color: #4CAF50;
-    --expense-color: #FF5252;
+    --income-color: #FF5252;
+    --expense-color: #4CAF50;
     --text-dark: #333333;
     --text-light: #666666;
     --text-muted: #999999;
@@ -134,11 +134,11 @@ body {
 }
 
 .record-tab-btn[data-type="income"].active {
-    background: linear-gradient(135deg, #81C784, #4CAF50);
+    background: linear-gradient(135deg, #FF8A80, #FF5252);
 }
 
 .record-tab-btn[data-type="expense"].active {
-    background: linear-gradient(135deg, #FF8A80, #FF5252);
+    background: linear-gradient(135deg, #81C784, #4CAF50);
 }
 
 .settings-btn {

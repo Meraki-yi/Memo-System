@@ -6,8 +6,8 @@
 }
 
 :root {
-    --income-color: #4CAF50;
-    --income-light: #81C784;
+    --income-color: #FF5252;
+    --income-light: #FF8A80;
     --text-dark: #333333;
     --text-light: #666666;
     --text-muted: #999999;
@@ -82,7 +82,7 @@ body {
 .total-income-section {
     padding: 40px 20px 30px;
     text-align: center;
-    background: linear-gradient(135deg, #81C784, #4CAF50);
+    background: linear-gradient(135deg, #FF8A80, #FF5252);
     margin: 0;
 }
 

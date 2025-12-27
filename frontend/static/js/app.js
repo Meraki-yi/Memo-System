@@ -245,19 +245,19 @@ function renderAccountingSummary(summary) {
     const summaryEl = document.getElementById('accountingSummary');
     summaryEl.innerHTML = `
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px;">
-            <div style="background: linear-gradient(135deg, #81C784, #4CAF50); padding: 20px; border-radius: 12px; text-align: center; color: white; cursor: pointer; transition: transform 0.2s;" onclick="goToIncomeStats()">
+            <div style="background: linear-gradient(135deg, #FF8A80, #FF5252); padding: 20px; border-radius: 12px; text-align: center; color: white; cursor: pointer; transition: transform 0.2s;" onclick="goToIncomeStats()">
                 <div style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 8px;">本月收入</div>
-                <div style="font-size: 1.5rem; font-weight: 700;">¥${summary.total_income}</div>
+                <div style="font-size: 1.5rem; font-weight: 700;">¥${summary.total_income.toFixed(2)}</div>
                 <div style="font-size: 0.75rem; opacity: 0.7; margin-top: 4px;">点击查看详情 ›</div>
             </div>
-            <div style="background: linear-gradient(135deg, #FF8A80, #FF5252); padding: 20px; border-radius: 12px; text-align: center; color: white; cursor: pointer; transition: transform 0.2s;" onclick="goToExpenseStats()">
+            <div style="background: linear-gradient(135deg, #81C784, #4CAF50); padding: 20px; border-radius: 12px; text-align: center; color: white; cursor: pointer; transition: transform 0.2s;" onclick="goToExpenseStats()">
                 <div style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 8px;">本月支出</div>
-                <div style="font-size: 1.5rem; font-weight: 700;">¥${summary.total_expense}</div>
+                <div style="font-size: 1.5rem; font-weight: 700;">¥${summary.total_expense.toFixed(2)}</div>
                 <div style="font-size: 0.75rem; opacity: 0.7; margin-top: 4px;">点击查看详情 ›</div>
             </div>
-            <div style="background: ${summary.net_amount >= 0 ? 'linear-gradient(135deg, #64B5F6, #2196F3)' : 'linear-gradient(135deg, #FF8A80, #FF5252)'}; padding: 20px; border-radius: 12px; text-align: center; color: white;">
+            <div style="background: ${summary.net_amount >= 0 ? 'linear-gradient(135deg, #BA68C8, #9C27B0)' : 'linear-gradient(135deg, #BDBDBD, #9E9E9E)'}; padding: 20px; border-radius: 12px; text-align: center; color: white;">
                 <div style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 8px;">净额</div>
-                <div style="font-size: 1.5rem; font-weight: 700;">¥${summary.net_amount}</div>
+                <div style="font-size: 1.5rem; font-weight: 700;">¥${summary.net_amount.toFixed(2)}</div>
             </div>
         </div>
     `;
@@ -322,8 +322,8 @@ function renderRecentRecords(records) {
                 <div style="display: flex; justify-content: space-between; padding: 12px 15px; background: var(--bg-light); border-radius: 8px; margin-bottom: 10px;">
                     <strong>${dateDisplay}</strong>
                     <span>
-                        <span style="color: #4CAF50;">收 ¥${dayIncome.toFixed(1)}</span>
-                        <span style="color: #FF5252; margin-left: 10px;">支 ¥${dayExpense.toFixed(1)}</span>
+                        <span style="color: #FF5252;">收 ¥${dayIncome.toFixed(2)}</span>
+                        <span style="color: #4CAF50; margin-left: 10px;">支 ¥${dayExpense.toFixed(2)}</span>
                     </span>
                 </div>
                 ${items.map(item => `
@@ -333,8 +333,8 @@ function renderRecentRecords(records) {
                             <div style="flex: 1;">
                                 <div style="display: flex; justify-content: space-between;">
                                     <span style="font-weight: 500;">${item.category_name} > ${item.subcategory_name}</span>
-                                    <span style="font-weight: 600; color: ${item.record_type === 'income' ? '#4CAF50' : '#FF5252'};">
-                                        ${item.record_type === 'income' ? '+' : '-'}¥${item.amount}
+                                    <span style="font-weight: 600; color: ${item.record_type === 'income' ? '#FF5252' : '#4CAF50'};">
+                                        ${item.record_type === 'income' ? '+' : '-'}¥${item.amount.toFixed(2)}
                                     </span>
                                 </div>
                                 ${item.note ? `<div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">${item.note}</div>` : ''}
