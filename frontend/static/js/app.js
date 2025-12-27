@@ -28,6 +28,13 @@ const paginationState = {
     }
 };
 
+// 周数据缓存
+let weekDataCache = {
+    income: 0,
+    expense: 0,
+    net: 0
+};
+
 // API请求基础配置
 const API_BASE = '/api';
 const ACCOUNTING_API_BASE = '/api/accounting';
@@ -68,6 +75,29 @@ function showToast(message, type = 'success') {
     setTimeout(() => {
         toast.classList.remove('show');
     }, 3000);
+}
+
+// 切换更多菜单
+function toggleMoreMenu() {
+    const menu = document.getElementById('moreMenu');
+    menu.classList.toggle('show');
+
+    // 点击外部关闭菜单
+    if (menu.classList.contains('show')) {
+        setTimeout(() => {
+            document.addEventListener('click', closeMoreMenuOutside);
+        }, 0);
+    }
+}
+
+// 点击外部关闭更多菜单
+function closeMoreMenuOutside(event) {
+    const menu = document.getElementById('moreMenu');
+    const button = document.querySelector('.more-btn');
+    if (!menu.contains(event.target) && !button.contains(event.target)) {
+        menu.classList.remove('show');
+        document.removeEventListener('click', closeMoreMenuOutside);
+    }
 }
 
 // 显示/隐藏Loading
@@ -223,44 +253,53 @@ async function loadAccountingData() {
         state.totalItems = recordsData.pagination.total;
         state.currentPage = recordsData.pagination.page;
 
-        renderAccountingSummary(summary);
+        // 渲染统计数据（周报 + 月入口）
+        renderStatsArea(summary, recordsData.items);
         renderRecentRecords(recordsData.items);
 
         // 如果有周信息，显示周范围
         if (recordsData.week_info) {
-            updateWeekRangeHeader(recordsData.week_info);
+            updateWeekRangeDisplay(recordsData.week_info);
         } else {
-            hideWeekRangeHeader();
+            hideWeekRangeDisplay();
         }
 
-        updatePaginationUI('accounting');
+        updateBottomBarButtons();
     } catch (error) {
         console.error('加载记账数据失败:', error);
         showToast(error.message, 'error');
     }
 }
 
-// 渲染记账汇总
-function renderAccountingSummary(summary) {
-    const summaryEl = document.getElementById('accountingSummary');
-    summaryEl.innerHTML = `
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px;">
-            <div style="background: linear-gradient(135deg, #FF8A80, #FF5252); padding: 20px; border-radius: 12px; text-align: center; color: white; cursor: pointer; transition: transform 0.2s;" onclick="goToIncomeStats()">
-                <div style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 8px;">本月收入</div>
-                <div style="font-size: 1.5rem; font-weight: 700;">¥${summary.total_income.toFixed(2)}</div>
-                <div style="font-size: 0.75rem; opacity: 0.7; margin-top: 4px;">点击查看详情 ›</div>
-            </div>
-            <div style="background: linear-gradient(135deg, #81C784, #4CAF50); padding: 20px; border-radius: 12px; text-align: center; color: white; cursor: pointer; transition: transform 0.2s;" onclick="goToExpenseStats()">
-                <div style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 8px;">本月支出</div>
-                <div style="font-size: 1.5rem; font-weight: 700;">¥${summary.total_expense.toFixed(2)}</div>
-                <div style="font-size: 0.75rem; opacity: 0.7; margin-top: 4px;">点击查看详情 ›</div>
-            </div>
-            <div style="background: ${summary.net_amount >= 0 ? 'linear-gradient(135deg, #BA68C8, #9C27B0)' : 'linear-gradient(135deg, #BDBDBD, #9E9E9E)'}; padding: 20px; border-radius: 12px; text-align: center; color: white;">
-                <div style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 8px;">净额</div>
-                <div style="font-size: 1.5rem; font-weight: 700;">¥${summary.net_amount.toFixed(2)}</div>
-            </div>
-        </div>
-    `;
+// 渲染统计区（周报 + 月入口）
+function renderStatsArea(summary, records) {
+    // 计算本周数据（从当前记录中计算）
+    const weekIncome = records.filter(r => r.record_type === 'income').reduce((sum, r) => sum + r.amount, 0);
+    const weekExpense = records.filter(r => r.record_type === 'expense').reduce((sum, r) => sum + r.amount, 0);
+    const weekNet = weekIncome - weekExpense;
+
+    // 更新周报显示
+    document.getElementById('weekIncome').textContent = `+¥${weekIncome.toFixed(2)}`;
+    document.getElementById('weekExpense').textContent = `-¥${weekExpense.toFixed(2)}`;
+    document.getElementById('weekNet').textContent = `¥${weekNet.toFixed(2)}`;
+
+    // 更新月入口显示
+    document.getElementById('monthIncome').textContent = `¥${summary.total_income.toFixed(2)}`;
+    document.getElementById('monthExpense').textContent = `¥${summary.total_expense.toFixed(2)}`;
+
+    // 更新周轮次标签
+    const state = paginationState.accounting;
+    const weekBadge = document.getElementById('currentWeekBadge');
+    if (state.currentPage === 1) {
+        weekBadge.textContent = '本周';
+    } else {
+        weekBadge.textContent = `第${state.currentPage}周`;
+    }
+
+    // 更新分页信息显示
+    document.getElementById('accounting-current-page').textContent = state.currentPage;
+    document.getElementById('accounting-total-pages').textContent = state.totalPages;
+    document.getElementById('accounting-total-items').textContent = state.totalItems;
 }
 
 // 跳转到分类收入统计页面
@@ -319,7 +358,7 @@ function renderRecentRecords(records) {
 
         return `
             <div class="day-group">
-                <div style="display: flex; justify-content: space-between; padding: 12px 15px; background: var(--bg-light); border-radius: 8px; margin-bottom: 10px;">
+                <div>
                     <strong>${dateDisplay}</strong>
                     <span>
                         <span style="color: #FF5252;">收 ¥${dayIncome.toFixed(2)}</span>
@@ -327,12 +366,12 @@ function renderRecentRecords(records) {
                     </span>
                 </div>
                 ${items.map(item => `
-                    <div class="item-card accounting-record-card" style="margin-bottom: 8px; cursor: pointer;" onclick="editAccountingRecord(${item.id})">
+                    <div class="item-card accounting-record-card" onclick="editAccountingRecord(${item.id})">
                         <div class="item-content">
-                            <span style="font-size: 1.2rem; margin-right: 10px;">${item.category_icon}</span>
+                            <span>${item.category_icon}</span>
                             <div style="flex: 1;">
                                 <div style="display: flex; justify-content: space-between;">
-                                    <span style="font-weight: 500;">${item.category_name} > ${item.subcategory_name}</span>
+                                    <span style="font-weight: 500;">${item.category_name} · ${item.subcategory_name}</span>
                                     <span style="font-weight: 600; color: ${item.record_type === 'income' ? '#FF5252' : '#4CAF50'};">
                                         ${item.record_type === 'income' ? '+' : '-'}¥${item.amount.toFixed(2)}
                                     </span>
@@ -955,8 +994,8 @@ function changeAccountingPage(delta) {
     if (newPage >= 1 && newPage <= state.totalPages) {
         state.currentPage = newPage;
         loadAccountingData();
-        // 平滑滚动到顶部
-        document.getElementById('recent-records').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // 滚动到顶部
+        document.querySelector('.tab-content-scrollable').scrollTop = 0;
     }
 }
 
@@ -989,18 +1028,28 @@ function changeMemosPage(delta) {
 // ==================== 周分页相关功能 ====================
 
 // 更新周范围显示
-function updateWeekRangeHeader(weekInfo) {
-    const display = document.getElementById('weekRangeDisplay');
-    const text = document.getElementById('weekRangeText');
-
-    if (weekInfo) {
-        text.textContent = `${weekInfo.start_display} - ${weekInfo.end_display}`;
-        display.style.display = 'flex';
+function updateWeekRangeDisplay(weekInfo) {
+    // 更新头部周报区域的日期范围
+    const headerDateRange = document.getElementById('weekDateRangeHeader');
+    if (weekInfo && headerDateRange) {
+        headerDateRange.textContent = `${weekInfo.start_display} - ${weekInfo.end_display}`;
     }
 }
 
 // 隐藏周范围显示
-function hideWeekRangeHeader() {
-    const display = document.getElementById('weekRangeDisplay');
-    display.style.display = 'none';
+function hideWeekRangeDisplay() {
+    const headerDateRange = document.getElementById('weekDateRangeHeader');
+    if (headerDateRange) {
+        headerDateRange.textContent = '';
+    }
+}
+
+// 更新底部栏按钮状态
+function updateBottomBarButtons() {
+    const state = paginationState.accounting;
+    const prevBtn = document.getElementById('prevWeekBtn');
+    const nextBtn = document.getElementById('nextWeekBtn');
+
+    prevBtn.disabled = state.currentPage <= 1;
+    nextBtn.disabled = state.currentPage >= state.totalPages;
 }

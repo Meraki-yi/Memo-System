@@ -254,7 +254,7 @@ body {
 
 .app-header {
     background: var(--bg-white);
-    padding: 20px 30px;
+    padding: 12px 20px;
     box-shadow: var(--shadow-sm);
     display: flex;
     justify-content: space-between;
@@ -266,48 +266,106 @@ body {
     right: 0;
     z-index: 100;
     flex-shrink: 0;
+    height: 56px;
 }
 
 .app-title {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     font-weight: 700;
     color: var(--text-dark);
 }
 
 .app-title .icon {
-    font-size: 1.8rem;
-    margin-right: 10px;
+    font-size: 1.4rem;
+    margin-right: 8px;
     vertical-align: middle;
 }
 
-.logout-btn {
-    background: var(--bg-light);
-    border: 2px solid var(--border-color);
-    padding: 8px 20px;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    transition: var(--transition);
-    font-size: 0.95rem;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+/* 顶部更多按钮和菜单 */
+.header-more-wrapper {
+    position: relative;
 }
 
-.logout-btn:hover {
-    background: var(--accent-color);
-    border-color: var(--accent-color);
-    transform: translateY(-2px);
+.more-btn {
+    background: var(--bg-light);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 1.5rem;
+    padding: 0;
+}
+
+.more-btn:hover {
+    background: var(--bg-gray);
+    transform: scale(1.05);
+}
+
+.more-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background: var(--bg-white);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    min-width: 160px;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 101;
+}
+
+.more-menu.show {
+    display: flex;
+    animation: slideDown 0.2s ease;
+}
+
+.more-menu-item {
+    background: none;
+    border: none;
+    padding: 14px 20px;
+    text-align: left;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.95rem;
+    color: var(--text-dark);
+    width: 100%;
+}
+
+.more-menu-item:hover {
+    background: var(--bg-light);
+}
+
+.more-menu-item.logout {
+    border-top: 1px solid var(--border-color);
+    color: #FF5252;
+}
+
+.more-menu-item.logout:hover {
+    background: #FFEBEE;
+}
+
+.more-menu-item .icon {
+    font-size: 1.1rem;
 }
 
 .app-main {
     flex: 1;
-    padding: 30px;
-    max-width: 1200px;
+    padding: 15px;
+    max-width: 600px;
     margin: 0 auto;
     width: 100%;
-    /* 固定布局，为顶部header、标签栏和底部分页栏留出空间 */
-    padding-top: 170px; /* header(80px) + tabs(60px) + 间距(30px) */
-    padding-bottom: 120px; /* 为固定底部分页导航栏留出空间 */
+    /* 固定布局，为顶部header、标签栏和底部栏留出空间 */
+    padding-top: 110px; /* header(56px) + tabs(44px) + 间距(10px) */
+    padding-bottom: 82px; /* 为固定底部栏留出空间(72px + 10px) */
     /* 禁止app-main滚动 - 滚动仅在tab-content-scrollable中 */
     overflow: hidden;
     display: flex;
@@ -317,27 +375,27 @@ body {
 /* 标签页样式 */
 .tabs {
     display: flex;
-    gap: 10px;
-    margin-bottom: 30px;
+    gap: 0;
     border-bottom: 2px solid var(--border-color);
     align-items: center;
     /* 固定标签栏，确保始终可见 */
     position: fixed;
-    top: 80px; /* header高度 */
+    top: 56px; /* header高度 */
     left: 0;
     right: 0;
     z-index: 99;
-    background: var(--bg-light);
-    padding: 0 30px;
+    background: var(--bg-white);
+    padding: 0;
     /* 禁止标签栏滚动 */
     flex-shrink: 0;
+    height: 44px;
 }
 
 .tab-btn {
     background: none;
     border: none;
-    padding: 15px 25px;
-    font-size: 1rem;
+    padding: 0 20px;
+    font-size: 0.95rem;
     font-weight: 600;
     color: var(--text-light);
     cursor: pointer;
@@ -346,7 +404,10 @@ body {
     margin-bottom: -2px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+    height: 100%;
+    flex: 1;
+    justify-content: center;
 }
 
 .tab-btn:hover {
@@ -356,42 +417,6 @@ body {
 .tab-btn.active {
     color: var(--primary-dark);
     border-bottom-color: var(--primary-light);
-}
-
-/* 标签栏中的导出按钮 - 弧形长方形样式 */
-.tab-btn-export {
-    /* 独特的渐变背景，与其他标签区分 */
-    background: linear-gradient(135deg, #6FB1FC, #4A90E2);
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    /* 弧形长方形：四角圆角，其余直边 */
-    border-radius: 20px;
-    cursor: pointer;
-    transition: var(--transition);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    /* 与备忘录标签保持明显间距 */
-    margin-left: 24px;
-    /* 视觉上更突出的阴影 */
-    box-shadow: 0 3px 10px rgba(74, 144, 226, 0.3);
-}
-
-.tab-btn-export:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4);
-    filter: brightness(1.1);
-}
-
-.tab-btn-export:active {
-    transform: translateY(0);
-}
-
-.tab-btn-export .icon {
-    font-size: 1.2rem;
 }
 
 .tab-content {
@@ -404,7 +429,7 @@ body {
     display: flex;
     flex-direction: column;
     /* 使用固定高度，内部scrollable区域滚动 */
-    height: calc(100vh - 290px); /* 减去header(80px) + tabs(60px) + padding(150px) */
+    height: calc(100vh - 170px); /* 减去header(56px) + tabs(44px) + padding+b-bottom(70px) */
 }
 
 /* 标签页内容可滚动区域 - 唯一的滚动上下文 */
@@ -457,14 +482,300 @@ body {
     }
 }
 
-/* 固定顶部记账汇总栏 - 在scrollable区域内固定 */
-.accounting-summary.fixed-top {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    margin-bottom: 15px;
-    /* 确保背景不透明 */
+/* ==================== 统计区样式 ==================== */
+.stats-area {
     background: var(--bg-white);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 15px;
+    overflow: hidden;
+}
+
+/* 周报模块 */
+.week-report-section {
+    padding: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    gap: 8px;
+}
+
+.section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    flex-shrink: 0;
+}
+
+.week-date-range {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-light);
+    flex: 1;
+    text-align: center;
+}
+
+.week-badge {
+    background: linear-gradient(135deg, #FFE5EC, #FFF0E6);
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--primary-dark);
+    flex-shrink: 0;
+}
+
+.week-report-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.week-card {
+    padding: 12px 8px;
+    border-radius: var(--radius-sm);
+    text-align: center;
+    transition: var(--transition);
+}
+
+.week-card.income {
+    background: linear-gradient(135deg, #FF8A80, #FF5252);
+    color: white;
+}
+
+.week-card.expense {
+    background: linear-gradient(135deg, #81C784, #4CAF50);
+    color: white;
+}
+
+.week-card.net {
+    background: linear-gradient(135deg, #BA68C8, #9C27B0);
+    color: white;
+}
+
+.week-card-label {
+    font-size: 0.75rem;
+    opacity: 0.9;
+    margin-bottom: 4px;
+}
+
+.week-card-amount {
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+/* 月入口模块 */
+.month-entrance-section {
+    padding: 15px;
+}
+
+.month-entrance-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.month-entrance-card {
+    background: var(--bg-light);
+    padding: 12px 15px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid var(--border-color);
+}
+
+.month-entrance-card:active {
+    transform: scale(0.98);
+}
+
+.month-entrance-card.income:hover {
+    border-color: #FF5252;
+    background: #FFEBEE;
+}
+
+.month-entrance-card.expense:hover {
+    border-color: #4CAF50;
+    background: #E8F5E9;
+}
+
+.month-entrance-label {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    margin-bottom: 2px;
+}
+
+.month-entrance-amount {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.month-entrance-arrow {
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    font-weight: bold;
+}
+
+/* ==================== 底部固定栏样式 ==================== */
+.bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg-white);
+    border-top: 1px solid var(--border-color);
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
+    z-index: 99;
+    padding: 10px 15px;
+    display: flex;
+    justify-content: center;
+    height: 72px;
+}
+
+.bottom-bar-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    max-width: 600px;
+}
+
+.bottom-bar-nav {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.bottom-bar-info {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.nav-btn {
+    background: var(--bg-light);
+    border: 1px solid var(--border-color);
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--text-dark);
+    white-space: nowrap;
+}
+
+.nav-btn:hover:not(:disabled) {
+    background: var(--primary-light);
+    border-color: var(--primary-light);
+}
+
+.nav-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.nav-btn .icon {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.add-record-btn {
+    background: var(--primary-gradient);
+    border: none;
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    color: var(--text-dark);
+    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+    white-space: nowrap;
+}
+
+.add-record-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+}
+
+.add-record-btn .icon {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+/* 底部栏分页信息 */
+.bottom-bar-info .pagination-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    color: var(--text-light);
+}
+
+.bottom-bar-info .pagination-current span {
+    color: var(--primary-dark);
+    font-weight: 600;
+}
+
+.bottom-bar-info .pagination-total span {
+    color: var(--text-dark);
+    font-weight: 600;
+}
+
+.bottom-bar-info .pagination-items span {
+    color: var(--primary-dark);
+    font-weight: 600;
+}
+
+.bottom-bar-info .pagination-divider {
+    color: var(--text-muted);
+}
+
+/* ==================== 列表样式调整 ==================== */
+.day-group {
+    margin-bottom: 15px;
+}
+
+.day-group > div:first-child {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 12px;
+    background: var(--bg-light);
+    border-radius: var(--radius-sm);
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.accounting-record-card {
+    padding: 12px;
+    margin-bottom: 6px;
+}
+
+.accounting-record-card .item-content {
+    margin-bottom: 0;
+}
+
+.accounting-record-card .item-content span:first-child {
+    font-size: 1.1rem;
 }
 
 .content-header {
@@ -962,30 +1273,68 @@ body {
 /* 响应式设计 */
 @media (max-width: 768px) {
     .app-main {
-        padding: 20px;
-        padding-top: 150px; /* 移动端header + tabs + 间距 */
-        padding-bottom: 110px; /* 移动端底部空间稍小 */
+        padding: 15px;
+        padding-top: 110px;
+        padding-bottom: 78px;
     }
 
     /* 移动端标签栏位置调整 */
     .tabs {
-        top: 70px; /* 移动端header较小 */
-        padding: 0 20px;
+        top: 56px;
     }
 
     /* 移动端标签页高度调整 */
     .tab-content.active {
-        height: calc(100vh - 260px); /* 移动端高度调整 */
+        height: calc(100vh - 170px);
     }
 
-    /* 移动端固定顶部汇总栏样式调整 */
-    .accounting-summary.fixed-top {
-        margin-bottom: 10px;
+    /* 移动端底部栏调整 */
+    .bottom-bar {
+        padding: 8px 12px;
+        height: 68px;
     }
 
-    /* 移动端固定分页栏样式调整 */
-    .pagination-container.fixed-bottom {
-        padding: 12px 15px;
+    .bottom-bar-nav {
+        gap: 6px;
+    }
+
+    .nav-btn {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+
+    .add-record-btn {
+        padding: 6px 14px;
+        font-size: 0.8rem;
+    }
+
+    .bottom-bar-info .pagination-info {
+        font-size: 0.75rem;
+        gap: 4px;
+    }
+
+    .bottom-bar-info .pagination-items {
+        display: none;
+    }
+
+    .week-report-cards {
+        gap: 8px;
+    }
+
+    .week-card {
+        padding: 10px 6px;
+    }
+
+    .week-card-amount {
+        font-size: 1rem;
+    }
+
+    .month-entrance-cards {
+        gap: 8px;
+    }
+
+    .month-entrance-card {
+        padding: 10px 12px;
     }
 
     .login-box {
@@ -995,24 +1344,6 @@ body {
     .modal-content {
         width: 95%;
         margin: 20px;
-    }
-
-    .tabs {
-        overflow-x: auto;
-        /* 禁止标签栏滚动穿透 */
-        overscroll-behavior: contain;
-    }
-
-    .tab-btn {
-        padding: 12px 20px;
-        font-size: 0.9rem;
-    }
-
-    .tab-btn-export {
-        padding: 10px 16px;
-        font-size: 0.85rem;
-        margin-left: 16px;
-        border-radius: 16px;
     }
 
     .content-header {
@@ -1034,38 +1365,66 @@ body {
 
 @media (max-width: 480px) {
     .app-header {
-        padding: 15px 20px;
+        padding: 10px 15px;
+        height: 52px;
     }
 
     .app-title {
-        font-size: 1.2rem;
-    }
-
-    .logout-btn {
-        padding: 8px 15px;
-        font-size: 0.9rem;
+        font-size: 1.1rem;
     }
 
     .app-main {
-        padding: 15px;
-        padding-top: 140px; /* 小屏幕header + tabs + 间距 */
-        padding-bottom: 100px; /* 小屏幕底部空间更小 */
+        padding: 12px;
+        padding-top: 106px; /* header(52) + tabs(44) + 间距(10) */
+        padding-bottom: 66px;
     }
 
     /* 小屏幕标签栏位置调整 */
     .tabs {
-        top: 65px; /* 小屏幕header更小 */
-        padding: 0 15px;
+        top: 52px;
     }
 
     /* 小屏幕标签页高度调整 */
     .tab-content.active {
-        height: calc(100vh - 240px); /* 小屏幕高度调整 */
+        height: calc(100vh - 164px);
     }
 
-    /* 小屏幕固定顶部汇总栏样式调整 */
-    .accounting-summary.fixed-top {
-        margin-bottom: 8px;
+    /* 小屏幕底部栏 - 保持垂直布局，两行居中对齐 */
+    .bottom-bar {
+        height: auto;
+        min-height: 70px;
+        padding: 8px 10px;
+    }
+
+    .bottom-bar-content {
+        gap: 4px;
+    }
+
+    .bottom-bar-nav {
+        gap: 6px;
+    }
+
+    .nav-btn {
+        padding: 6px 10px;
+        font-size: 0.75rem;
+    }
+
+    .add-record-btn {
+        padding: 6px 14px;
+        font-size: 0.75rem;
+    }
+
+    .bottom-bar-info .pagination-info {
+        font-size: 0.7rem;
+        gap: 4px;
+    }
+
+    .bottom-bar-info .pagination-items {
+        display: none;
+    }
+
+    .week-date-range {
+        font-size: 0.75rem;
     }
 
     .item-meta {
@@ -1079,6 +1438,11 @@ body {
 
     .btn {
         width: 100%;
+    }
+
+    /* 分页信息隐藏 */
+    .pagination-items {
+        display: none;
     }
 }
 
@@ -1224,32 +1588,26 @@ body {
     transform: translateY(0);
 }
 
-/* 周日期范围显示样式 */
+/* 周日期范围显示样式（通用） */
 .week-range-display {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 8px 16px;
-    background: linear-gradient(135deg, #FFE5EC, #FFF0E6);
-    border-radius: 20px;
-    border: 1px solid rgba(255, 182, 193, 0.3);
-    margin-right: auto;
 }
 
 .week-range-icon {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
 }
 
 .week-range-text {
-    font-size: 1.05rem;
+    font-size: 0.9rem;
     font-weight: 600;
     color: var(--text-dark);
-    font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
 }
 
-/* 分页组件样式 */
+/* 分页组件（用于反思和备忘录标签） */
 .pagination-container {
-    padding: 20px;
+    padding: 15px;
     background: var(--bg-white);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-sm);
@@ -1280,17 +1638,16 @@ body {
     background: var(--bg-white);
     border: 2px solid var(--border-color);
     color: var(--text-dark);
-    padding: 10px 20px;
+    padding: 8px 16px;
     border-radius: var(--radius-sm);
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
     transition: var(--transition);
     display: flex;
     align-items: center;
-    gap: 8px;
-    min-width: 100px;
-    justify-content: center;
+    gap: 6px;
+    white-space: nowrap;
 }
 
 .pagination-btn:hover:not(:disabled) {
@@ -1307,44 +1664,21 @@ body {
 }
 
 .pagination-btn .icon {
-    font-size: 1.2rem;
+    font-size: 1rem;
     font-weight: bold;
-}
-
-/* 记账按钮特殊样式 */
-.pagination-btn.accounting-btn {
-    background: var(--primary-gradient);
-    border-color: var(--primary-dark);
-    color: var(--text-dark);
-}
-
-.pagination-btn.accounting-btn:hover {
-    background: linear-gradient(135deg, #FFE066, #9ACD32);
-    border-color: var(--primary-dark);
-    box-shadow: var(--shadow-md);
 }
 
 .pagination-info {
     display: flex;
     align-items: center;
-    gap: 12px;
-    font-size: 0.95rem;
+    gap: 8px;
+    font-size: 0.85rem;
     color: var(--text-light);
-    min-width: 200px;
-}
-
-.pagination-current {
-    font-weight: 600;
-    color: var(--text-dark);
 }
 
 .pagination-current span {
     color: var(--primary-dark);
-    font-size: 1.05rem;
-}
-
-.pagination-divider {
-    color: var(--text-muted);
+    font-weight: 600;
 }
 
 .pagination-total span {
@@ -1352,75 +1686,7 @@ body {
     font-weight: 600;
 }
 
-.pagination-items {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-}
-
 .pagination-items span {
     color: var(--primary-dark);
     font-weight: 600;
-}
-
-/* 响应式分页 */
-@media (max-width: 768px) {
-    .pagination {
-        flex-direction: row;
-        gap: 10px;
-        justify-content: center;
-    }
-
-    .pagination-btn {
-        padding: 10px 16px;
-        font-size: 0.9rem;
-        min-width: 80px;
-    }
-
-    .pagination-info {
-        font-size: 0.85rem;
-        gap: 8px;
-        order: 2;
-        width: 100%;
-        justify-content: center;
-    }
-
-    .pagination-btn:first-child {
-        order: 1;
-    }
-
-    .pagination-btn:nth-child(2) {
-        order: 3;
-    }
-
-    .pagination-btn.accounting-btn {
-        order: 4;
-    }
-}
-
-@media (max-width: 480px) {
-    .pagination-container {
-        padding: 15px;
-        margin-top: 20px;
-    }
-
-    .pagination {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .pagination-btn {
-        width: 100%;
-        max-width: 200px;
-        padding: 10px 20px;
-    }
-
-    .pagination-info {
-        font-size: 0.85rem;
-        gap: 6px;
-        width: auto;
-    }
-
-    .pagination-items {
-        display: none;
-    }
 }
