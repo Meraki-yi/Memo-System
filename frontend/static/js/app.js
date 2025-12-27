@@ -245,13 +245,15 @@ function renderAccountingSummary(summary) {
     const summaryEl = document.getElementById('accountingSummary');
     summaryEl.innerHTML = `
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px;">
-            <div style="background: linear-gradient(135deg, #81C784, #4CAF50); padding: 20px; border-radius: 12px; text-align: center; color: white;">
+            <div style="background: linear-gradient(135deg, #81C784, #4CAF50); padding: 20px; border-radius: 12px; text-align: center; color: white; cursor: pointer; transition: transform 0.2s;" onclick="goToIncomeStats()">
                 <div style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 8px;">本月收入</div>
                 <div style="font-size: 1.5rem; font-weight: 700;">¥${summary.total_income}</div>
+                <div style="font-size: 0.75rem; opacity: 0.7; margin-top: 4px;">点击查看详情 ›</div>
             </div>
-            <div style="background: linear-gradient(135deg, #FF8A80, #FF5252); padding: 20px; border-radius: 12px; text-align: center; color: white;">
+            <div style="background: linear-gradient(135deg, #FF8A80, #FF5252); padding: 20px; border-radius: 12px; text-align: center; color: white; cursor: pointer; transition: transform 0.2s;" onclick="goToExpenseStats()">
                 <div style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 8px;">本月支出</div>
                 <div style="font-size: 1.5rem; font-weight: 700;">¥${summary.total_expense}</div>
+                <div style="font-size: 0.75rem; opacity: 0.7; margin-top: 4px;">点击查看详情 ›</div>
             </div>
             <div style="background: ${summary.net_amount >= 0 ? 'linear-gradient(135deg, #64B5F6, #2196F3)' : 'linear-gradient(135deg, #FF8A80, #FF5252)'}; padding: 20px; border-radius: 12px; text-align: center; color: white;">
                 <div style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 8px;">净额</div>
@@ -259,6 +261,16 @@ function renderAccountingSummary(summary) {
             </div>
         </div>
     `;
+}
+
+// 跳转到分类收入统计页面
+function goToIncomeStats() {
+    window.location.href = '/income-stats';
+}
+
+// 跳转到分类支出统计页面
+function goToExpenseStats() {
+    window.location.href = '/category-stats';
 }
 
 // 渲染最近记录

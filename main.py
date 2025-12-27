@@ -1038,6 +1038,150 @@ async def read_accounting(request: Request):
     check_auth(request)
     return templates.TemplateResponse("accounting.html", {"request": request})
 
+# 分类支出统计页面路由
+@app.get("/category-stats", response_class=HTMLResponse)
+async def read_category_stats(request: Request):
+    check_auth(request)
+    return templates.TemplateResponse("category_stats.html", {"request": request})
+
+# 分类支出详情页面路由
+@app.get("/category-detail", response_class=HTMLResponse)
+async def read_category_detail(request: Request):
+    check_auth(request)
+    return templates.TemplateResponse("category_detail.html", {"request": request})
+
+# 分类收入统计页面路由
+@app.get("/income-stats", response_class=HTMLResponse)
+async def read_income_stats(request: Request):
+    check_auth(request)
+    return templates.TemplateResponse("income_stats.html", {"request": request})
+
+# 分类收入详情页面路由
+@app.get("/income-detail", response_class=HTMLResponse)
+async def read_income_detail(request: Request):
+    check_auth(request)
+    return templates.TemplateResponse("income_detail.html", {"request": request})
+
+# ==================== 分类统计API ====================
+
+# 获取分类统计数据（支持收入和支出）
+@app.get("/api/accounting/category-stats")
+async def get_category_stats(
+    request: Request,
+    start_date: str,
+    end_date: str,
+    type: str = "expense",
+    db: Session = Depends(get_db)
+):
+    """获取指定时间范围内的分类统计（type: 'income' 或 'expense'）"""
+    check_auth(request)
+
+    # 查询指定时间范围内的记录
+    query = db.query(DailyRecord).filter(
+        DailyRecord.record_type == type,
+        DailyRecord.record_date >= start_date,
+        DailyRecord.record_date <= end_date
+    )
+
+    records = query.all()
+
+    if not records:
+        total_key = "total_income" if type == "income" else "total_expense"
+        return {
+            total_key: 0,
+            "categories": []
+        }
+
+    # 计算总收入/支出
+    total_amount = sum(r.amount for r in records)
+
+    # 按一级类目分组统计
+    from collections import defaultdict
+    category_stats = defaultdict(lambda: {"amount": 0, "count": 0, "icon": "", "name": ""})
+
+    for record in records:
+        category = db.query(Category).filter(Category.id == record.category_id).first()
+        if category:
+            category_stats[category.id]["amount"] += record.amount
+            category_stats[category.id]["count"] += 1
+            category_stats[category.id]["icon"] = category.icon
+            category_stats[category.id]["name"] = category.name
+
+    # 转换为列表并计算百分比
+    categories = []
+    for cat_id, stats in category_stats.items():
+        percent = (stats["amount"] / total_amount * 100) if total_amount > 0 else 0
+        categories.append({
+            "id": cat_id,
+            "name": stats["name"],
+            "icon": stats["icon"],
+            "amount": stats["amount"],
+            "record_count": stats["count"],
+            "percent": percent
+        })
+
+    # 按金额降序排序
+    categories.sort(key=lambda x: x["amount"], reverse=True)
+
+    total_key = "total_income" if type == "income" else "total_expense"
+    return {
+        total_key: round(total_amount, 2),
+        "categories": categories
+    }
+
+# 获取分类详情（支持收入和支出）
+@app.get("/api/accounting/category-detail/{category_id}")
+async def get_category_detail(
+    request: Request,
+    category_id: int,
+    start_date: str,
+    end_date: str,
+    type: str = "expense",
+    db: Session = Depends(get_db)
+):
+    """获取指定分类在指定时间范围内的详细记录（type: 'income' 或 'expense'）"""
+    check_auth(request)
+
+    # 获取分类信息
+    category = db.query(Category).filter(Category.id == category_id).first()
+    if not category:
+        raise HTTPException(status_code=404, detail="分类不存在")
+
+    # 查询该分类的记录（根据type参数）
+    records = db.query(DailyRecord).filter(
+        DailyRecord.record_type == type,
+        DailyRecord.category_id == category_id,
+        DailyRecord.record_date >= start_date,
+        DailyRecord.record_date <= end_date
+    ).order_by(DailyRecord.record_date.desc(), DailyRecord.created_at.desc()).all()
+
+    # 计算统计信息
+    total_amount = sum(r.amount for r in records)
+    record_count = len(records)
+    avg_amount = total_amount / record_count if record_count > 0 else 0
+
+    # 构建记录详情列表
+    records_detail = []
+    for record in records:
+        subcategory = db.query(SubCategory).filter(SubCategory.id == record.subcategory_id).first()
+        records_detail.append({
+            "id": record.id,
+            "record_date": record.record_date.isoformat(),
+            "amount": record.amount,
+            "note": record.note,
+            "subcategory_name": subcategory.name if subcategory else ""
+        })
+
+    return {
+        "category_id": category_id,
+        "category_name": category.name,
+        "category_icon": category.icon,
+        "total_amount": round(total_amount, 2),
+        "record_count": record_count,
+        "avg_amount": round(avg_amount, 2),
+        "records": records_detail
+    }
+
 # ==================== CSV导出API ====================
 
 # 导出记账记录为CSV

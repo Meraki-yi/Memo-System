@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>分类支出 - 备忘录系统</title>
+    <link rel="stylesheet" href="/static/css/category_stats.css">
+</head>
+<body>
+    <div class="stats-container">
+        <!-- 顶部导航栏 -->
+        <header class="stats-header">
+            <button class="back-btn" onclick="goBack()">
+                <span class="icon">←</span>
+            </button>
+            <h1 class="page-title">分类支出</h1>
+            <div class="header-spacer"></div>
+        </header>
+
+        <!-- 总支出概览区 -->
+        <div class="total-expense-section">
+            <div class="total-label">总支出</div>
+            <div class="total-amount" id="totalAmount">¥0.00</div>
+        </div>
+
+        <!-- 分类列表 -->
+        <div class="category-list" id="categoryList">
+            <!-- 动态加载分类数据 -->
+        </div>
+
+        <!-- 空状态 -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <span class="icon">📊</span>
+            <p>暂无支出记录</p>
+        </div>
+
+        <!-- 底部时间范围选择栏 -->
+        <div class="period-selector">
+            <button class="period-nav-btn" onclick="changePeriod(-1)">
+                <span class="icon">‹</span>
+            </button>
+            <div class="period-display" id="periodDisplay">
+                <!-- 动态显示时间范围 -->
+            </div>
+            <button class="period-nav-btn" onclick="changePeriod(1)">
+                <span class="icon">›</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading遮罩 -->
+    <div class="loading-overlay" id="loading">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Toast提示 -->
+    <div class="toast" id="toast"></div>
+
+    <script src="/static/js/category_stats.js"></script>
+</body>
+</html>

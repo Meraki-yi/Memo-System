@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>收入详情 - 备忘录系统</title>
+    <link rel="stylesheet" href="/static/css/income_detail.css">
+</head>
+<body>
+    <div class="detail-container">
+        <!-- 顶部导航栏 -->
+        <header class="detail-header">
+            <button class="back-btn" onclick="goBack()">
+                <span class="icon">←</span>
+            </button>
+            <h1 class="page-title" id="pageTitle">收入详情</h1>
+            <div class="header-spacer"></div>
+        </header>
+
+        <!-- 分类概览卡片 -->
+        <div class="category-overview">
+            <div class="overview-header">
+                <span class="category-icon" id="categoryIcon">📁</span>
+                <span class="category-name" id="categoryName">分类名称</span>
+            </div>
+            <div class="overview-stats">
+                <div class="stat-item">
+                    <div class="stat-label">总金额</div>
+                    <div class="stat-value" id="totalAmount">¥0.00</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">笔数</div>
+                    <div class="stat-value" id="recordCount">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">平均</div>
+                    <div class="stat-value" id="avgAmount">¥0.00</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 记录列表 -->
+        <div class="records-section">
+            <div class="section-title">收入记录</div>
+            <div class="records-list" id="recordsList">
+                <!-- 动态加载记录 -->
+            </div>
+        </div>
+
+        <!-- 空状态 -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <span class="icon">📋</span>
+            <p>暂无收入记录</p>
+        </div>
+    </div>
+
+    <!-- Loading遮罩 -->
+    <div class="loading-overlay" id="loading">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Toast提示 -->
+    <div class="toast" id="toast"></div>
+
+    <script src="/static/js/income_detail.js"></script>
+</body>
+</html>
