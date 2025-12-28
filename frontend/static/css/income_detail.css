@@ -20,6 +20,9 @@
     --radius-md: 12px;
     --radius-lg: 20px;
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --gold-black-gradient: linear-gradient(135deg, #FFD700 0%, #B8860B 30%, #333333 100%);
+    --green-metal-gradient: linear-gradient(135deg, #90EE90 0%, #32CD32 30%, #006400 100%);
+    --red-metal-gradient: linear-gradient(135deg, #FFB6C1 0%, #FF6B6B 30%, #8B0000 100%);
 }
 
 body {
@@ -80,16 +83,13 @@ body {
 
 /* 分类概览卡片 */
 .category-overview {
-    background: linear-gradient(135deg, var(--income-light), var(--income-color));
-    padding: 25px 20px;
-    color: white;
+    background: var(--bg-white);
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .overview-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 20px;
+    display: none;
 }
 
 .category-icon {
@@ -113,13 +113,14 @@ body {
 
 .stat-label {
     font-size: 0.85rem;
-    opacity: 0.9;
+    color: var(--text-muted);
     margin-bottom: 6px;
 }
 
 .stat-value {
     font-size: 1.3rem;
     font-weight: 700;
+    color: var(--text-dark);
 }
 
 /* 记录列表区域 */
@@ -143,66 +144,54 @@ body {
     gap: 12px;
 }
 
-/* 记录卡片 */
+/* 记录卡片 - 固定尺寸，无交互 */
 .record-card {
     background: var(--bg-white);
     border-radius: var(--radius-md);
-    padding: 16px;
     box-shadow: var(--shadow-sm);
     border: 1px solid var(--border-color);
-    transition: var(--transition);
-    cursor: pointer;
+    height: 80px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
-.record-card:hover {
-    box-shadow: var(--shadow-md);
-    transform: translateY(-2px);
-}
-
-.record-card:active {
-    transform: translateY(0);
-}
-
-.record-header {
+.record-first-line {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    padding: 0 16px;
+    height: 40px;
+    background: var(--bg-light);
+    border-bottom: 1px solid var(--border-color);
 }
 
-.record-date {
+.record-subcategory-name {
     font-size: 0.95rem;
     font-weight: 600;
     color: var(--text-dark);
 }
 
 .record-amount {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: 700;
-    color: var(--income-color);
+    background: var(--red-metal-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
-.record-note {
+.record-second-line {
+    flex: 1;
+    padding: 0 16px;
     font-size: 0.9rem;
     color: var(--text-light);
-    line-height: 1.5;
-    margin-bottom: 8px;
-}
-
-.record-subcategory {
-    font-size: 0.85rem;
-    color: var(--text-muted);
+    line-height: 40px;
     display: flex;
     align-items: center;
-    gap: 6px;
-}
-
-.subcategory-badge {
-    background: var(--bg-light);
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 0.8rem;
-    color: var(--text-light);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 /* 空状态 */
@@ -306,7 +295,7 @@ body {
 /* 响应式设计 */
 @media (max-width: 480px) {
     .category-overview {
-        padding: 20px 15px;
+        padding: 15px;
     }
 
     .overview-stats {
@@ -322,7 +311,21 @@ body {
     }
 
     .record-card {
-        padding: 14px;
+        height: 80px;
+    }
+
+    .record-first-line {
+        padding: 0 12px;
+        height: 40px;
+    }
+
+    .record-second-line {
+        padding: 0 12px;
+        line-height: 40px;
+    }
+
+    .record-amount {
+        font-size: 1rem;
     }
 }
 
@@ -332,10 +335,8 @@ body {
 }
 
 .date-group-header {
-    background: var(--bg-light);
     padding: 10px 15px;
-    border-radius: var(--radius-sm);
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     font-weight: 600;
     color: var(--text-dark);
     display: flex;
@@ -345,6 +346,12 @@ body {
 
 .date-group-total {
     font-size: 0.9rem;
-    color: var(--income-color);
+    color: var(--text-dark);
     font-weight: 700;
+}
+
+.date-group-records {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }

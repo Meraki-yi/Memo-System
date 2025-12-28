@@ -6,23 +6,15 @@ let currentYear = new Date().getFullYear();
 let currentMonth = new Date().getMonth() + 1; // 1-12
 let categoryStatsData = null;
 
-// 类目颜色池 - 鲜艳的绿色系、青色系、蓝色系等
+// 类目颜色池 - 低饱和度，偏账本工具感
+// 支出类：居住、学习、交通、餐饮、购物、其他
 const CATEGORY_COLORS = [
-    '#1B5E20',  // 深绿
-    '#2E7D32',  // 绿色
-    '#43A047',  // 鲜绿
-    '#66BB6A',  // 浅绿
-    '#009688',  // 青色
-    '#00BCD4',  // 青蓝
-    '#03A9F4',  // 天蓝
-    '#2196F3',  // 蓝色
-    '#3F51B5',  // 靛蓝
-    '#5E35B1',  // 深紫
-    '#9C27B0',  // 紫色
-    '#E91E63',  // 粉红
-    '#F44336',  // 红色
-    '#FF5722',  // 橙红
-    '#FF9800'   // 橙色
+    '#2d5a3d',  // 居住 - 深绿（稳定）
+    '#3d7a5a',  // 学习 - 蓝绿（理性投入）
+    '#4a7a8a',  // 交通 - 蓝色（流动性）
+    '#8a6a3a',  // 餐饮 - 橙黄（日常）
+    '#8a5a5a',  // 购物 - 粉橙
+    '#6a6a7a',  // 其他 - 灰蓝
 ];
 
 // 根据索引获取颜色
@@ -82,7 +74,7 @@ async function loadCategoryStats() {
 
         // 获取分类统计数据
         const response = await fetch(
-            `${API_BASE}/category-stats?start_date=${startDateStr}&end_date=${endDateStr}`,
+            `${API_BASE}/category-stats?start_date=${startDateStr}&end_date=${endDateStr}&type=expense`,
             getAuthOptions()
         );
 
@@ -148,20 +140,15 @@ function renderCategoryStats(data) {
                     <div class="category-name-section">
                         <span class="category-icon">${category.icon}</span>
                         <span class="category-name">${category.name}</span>
-                        <span class="category-percent" style="color: ${color}">${percent}%</span>
+                        <span class="category-percent">${percent}%</span>
                     </div>
-                    <span class="category-amount" style="color: ${color}">¥${amount}</span>
                 </div>
                 <div class="progress-bar">
                     <div class="progress-fill" style="width: ${percent}%; background: ${color}"></div>
                 </div>
                 <div class="category-detail-row">
-                    <div class="category-detail-info">
-                        <span style="font-size: 0.85rem; color: var(--text-muted);">
-                            共 ${category.record_count} 笔
-                        </span>
-                    </div>
-                    <span class="arrow-icon">›</span>
+                    <span class="category-record-count">共 ${category.record_count} 笔</span>
+                    <span class="category-amount">¥${amount}</span>
                 </div>
             </div>
         `;
@@ -192,7 +179,7 @@ function updatePeriodDisplay() {
                        '7月', '8月', '9月', '10月', '11月', '12月'];
 
     periodDisplayEl.innerHTML = `
-        <div class="period-text">本月 ${currentMonth}.${startDay} ~ ${currentMonth}.${endDay}</div>
+        <div class="period-text">${currentMonth}.${startDay} ~ ${currentMonth}.${endDay}</div>
         <div class="period-subtext">${monthNames[currentMonth - 1]}</div>
     `;
 }
@@ -223,5 +210,5 @@ function goToCategoryDetail(categoryId) {
     const endDateStr = formatDateToString(endDate);
 
     // 跳转到分类详情页面，传递分类ID和时间范围
-    window.location.href = `/category-detail?id=${categoryId}&start=${startDateStr}&end=${endDateStr}`;
+    window.location.href = `/category-detail?id=${categoryId}&start=${startDateStr}&end=${endDateStr}&type=expense`;
 }

@@ -113,7 +113,7 @@ function renderCategoryDetail(data) {
     emptyStateEl.style.display = 'none';
     recordsListEl.style.display = 'block';
 
-    // 按日期分组
+    // 按日期分组展示，记录框内不显示日期
     const groupedRecords = groupRecordsByDate(data.records);
 
     recordsListEl.innerHTML = Object.entries(groupedRecords).map(([date, records]) => {
@@ -137,18 +137,17 @@ function renderCategoryDetail(data) {
                     <span>${dateDisplay}</span>
                     <span class="date-group-total">¥${dayTotal.toFixed(2)}</span>
                 </div>
-                ${records.map(record => `
-                    <div class="record-card" onclick="editRecord(${record.id})">
-                        <div class="record-header">
-                            <span class="record-date">${formatDate(dateObj)}</span>
-                            <span class="record-amount">¥${record.amount.toFixed(2)}</span>
+                <div class="date-group-records">
+                    ${records.map(record => `
+                        <div class="record-card">
+                            <div class="record-first-line">
+                                <span class="record-subcategory-name">${record.subcategory_name}</span>
+                                <span class="record-amount">¥${record.amount.toFixed(2)}</span>
+                            </div>
+                            <div class="record-second-line">${record.note || ''}</div>
                         </div>
-                        ${record.note ? `<div class="record-note">${record.note}</div>` : ''}
-                        <div class="record-subcategory">
-                            <span class="subcategory-badge">${record.subcategory_name}</span>
-                        </div>
-                    </div>
-                `).join('')}
+                    `).join('')}
+                </div>
             </div>
         `;
     }).join('');
@@ -174,9 +173,4 @@ function formatDate(date) {
     const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
     const weekDay = weekDays[date.getDay()];
     return `${month}月${day}日 ${weekDay}`;
-}
-
-// 编辑记录
-function editRecord(recordId) {
-    window.location.href = `/accounting?edit=${recordId}`;
 }

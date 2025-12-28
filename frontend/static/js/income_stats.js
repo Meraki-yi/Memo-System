@@ -6,23 +6,13 @@ let currentYear = new Date().getFullYear();
 let currentMonth = new Date().getMonth() + 1; // 1-12
 let categoryStatsData = null;
 
-// 类目颜色池 - 鲜艳的红色系、橙色系、黄色系等
+// 类目颜色池 - 低饱和度，偏账本工具感
+// 收入类：工资、兼职、理财、其他
 const CATEGORY_COLORS = [
-    '#D32F2F',  // 深红
-    '#F44336',  // 鲜红
-    '#FF5722',  // 橙红
-    '#FF9800',  // 橙色
-    '#FFC107',  // 琥珀
-    '#FFEB3B',  // 黄色
-    '#CDDC39',  // 黄绿
-    '#8BC34A',  // 浅绿
-    '#4CAF50',  // 绿色
-    '#009688',  // 青色
-    '#00BCD4',  // 青蓝
-    '#03A9F4',  // 天蓝
-    '#2196F3',  // 蓝色
-    '#3F51B5',  // 靛蓝
-    '#673AB7'   // 紫色
+    '#8a4a3a',  // 工资 - 偏暖红（低饱和）
+    '#8a5a3a',  // 兼职 - 偏橙（低饱和）
+    '#8a7a3a',  // 理财 - 偏黄/琥珀色（低饱和）
+    '#6a6a7a',  // 其他 - 灰蓝（低饱和）
 ];
 
 // 根据索引获取颜色
@@ -148,20 +138,15 @@ function renderCategoryStats(data) {
                     <div class="category-name-section">
                         <span class="category-icon">${category.icon}</span>
                         <span class="category-name">${category.name}</span>
-                        <span class="category-percent" style="color: ${color}">${percent}%</span>
+                        <span class="category-percent">${percent}%</span>
                     </div>
-                    <span class="category-amount" style="color: ${color}">¥${amount}</span>
                 </div>
                 <div class="progress-bar">
                     <div class="progress-fill" style="width: ${percent}%; background: ${color}"></div>
                 </div>
                 <div class="category-detail-row">
-                    <div class="category-detail-info">
-                        <span style="font-size: 0.85rem; color: var(--text-muted);">
-                            共 ${category.record_count} 笔
-                        </span>
-                    </div>
-                    <span class="arrow-icon">›</span>
+                    <span class="category-record-count">共 ${category.record_count} 笔</span>
+                    <span class="category-amount">¥${amount}</span>
                 </div>
             </div>
         `;
@@ -192,7 +177,7 @@ function updatePeriodDisplay() {
                        '7月', '8月', '9月', '10月', '11月', '12月'];
 
     periodDisplayEl.innerHTML = `
-        <div class="period-text">本月 ${currentMonth}.${startDay} ~ ${currentMonth}.${endDay}</div>
+        <div class="period-text">${currentMonth}.${startDay} ~ ${currentMonth}.${endDay}</div>
         <div class="period-subtext">${monthNames[currentMonth - 1]}</div>
     `;
 }

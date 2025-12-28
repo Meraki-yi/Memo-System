@@ -1,4 +1,4 @@
-/* 分类收入统计页面样式 - 垂直流式布局，适应移动端 */
+/* 分类收入统计页面样式 - 账本型扁平设计 */
 * {
     margin: 0;
     padding: 0;
@@ -6,27 +6,25 @@
 }
 
 :root {
-    --income-color: #FF5252;
-    --income-light: #FF8A80;
-    --text-dark: #333333;
-    --text-light: #666666;
-    --text-muted: #999999;
+    /* 基础颜色 */
+    --text-dark: #1a1a1a;
+    --text-medium: #4a4a4a;
+    --text-light: #999999;
     --bg-white: #FFFFFF;
-    --bg-light: #F5F5F5;
-    --border-color: #E0E0E0;
-    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
-    --radius-sm: 8px;
-    --radius-md: 12px;
-    --radius-lg: 20px;
-    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --border-light: #f0f0f0;
+
+    /* 类目颜色 - 低饱和度，偏账本工具感 */
+    --category-1: #8a4a3a;  /* 工资 - 偏暖红 */
+    --category-2: #8a5a3a;  /* 兼职 - 偏橙 */
+    --category-3: #8a7a3a;  /* 理财 - 偏黄 */
+    --category-4: #6a6a7a;  /* 其他 - 灰蓝 */
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: var(--bg-light);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg-white);
     color: var(--text-dark);
-    line-height: 1.6;
+    line-height: 1.5;
     min-height: 100vh;
 }
 
@@ -37,17 +35,15 @@ body {
     max-width: 600px;
     margin: 0 auto;
     background: var(--bg-white);
-    box-shadow: var(--shadow-md);
 }
 
-/* 顶部导航栏 */
+/* ========== 顶部标题区 ========== */
 .stats-header {
     background: var(--bg-white);
-    padding: 15px 20px;
+    padding: 16px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid var(--border-color);
     position: sticky;
     top: 0;
     z-index: 100;
@@ -56,206 +52,183 @@ body {
 .back-btn {
     background: none;
     border: none;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     cursor: pointer;
-    padding: 8px 12px;
-    border-radius: var(--radius-sm);
-    transition: var(--transition);
-    color: var(--text-dark);
+    padding: 8px;
+    color: var(--text-medium);
+    transition: opacity 0.2s;
 }
 
 .back-btn:hover {
-    background: var(--bg-light);
+    opacity: 0.6;
 }
 
 .page-title {
-    font-size: 1.2rem;
-    font-weight: 700;
+    font-size: 1.1rem;
+    font-weight: 500;
     color: var(--text-dark);
 }
 
 .header-spacer {
-    width: 48px;
+    width: 40px;
 }
 
-/* 总收入概览区 */
+/* ========== 总金额展示区 ========== */
 .total-income-section {
-    padding: 40px 20px 30px;
+    padding: 48px 20px 40px;
     text-align: center;
-    background: #FFCDD2;
-    margin: 0;
+    background: var(--bg-white);
 }
 
 .total-label {
-    font-size: 1rem;
-    color: #000000;
-    margin-bottom: 12px;
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin-bottom: 8px;
+    font-weight: 400;
 }
 
 .total-amount {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #000000;
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: var(--text-dark);
     letter-spacing: -0.5px;
 }
 
-/* 分类列表 */
+/* ========== 分类列表区 ========== */
 .category-list {
     flex: 1;
-    padding: 20px;
+    padding: 0 20px 20px;
     overflow-y: auto;
 }
 
 .category-item {
     background: var(--bg-white);
-    border-radius: var(--radius-md);
-    padding: 18px 16px;
-    margin-bottom: 12px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-    transition: var(--transition);
+    padding: 20px 0;
+    transition: opacity 0.2s;
     cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.category-item:last-child {
+    border-bottom: none;
 }
 
 .category-item:hover {
-    transform: translateX(4px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    opacity: 0.8;
 }
 
-.category-item:active {
-    transform: translateX(2px);
-}
-
-/* 分类头部信息 */
+/* 第一行：文字信息行 */
 .category-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 12px;
 }
 
 .category-name-section {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     flex: 1;
 }
 
 .category-icon {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
 }
 
 .category-name {
     font-size: 1rem;
-    font-weight: 600;
+    font-weight: 400;
     color: var(--text-dark);
 }
 
 .category-percent {
-    font-size: 0.9rem;
-    color: var(--income-color);
-    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--text-light);
+    font-weight: 400;
 }
 
-.category-amount {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--income-color);
-}
-
-/* 进度条 */
+/* 第二行：进度条行 */
 .progress-bar {
-    height: 8px;
-    background: var(--bg-light);
-    border-radius: 4px;
+    height: 6px;
+    background: #f5f5f5;
+    border-radius: 3px;
     overflow: hidden;
-    position: relative;
+    margin-bottom: 12px;
 }
 
 .progress-fill {
     height: 100%;
-    border-radius: 4px;
+    border-radius: 3px;
     transition: width 0.5s ease;
 }
 
-/* 分类详细信息行 */
+/* 第三行：金额行 */
 .category-detail-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.category-detail-info {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+.category-amount {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--text-dark);
 }
 
-.arrow-icon {
-    font-size: 1.2rem;
-    color: var(--text-muted);
-    transition: var(--transition);
-}
-
-.category-item:hover .arrow-icon {
-    color: var(--income-color);
-    transform: translateX(4px);
+.category-record-count {
+    font-size: 0.8rem;
+    color: var(--text-light);
 }
 
 /* 空状态 */
 .empty-state {
     text-align: center;
-    padding: 60px 20px;
-    color: var(--text-muted);
+    padding: 80px 20px;
+    color: var(--text-light);
 }
 
 .empty-state .icon {
-    font-size: 4rem;
-    margin-bottom: 20px;
+    font-size: 3rem;
+    margin-bottom: 16px;
     display: block;
-    opacity: 0.5;
+    opacity: 0.4;
 }
 
 .empty-state p {
-    font-size: 1rem;
+    font-size: 0.95rem;
 }
 
-/* 底部时间范围选择栏 */
+/* ========== 底部时间范围选择栏 ========== */
 .period-selector {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 15px 20px;
+    padding: 16px 20px;
     background: var(--bg-white);
-    border-top: 1px solid var(--border-color);
+    border-top: 1px solid var(--border-light);
     position: sticky;
     bottom: 0;
     z-index: 100;
 }
 
 .period-nav-btn {
-    background: var(--bg-light);
+    background: none;
     border: none;
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: var(--transition);
-    font-size: 1.3rem;
-    color: var(--text-dark);
+    transition: opacity 0.2s;
+    font-size: 1.2rem;
+    color: var(--text-medium);
 }
 
 .period-nav-btn:hover {
-    background: var(--border-color);
-    transform: scale(1.05);
-}
-
-.period-nav-btn:active {
-    transform: scale(0.95);
+    opacity: 0.6;
 }
 
 .period-display {
@@ -265,14 +238,14 @@ body {
 }
 
 .period-text {
-    font-size: 1rem;
-    font-weight: 600;
+    font-size: 0.95rem;
+    font-weight: 500;
     color: var(--text-dark);
 }
 
 .period-subtext {
-    font-size: 0.85rem;
-    color: var(--text-muted);
+    font-size: 0.8rem;
+    color: var(--text-light);
     margin-top: 2px;
 }
 
@@ -282,51 +255,21 @@ body {
     bottom: 80px;
     left: 50%;
     transform: translateX(-50%) translateY(100px);
-    background: var(--bg-white);
-    padding: 15px 25px;
-    border-radius: var(--radius-sm);
-    box-shadow: var(--shadow-md);
-    font-size: 0.95rem;
+    background: var(--text-dark);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 4px;
+    font-size: 0.9rem;
     opacity: 0;
-    transition: var(--transition);
+    transition: all 0.3s ease;
     z-index: 2000;
     min-width: 200px;
     text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
 }
 
 .toast.show {
     transform: translateX(-50%) translateY(0);
     opacity: 1;
-}
-
-.toast.error {
-    background: #FF5252;
-    color: white;
-}
-
-.toast.success {
-    background: #E8F5E9;
-    color: #2E7D32;
-    border: 2px solid #4CAF50;
-}
-
-.toast.success::before {
-    content: '✓';
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 20px;
-    height: 20px;
-    background: #4CAF50;
-    color: white;
-    border-radius: 50%;
-    font-size: 0.9rem;
-    font-weight: bold;
-    flex-shrink: 0;
 }
 
 /* Loading */
@@ -336,7 +279,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.95);
     display: none;
     align-items: center;
     justify-content: center;
@@ -344,12 +287,12 @@ body {
 }
 
 .spinner {
-    width: 50px;
-    height: 50px;
-    border: 4px solid var(--border-color);
-    border-top-color: var(--income-color);
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--border-light);
+    border-top-color: var(--text-medium);
     border-radius: 50%;
-    animation: spin 1s linear infinite;
+    animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
@@ -363,18 +306,6 @@ body {
     }
 
     .category-item {
-        padding: 16px 14px;
-    }
-
-    .category-name {
-        font-size: 0.95rem;
-    }
-
-    .category-amount {
-        font-size: 1rem;
-    }
-
-    .period-text {
-        font-size: 0.95rem;
+        padding: 16px 0;
     }
 }
