@@ -35,6 +35,12 @@ let weekDataCache = {
     net: 0
 };
 
+// 日期分组折叠状态管理
+const dateGroupCollapseState = {
+    // 格式: { 'YYYY-MM-DD': boolean }
+    // true = 折叠, false = 展开
+};
+
 // API请求基础配置
 const API_BASE = '/api';
 const ACCOUNTING_API_BASE = '/api/accounting';
@@ -336,54 +342,113 @@ function renderRecentRecords(records) {
         grouped[date].push(record);
     });
 
-    list.innerHTML = Object.entries(grouped).map(([date, items]) => {
-        const dateObj = new Date(date);
-        const today = new Date();
-        const yesterday = new Date(today);
-        yesterday.setDate(yesterday.getDate() - 1);
+    // 获取今天和昨天的日期
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    const todayStr = today.toISOString().split('T')[0];
+    const yesterdayStr = yesterday.toISOString().split('T')[0];
 
-        let dateDisplay = date;
-        if (date === today.toISOString().split('T')[0]) {
+    // 周几映射
+    const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+
+    list.innerHTML = Object.entries(grouped).map(([date, items]) => {
+        const dateObj = new Date(date + 'T00:00:00'); // 确保按本地时区解析
+
+        // 判断是否是今天或昨天
+        const isToday = date === todayStr;
+        const isYesterday = date === yesterdayStr;
+
+        // 生成日期显示
+        let dateDisplay = '';
+        if (isToday) {
             dateDisplay = '今天';
-        } else if (date === yesterday.toISOString().split('T')[0]) {
+        } else if (isYesterday) {
             dateDisplay = '昨天';
         } else {
             const month = dateObj.getMonth() + 1;
             const day = dateObj.getDate();
-            dateDisplay = `${month}月${day}日`;
+            const weekDay = weekDays[dateObj.getDay()];
+            dateDisplay = `${month}.${day} ${weekDay}`;
         }
 
+        // 计算当日收支
         const dayIncome = items.filter(r => r.record_type === 'income').reduce((sum, r) => sum + r.amount, 0);
         const dayExpense = items.filter(r => r.record_type === 'expense').reduce((sum, r) => sum + r.amount, 0);
 
+        // 确定折叠状态
+        // 今天不允许折叠，其他日期默认展开
+        const isCollapsed = isToday ? false : (dateGroupCollapseState[date] || false);
+        const canCollapse = !isToday;
+
+        // 生成唯一的组ID
+        const groupId = `day-group-${date.replace(/-/g, '')}`;
+
         return `
-            <div class="day-group">
-                <div>
-                    <strong>${dateDisplay}</strong>
-                    <span>
+            <div class="day-group" data-date="${date}">
+                <div class="day-header ${isCollapsed ? 'collapsed' : ''} ${!canCollapse ? 'disabled' : ''}"
+                     onclick="${canCollapse ? `toggleDateGroup('${date}')` : ''}"
+                     data-date="${date}">
+                    <div class="day-header-left">
+                        <strong>${dateDisplay}</strong>
+                        ${canCollapse ? `<span class="collapse-icon">▼</span>` : ''}
+                    </div>
+                    <div class="day-header-right">
                         <span style="color: #FF5252;">收 ¥${dayIncome.toFixed(2)}</span>
-                        <span style="color: #4CAF50; margin-left: 10px;">支 ¥${dayExpense.toFixed(2)}</span>
-                    </span>
+                        <span style="color: #4CAF50;">支 ¥${dayExpense.toFixed(2)}</span>
+                    </div>
                 </div>
-                ${items.map(item => `
-                    <div class="item-card accounting-record-card" onclick="editAccountingRecord(${item.id})">
-                        <div class="item-content">
-                            <span>${item.category_icon}</span>
-                            <div style="flex: 1;">
-                                <div style="display: flex; justify-content: space-between;">
-                                    <span style="font-weight: 500;">${item.category_name} · ${item.subcategory_name}</span>
-                                    <span style="font-weight: 600; color: ${item.record_type === 'income' ? '#FF5252' : '#4CAF50'};">
-                                        ${item.record_type === 'income' ? '+' : '-'}¥${item.amount.toFixed(2)}
-                                    </span>
+                <div class="day-details ${isCollapsed ? 'collapsed' : ''}" id="${groupId}">
+                    ${items.map(item => `
+                        <div class="item-card accounting-record-card" onclick="editAccountingRecord(${item.id})">
+                            <div class="accounting-record-main">
+                                <span class="accounting-record-icon">${item.category_icon}</span>
+                                <div class="accounting-record-info">
+                                    <div class="accounting-record-header">
+                                        <span class="accounting-record-category">${item.category_name} · ${item.subcategory_name}</span>
+                                        <span class="accounting-record-amount ${item.record_type}">
+                                            ${item.record_type === 'income' ? '+' : '-'}¥${item.amount.toFixed(2)}
+                                        </span>
+                                    </div>
+                                    <div class="accounting-record-note">${item.note || ''}</div>
                                 </div>
-                                ${item.note ? `<div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">${item.note}</div>` : ''}
                             </div>
                         </div>
-                    </div>
-                `).join('')}
+                    `).join('')}
+                </div>
             </div>
         `;
     }).join('');
+}
+
+// 切换日期分组的折叠/展开状态
+function toggleDateGroup(date) {
+    // 获取今天日期
+    const today = new Date().toISOString().split('T')[0];
+
+    // 今天不允许折叠
+    if (date === today) {
+        return;
+    }
+
+    // 切换折叠状态
+    const currentState = dateGroupCollapseState[date] || false;
+    dateGroupCollapseState[date] = !currentState;
+
+    // 更新DOM
+    const dayHeader = document.querySelector(`.day-header[data-date="${date}"]`);
+    const dayDetails = document.querySelector(`.day-details[id="day-group-${date.replace(/-/g, '')}"]`);
+
+    if (dayHeader && dayDetails) {
+        const newState = !currentState;
+        if (newState) {
+            dayHeader.classList.add('collapsed');
+            dayDetails.classList.add('collapsed');
+        } else {
+            dayHeader.classList.remove('collapsed');
+            dayDetails.classList.remove('collapsed');
+        }
+    }
 }
 
 // 编辑记账记录

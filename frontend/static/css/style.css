@@ -788,6 +788,70 @@ body {
     margin-bottom: 15px;
 }
 
+/* 日期分组头部 */
+.day-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    background: var(--bg-light);
+    border-radius: var(--radius-sm);
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    user-select: none;
+    transition: var(--transition);
+}
+
+.day-header:hover {
+    background: var(--bg-gray);
+}
+
+.day-header.disabled {
+    cursor: default;
+}
+
+.day-header.disabled:hover {
+    background: var(--bg-light);
+}
+
+.day-header-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.day-header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* 折叠图标 */
+.collapse-icon {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    transition: transform 0.3s ease;
+}
+
+.day-header.collapsed .collapse-icon {
+    transform: rotate(-90deg);
+}
+
+/* 日期分组明细区域 */
+.day-details {
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+    max-height: 2000px;
+    opacity: 1;
+}
+
+.day-details.collapsed {
+    max-height: 0;
+    opacity: 0;
+}
+
+/* 兼容旧样式 */
 .day-group > div:first-child {
     display: flex;
     justify-content: space-between;
@@ -798,11 +862,77 @@ body {
     font-size: 0.9rem;
 }
 
+/* 记账记录卡片统一样式 */
 .accounting-record-card {
-    padding: 12px;
-    margin-bottom: 6px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    min-height: 72px;
+    display: flex;
+    align-items: center;
 }
 
+.accounting-record-main {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    width: 100%;
+}
+
+.accounting-record-icon {
+    font-size: 1.4rem;
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+.accounting-record-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.accounting-record-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.accounting-record-category {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-dark);
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.accounting-record-amount {
+    font-size: 1rem;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.accounting-record-amount.income {
+    color: #FF5252;
+}
+
+.accounting-record-amount.expense {
+    color: #4CAF50;
+}
+
+.accounting-record-note {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+    min-height: 1.2em;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* 旧样式兼容 */
 .accounting-record-card .item-content {
     margin-bottom: 0;
 }
@@ -897,9 +1027,9 @@ body {
     cursor: pointer;
 }
 
+/* 移除hover效果 - 固定显示 */
 .item-card.reflection-card:hover {
-    box-shadow: var(--shadow-md);
-    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
 }
 
 /* 记账记录卡片可点击进入编辑 */
@@ -907,18 +1037,18 @@ body {
     cursor: pointer;
 }
 
+/* 移除hover效果 - 固定显示 */
 .accounting-record-card:hover {
-    box-shadow: var(--shadow-md);
-    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
 }
 
 .accounting-record-card:hover .item-content {
-    color: var(--primary-dark);
+    color: inherit;
 }
 
+/* 移除通用卡片hover效果 */
 .item-card:hover {
-    box-shadow: var(--shadow-md);
-    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
 }
 
 .item-card.completed {
