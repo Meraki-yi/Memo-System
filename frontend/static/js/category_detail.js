@@ -96,7 +96,11 @@ function renderCategoryDetail(data) {
     // 更新分类概览
     document.getElementById('categoryIcon').textContent = data.category_icon;
     document.getElementById('categoryName').textContent = data.category_name;
-    document.getElementById('totalAmount').textContent = `¥${data.total_amount.toFixed(2)}`;
+
+    const totalAmountEl = document.getElementById('totalAmount');
+    totalAmountEl.textContent = `¥${data.total_amount.toFixed(2)}`;
+    totalAmountEl.className = 'stat-value total-amount';
+
     document.getElementById('recordCount').textContent = data.record_count;
     document.getElementById('avgAmount').textContent = `¥${data.avg_amount.toFixed(2)}`;
 
