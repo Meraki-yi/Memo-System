@@ -11,7 +11,7 @@
         <!-- 顶部导航栏 -->
         <header class="stats-header">
             <button class="back-btn" onclick="goBack()">
-                <span class="icon">←</span>
+                ←
             </button>
             <h1 class="page-title">分类支出</h1>
             <div class="header-spacer"></div>
@@ -19,8 +19,18 @@
 
         <!-- 总支出概览区 -->
         <div class="total-expense-section">
-            <div class="total-label">总支出</div>
+            <div class="total-label">本月支出</div>
             <div class="total-amount" id="totalAmount">¥0.00</div>
+            <div class="stats-summary">
+                <div class="summary-item">
+                    <span class="summary-label">分类数</span>
+                    <span class="summary-value" id="categoryCount">0</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">总笔数</span>
+                    <span class="summary-value" id="totalCount">0</span>
+                </div>
+            </div>
         </div>
 
         <!-- 分类列表 -->
@@ -31,19 +41,20 @@
         <!-- 空状态 -->
         <div class="empty-state" id="emptyState" style="display: none;">
             <span class="icon">📊</span>
-            <p>暂无支出记录</p>
+            <p>本月暂无支出记录</p>
+            <span class="empty-state-hint">记一笔开始记录您的支出</span>
         </div>
 
         <!-- 底部时间范围选择栏 -->
         <div class="period-selector">
             <button class="period-nav-btn" onclick="changePeriod(-1)">
-                <span class="icon">‹</span>
+                ‹
             </button>
             <div class="period-display" id="periodDisplay">
                 <!-- 动态显示时间范围 -->
             </div>
             <button class="period-nav-btn" onclick="changePeriod(1)">
-                <span class="icon">›</span>
+                ›
             </button>
         </div>
     </div>

@@ -1,4 +1,4 @@
-/* 分类收入统计页面样式 - 账本型扁平设计 */
+/* 分类收入页面样式 - 简洁移动版 */
 * {
     margin: 0;
     padding: 0;
@@ -6,26 +6,35 @@
 }
 
 :root {
-    /* 基础颜色 */
+    --income-color: #FF5252;
+    --income-light: #FF8A80;
+    --income-dark: #D32F2F;
     --text-dark: #1a1a1a;
-    --text-medium: #4a4a4a;
-    --text-light: #999999;
+    --text-light: #666666;
+    --text-muted: #999999;
     --bg-white: #FFFFFF;
-    --border-light: #f0f0f0;
+    --bg-light: #F5F5F5;
+    --border-color: #E8E8E8;
+    --divider-color: #F0F0F0;
+    --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.03);
+    --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.06);
+    --radius-sm: 12px;
+    --radius-md: 16px;
+    --transition-smooth: all 0.2s ease;
 
-    /* 类目颜色 - 低饱和度，偏账本工具感 */
-    --category-1: #8a4a3a;  /* 工资 - 偏暖红 */
-    --category-2: #8a5a3a;  /* 兼职 - 偏橙 */
-    --category-3: #8a7a3a;  /* 理财 - 偏黄 */
-    --category-4: #6a6a7a;  /* 其他 - 灰蓝 */
+    /* 渐变定义 */
+    --red-premium-gradient: linear-gradient(135deg, #FF6B6B 0%, #FF5252 50%, #E53935 100%);
+    --card-bg-gradient: linear-gradient(145deg, #FFFFFF 0%, #FAFAFA 100%);
+    --income-icon-bg: rgba(255, 82, 82, 0.08);
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: var(--bg-white);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: var(--bg-light);
     color: var(--text-dark);
-    line-height: 1.5;
+    line-height: 1.4;
     min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
 }
 
 .stats-container {
@@ -37,13 +46,14 @@ body {
     background: var(--bg-white);
 }
 
-/* ========== 顶部标题区 ========== */
+/* 顶部导航栏 */
 .stats-header {
     background: var(--bg-white);
-    padding: 16px 20px;
+    padding: 10px 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border-bottom: 1px solid var(--divider-color);
     position: sticky;
     top: 0;
     z-index: 100;
@@ -52,201 +62,315 @@ body {
 .back-btn {
     background: none;
     border: none;
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     cursor: pointer;
-    padding: 8px;
-    color: var(--text-medium);
-    transition: opacity 0.2s;
-}
-
-.back-btn:hover {
-    opacity: 0.6;
+    padding: 8px 4px;
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+    width: 32px;
 }
 
 .page-title {
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 500;
     color: var(--text-dark);
 }
 
 .header-spacer {
-    width: 40px;
+    width: 32px;
 }
 
-/* ========== 总金额展示区 ========== */
+/* 总收入概览区 - 简洁设计 */
 .total-income-section {
-    padding: 48px 20px 40px;
-    text-align: center;
     background: var(--bg-white);
+    padding: 16px 16px 20px;
+    text-align: center;
+    position: relative;
+}
+
+.total-income-section::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #D4AF37, transparent);
 }
 
 .total-label {
-    font-size: 0.9rem;
-    color: var(--text-light);
-    margin-bottom: 8px;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
     font-weight: 400;
+    margin-bottom: 8px;
 }
 
 .total-amount {
-    font-size: 2.2rem;
-    font-weight: 600;
-    color: var(--text-dark);
+    font-size: 2rem;
+    font-weight: 400;
+    background: var(--red-premium-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     letter-spacing: -0.5px;
+    line-height: 1.2;
 }
 
-/* ========== 分类列表区 ========== */
+/* 统计摘要 - 紧凑 */
+.stats-summary {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 12px;
+    padding-top: 12px;
+    position: relative;
+}
+
+.stats-summary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #D4AF37, transparent);
+}
+
+.summary-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.summary-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+.summary-value {
+    font-size: 0.95rem;
+    font-weight: 400;
+    color: var(--text-dark);
+}
+
+/* 分类列表区域 */
 .category-list {
     flex: 1;
-    padding: 0 20px 20px;
-    overflow-y: auto;
+    padding: 0 0 100px;
+    display: flex;
+    flex-direction: column;
 }
 
-.category-item {
+/* 分类卡片 - 简洁设计 */
+.category-card {
     background: var(--bg-white);
-    padding: 20px 0;
-    transition: opacity 0.2s;
     cursor: pointer;
-    border-bottom: 1px solid var(--border-light);
+    transition: background 0.15s ease;
+    position: relative;
 }
 
-.category-item:last-child {
-    border-bottom: none;
+.category-card:active {
+    background: var(--bg-light);
 }
 
-.category-item:hover {
-    opacity: 0.8;
+.category-card-inner {
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-/* 第一行：文字信息行 */
+/* 分隔线 */
+.category-card:not(:last-child) .category-card-inner::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 60px;
+    right: 16px;
+    height: 1px;
+    background: var(--divider-color);
+}
+
 .category-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
+    gap: 12px;
 }
 
-.category-name-section {
+.category-left {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     flex: 1;
+    min-width: 0;
 }
 
 .category-icon {
-    font-size: 1.4rem;
+    font-size: 1.5rem;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--income-icon-bg);
+    border-radius: 10px;
+    flex-shrink: 0;
+}
+
+.category-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex: 1;
+    min-width: 0;
 }
 
 .category-name {
-    font-size: 1rem;
-    font-weight: 400;
-    color: var(--text-dark);
-}
-
-.category-percent {
-    font-size: 0.85rem;
-    color: var(--text-light);
-    font-weight: 400;
-}
-
-/* 第二行：进度条行 */
-.progress-bar {
-    height: 6px;
-    background: #f5f5f5;
-    border-radius: 3px;
-    overflow: hidden;
-    margin-bottom: 12px;
-}
-
-.progress-fill {
-    height: 100%;
-    border-radius: 3px;
-    transition: width 0.5s ease;
-}
-
-/* 第三行：金额行 */
-.category-detail-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.category-amount {
-    font-size: 1.1rem;
+    font-size: 0.95rem;
     font-weight: 500;
     color: var(--text-dark);
 }
 
-.category-record-count {
-    font-size: 0.8rem;
-    color: var(--text-light);
+.category-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.category-percent {
+    font-size: 0.75rem;
+    color: var(--income-color);
+    font-weight: 400;
+}
+
+.category-count {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+.category-right {
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.category-amount {
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: var(--text-dark);
+    letter-spacing: -0.3px;
+}
+
+/* 进度条 - 简洁设计 */
+.progress-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-left: 52px;
+}
+
+.progress-bar-container {
+    flex: 1;
+    height: 4px;
+    background: var(--bg-light);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: var(--income-color);
+    border-radius: 2px;
+    transition: width 0.5s ease;
+    width: var(--progress, 0%);
 }
 
 /* 空状态 */
 .empty-state {
-    text-align: center;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     padding: 80px 20px;
-    color: var(--text-light);
+    text-align: center;
 }
 
 .empty-state .icon {
     font-size: 3rem;
     margin-bottom: 16px;
-    display: block;
     opacity: 0.4;
 }
 
 .empty-state p {
     font-size: 0.95rem;
+    font-weight: 400;
+    color: var(--text-muted);
 }
 
-/* ========== 底部时间范围选择栏 ========== */
+.empty-state-hint {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    margin-top: 6px;
+    opacity: 0.7;
+}
+
+/* 底部时间选择器 */
 .period-selector {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg-white);
+    padding: 12px 16px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 20px;
-    background: var(--bg-white);
-    border-top: 1px solid var(--border-light);
-    position: sticky;
-    bottom: 0;
-    z-index: 100;
+    gap: 12px;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.04);
+    z-index: 99;
+    max-width: 600px;
+    margin: 0 auto;
+    border-top: 1px solid var(--divider-color);
 }
 
 .period-nav-btn {
-    background: none;
-    border: none;
     width: 40px;
     height: 40px;
+    border: none;
+    background: var(--bg-light);
     border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: var(--text-dark);
+    transition: var(--transition-smooth);
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    transition: opacity 0.2s;
-    font-size: 1.2rem;
-    color: var(--text-medium);
+    flex-shrink: 0;
 }
 
-.period-nav-btn:hover {
-    opacity: 0.6;
+.period-nav-btn:active {
+    background: var(--income-icon-bg);
+    transform: scale(0.95);
 }
 
 .period-display {
     flex: 1;
     text-align: center;
-    padding: 0 20px;
-}
-
-.period-text {
-    font-size: 0.95rem;
-    font-weight: 500;
+    padding: 10px 16px;
+    background: var(--bg-light);
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
+    font-weight: 400;
     color: var(--text-dark);
-}
-
-.period-subtext {
-    font-size: 0.8rem;
-    color: var(--text-light);
-    margin-top: 2px;
 }
 
 /* Toast提示 */
@@ -255,21 +379,35 @@ body {
     bottom: 80px;
     left: 50%;
     transform: translateX(-50%) translateY(100px);
-    background: var(--text-dark);
-    color: white;
+    background: var(--bg-white);
     padding: 12px 20px;
-    border-radius: 4px;
-    font-size: 0.9rem;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-md);
+    font-size: 0.85rem;
     opacity: 0;
-    transition: all 0.3s ease;
+    transition: var(--transition-smooth);
     z-index: 2000;
-    min-width: 200px;
+    min-width: 180px;
     text-align: center;
+    font-weight: 400;
+    border: 1px solid var(--divider-color);
 }
 
 .toast.show {
     transform: translateX(-50%) translateY(0);
     opacity: 1;
+}
+
+.toast.error {
+    background: var(--income-color);
+    color: white;
+    border-color: transparent;
+}
+
+.toast.success {
+    background: var(--income-color);
+    color: white;
+    border-color: transparent;
 }
 
 /* Loading */
@@ -289,8 +427,8 @@ body {
 .spinner {
     width: 40px;
     height: 40px;
-    border: 3px solid var(--border-light);
-    border-top-color: var(--text-medium);
+    border: 3px solid var(--divider-color);
+    border-top-color: var(--income-color);
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
 }
@@ -299,13 +437,52 @@ body {
     to { transform: rotate(360deg); }
 }
 
-/* 响应式设计 */
-@media (max-width: 480px) {
+/* 小屏优化 */
+@media (max-width: 400px) {
     .total-amount {
-        font-size: 2rem;
+        font-size: 1.8rem;
     }
 
-    .category-item {
-        padding: 16px 0;
+    .category-card-inner {
+        padding: 12px 14px;
+    }
+
+    .category-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 1.3rem;
+    }
+
+    .category-amount {
+        font-size: 1rem;
+    }
+
+    .progress-section {
+        padding-left: 48px;
     }
 }
+
+/* 进场动画 - 简化 */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.category-card {
+    animation: fadeInUp 0.3s ease-out both;
+}
+
+.category-card:nth-child(1) { animation-delay: 0.02s; }
+.category-card:nth-child(2) { animation-delay: 0.04s; }
+.category-card:nth-child(3) { animation-delay: 0.06s; }
+.category-card:nth-child(4) { animation-delay: 0.08s; }
+.category-card:nth-child(5) { animation-delay: 0.1s; }
+.category-card:nth-child(6) { animation-delay: 0.12s; }
+.category-card:nth-child(7) { animation-delay: 0.14s; }
+.category-card:nth-child(8) { animation-delay: 0.16s; }

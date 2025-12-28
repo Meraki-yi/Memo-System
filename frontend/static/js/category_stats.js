@@ -6,20 +6,22 @@ let currentYear = new Date().getFullYear();
 let currentMonth = new Date().getMonth() + 1; // 1-12
 let categoryStatsData = null;
 
-// 类目颜色池 - 低饱和度，偏账本工具感
+// 类目颜色池 - 精美渐变色
 // 支出类：居住、学习、交通、餐饮、购物、其他
-const CATEGORY_COLORS = [
-    '#2d5a3d',  // 居住 - 深绿（稳定）
-    '#3d7a5a',  // 学习 - 蓝绿（理性投入）
-    '#4a7a8a',  // 交通 - 蓝色（流动性）
-    '#8a6a3a',  // 餐饮 - 橙黄（日常）
-    '#8a5a5a',  // 购物 - 粉橙
-    '#6a6a7a',  // 其他 - 灰蓝
+const CATEGORY_GRADIENTS = [
+    'linear-gradient(90deg, #667eea 0%, #764ba2 100%)',      // 居住 - 紫蓝渐变
+    'linear-gradient(90deg, #f093fb 0%, #f5576c 100%)',      // 学习 - 粉红渐变
+    'linear-gradient(90deg, #4facfe 0%, #00f2fe 100%)',      // 交通 - 天蓝渐变
+    'linear-gradient(90deg, #43e97b 0%, #38f9d7 100%)',      // 餐饮 - 青绿渐变
+    'linear-gradient(90deg, #fa709a 0%, #fee140 100%)',      // 购物 - 橙粉渐变
+    'linear-gradient(90deg, #a8edea 0%, #fed6e3 100%)',      // 其他 - 青粉渐变
+    'linear-gradient(90deg, #ff9a9e 0%, #fecfef 100%)',      // 备用1 - 粉色渐变
+    'linear-gradient(90deg, #ffecd2 0%, #fcb69f 100%)',      // 备用2 - 橙色渐变
 ];
 
-// 根据索引获取颜色
-function getCategoryColor(index) {
-    return CATEGORY_COLORS[index % CATEGORY_COLORS.length];
+// 根据索引获取渐变色
+function getCategoryGradient(index) {
+    return CATEGORY_GRADIENTS[index % CATEGORY_GRADIENTS.length];
 }
 
 // 初始化
@@ -115,9 +117,19 @@ function renderCategoryStats(data) {
     const totalAmountEl = document.getElementById('totalAmount');
     const categoryListEl = document.getElementById('categoryList');
     const emptyStateEl = document.getElementById('emptyState');
+    const categoryCountEl = document.getElementById('categoryCount');
+    const totalCountEl = document.getElementById('totalCount');
 
     // 显示总支出
     totalAmountEl.textContent = `¥${data.total_expense.toFixed(2)}`;
+
+    // 计算总分类数和总笔数
+    const categoryCount = data.categories ? data.categories.length : 0;
+    const totalRecords = data.categories ?
+        data.categories.reduce((sum, cat) => sum + cat.record_count, 0) : 0;
+
+    categoryCountEl.textContent = categoryCount;
+    totalCountEl.textContent = totalRecords;
 
     // 如果没有数据，显示空状态
     if (!data.categories || data.categories.length === 0) {
@@ -131,24 +143,31 @@ function renderCategoryStats(data) {
     // 渲染分类列表
     categoryListEl.innerHTML = data.categories.map((category, index) => {
         const percent = category.percent.toFixed(2);
-        const amount = category.amount.toFixed(2);
-        const color = getCategoryColor(index);
+        const gradient = getCategoryGradient(index);
 
         return `
-            <div class="category-item" onclick="goToCategoryDetail(${category.id})">
-                <div class="category-header">
-                    <div class="category-name-section">
-                        <span class="category-icon">${category.icon}</span>
-                        <span class="category-name">${category.name}</span>
-                        <span class="category-percent">${percent}%</span>
+            <div class="category-card" onclick="goToCategoryDetail(${category.id})" style="--progress: ${percent}%">
+                <div class="category-card-inner">
+                    <div class="category-header">
+                        <div class="category-left">
+                            <span class="category-icon">${category.icon}</span>
+                            <div class="category-info">
+                                <span class="category-name">${category.name}</span>
+                                <div class="category-meta">
+                                    <span class="category-percent">${percent}%</span>
+                                    <span class="category-count">${category.record_count} 笔</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="category-right">
+                            <span class="category-amount">¥${category.amount.toFixed(2)}</span>
+                        </div>
                     </div>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: ${percent}%; background: ${color}"></div>
-                </div>
-                <div class="category-detail-row">
-                    <span class="category-record-count">共 ${category.record_count} 笔</span>
-                    <span class="category-amount">¥${amount}</span>
+                    <div class="progress-section">
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" style="background: ${gradient}"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
@@ -160,8 +179,12 @@ function renderEmptyState() {
     const totalAmountEl = document.getElementById('totalAmount');
     const categoryListEl = document.getElementById('categoryList');
     const emptyStateEl = document.getElementById('emptyState');
+    const categoryCountEl = document.getElementById('categoryCount');
+    const totalCountEl = document.getElementById('totalCount');
 
     totalAmountEl.textContent = '¥0.00';
+    categoryCountEl.textContent = '0';
+    totalCountEl.textContent = '0';
     categoryListEl.style.display = 'none';
     emptyStateEl.style.display = 'block';
 }
@@ -178,10 +201,7 @@ function updatePeriodDisplay() {
     const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月',
                        '7月', '8月', '9月', '10月', '11月', '12月'];
 
-    periodDisplayEl.innerHTML = `
-        <div class="period-text">${currentMonth}.${startDay} ~ ${currentMonth}.${endDay}</div>
-        <div class="period-subtext">${monthNames[currentMonth - 1]}</div>
-    `;
+    periodDisplayEl.textContent = `${currentYear}年${currentMonth}月`;
 }
 
 // 切换时间周期
