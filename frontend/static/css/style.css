@@ -1022,14 +1022,74 @@ body {
     cursor: default;
 }
 
-/* 反思卡片可点击进入详情 */
+/* 反思卡片样式 */
 .item-card.reflection-card {
-    cursor: pointer;
+    cursor: default;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
 /* 移除hover效果 - 固定显示 */
 .item-card.reflection-card:hover {
     box-shadow: var(--shadow-sm);
+}
+
+/* 反思卡片标题样式 */
+.item-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0;
+    line-height: 1.4;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+/* 反思卡片内容区域 */
+.item-card.reflection-card .item-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* 反思卡片内容文本 */
+.item-card.reflection-card .item-text {
+    font-size: 0.95rem;
+    color: var(--text-light);
+    line-height: 1.6;
+    margin: 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/* 反思卡片元信息区域 */
+.item-card.reflection-card .item-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-color);
+}
+
+/* 反思卡片操作按钮 */
+.item-card.reflection-card .item-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    padding-top: 8px;
+}
+
+/* 模态框标题输入框样式 */
+#itemTitle {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+#itemTitle:focus {
+    border-color: var(--primary-light) !important;
+    box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
 }
 
 /* 记账记录卡片可点击进入编辑 */
@@ -1657,125 +1717,6 @@ body {
     .pagination-items {
         display: none;
     }
-}
-
-/* 心情标签样式 */
-.mood-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    transition: var(--transition);
-}
-
-.mood-badge .mood-icon-small {
-    font-size: 1.1rem;
-}
-
-.mood-badge.mood-happy {
-    background: #FFF9E6;
-    color: #F9A825;
-    border: 1px solid #FFD93D;
-}
-
-.mood-badge.mood-angry {
-    background: #FFEBEE;
-    color: #D32F2F;
-    border: 1px solid #FF6B6B;
-}
-
-.mood-badge.mood-confused {
-    background: #F3E5F5;
-    color: #7B1FA2;
-    border: 1px solid #BA68C8;
-}
-
-.mood-badge.mood-normal {
-    background: #E8F5E9;
-    color: #388E3C;
-    border: 1px solid #81C784;
-}
-
-/* 模态框内心情选择器 */
-.mood-selector-group {
-    margin-top: 20px;
-}
-
-.mood-selector-label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 600;
-    color: var(--text-dark);
-    margin-bottom: 12px;
-    font-size: 0.95rem;
-}
-
-.mood-selector-label .icon {
-    font-size: 1.2rem;
-}
-
-.mood-options-inline {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-}
-
-.mood-btn {
-    background: white;
-    border: 2px solid var(--border-color);
-    border-radius: var(--radius-sm);
-    padding: 12px 8px;
-    cursor: pointer;
-    transition: var(--transition);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-}
-
-.mood-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-sm);
-}
-
-.mood-btn .mood-emoji {
-    font-size: 1.8rem;
-}
-
-.mood-btn .mood-name {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--text-light);
-}
-
-.mood-btn.active {
-    border-color: var(--primary-light);
-    background: linear-gradient(135deg, #FFF9E6, #FFE5EC);
-    box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.3);
-}
-
-.mood-btn[data-mood="happy"].active {
-    border-color: #FFD93D;
-    background: #FFF9E6;
-}
-
-.mood-btn[data-mood="angry"].active {
-    border-color: #FF6B6B;
-    background: #FFEBEE;
-}
-
-.mood-btn[data-mood="confused"].active {
-    border-color: #BA68C8;
-    background: #F3E5F5;
-}
-
-.mood-btn[data-mood="normal"].active {
-    border-color: #81C784;
-    background: #E8F5E9;
 }
 
 /* 导出格式选择按钮样式 */

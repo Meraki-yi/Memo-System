@@ -3,15 +3,6 @@
 // 全局变量
 let reflectionId = null;
 let reflectionData = null;
-let currentMood = null;
-
-// 心情配置
-const MOOD_CONFIG = {
-    happy: { icon: '😄', text: '开心', class: 'mood-happy' },
-    angry: { icon: '😠', text: '愤怒', class: 'mood-angry' },
-    confused: { icon: '😕', text: '迷茫', class: 'mood-confused' },
-    normal: { icon: '🤔', text: '反省', class: 'mood-normal' }
-};
 
 // API请求配置
 const API_BASE = '/api';
@@ -116,7 +107,6 @@ async function loadReflectionDetail() {
         }
 
         reflectionData = await response.json();
-        currentMood = reflectionData.mood;
 
         renderDetail();
     } catch (error) {
@@ -135,139 +125,6 @@ function renderDetail() {
         `<span class="icon">📅</span>创建: ${formatFullDateTime(reflectionData.created_at)}`;
     document.getElementById('updatedAt').innerHTML =
         `<span class="icon">🔄</span>更新: ${formatFullDateTime(reflectionData.updated_at)}`;
-
-    // 渲染心情
-    renderMoodDisplay();
-}
-
-// 渲染心情显示
-function renderMoodDisplay() {
-    const moodConfig = MOOD_CONFIG[currentMood];
-    const moodDisplay = document.getElementById('currentMoodDisplay');
-    const moodIcon = document.getElementById('moodIcon');
-    const moodText = document.getElementById('moodText');
-
-    // 更新显示
-    moodIcon.textContent = moodConfig.icon;
-    moodText.textContent = moodConfig.text;
-
-    // 更新样式类
-    moodDisplay.className = 'mood-display';
-    moodDisplay.classList.add(moodConfig.class);
-}
-
-// 渲染心情历史记录（在模态框中）
-function renderMoodHistory() {
-    const historyContainer = document.getElementById('moodHistory');
-
-    if (!reflectionData.mood_history || reflectionData.mood_history.length === 0) {
-        historyContainer.innerHTML = `
-            <div class="empty-history">
-                <span class="icon">📭</span>
-                <p>暂无心情变更记录</p>
-            </div>
-        `;
-        return;
-    }
-
-    historyContainer.innerHTML = reflectionData.mood_history.map(item => {
-        const oldMoodConfig = item.old_mood ? MOOD_CONFIG[item.old_mood] : null;
-        const newMoodConfig = MOOD_CONFIG[item.new_mood];
-        const moodClass = newMoodConfig.class;
-
-        return `
-            <div class="history-item ${moodClass}">
-                <div class="history-mood-change">
-                    ${oldMoodConfig ? `<span>${oldMoodConfig.icon}</span>` : '<span class="icon">✨</span>'}
-                    <span class="history-arrow">→</span>
-                    <span>${newMoodConfig.icon}</span>
-                </div>
-                <div class="history-info">
-                    <span class="history-text">
-                        ${oldMoodConfig ? `从「${oldMoodConfig.text}」` : '初始'} 变更为 「${newMoodConfig.text}」
-                    </span>
-                </div>
-                <span class="history-time">
-                    <span class="icon">🕐</span>
-                    ${formatHistoryTime(item.changed_at)}
-                </span>
-            </div>
-        `;
-    }).join('');
-}
-
-// 显示历史记录模态框
-function showHistoryModal() {
-    renderMoodHistory();
-    document.getElementById('historyModal').classList.add('show');
-}
-
-// 关闭历史记录模态框
-function closeHistoryModal() {
-    document.getElementById('historyModal').classList.remove('show');
-}
-
-// 显示心情选择模态框
-function showMoodSelector() {
-    document.getElementById('moodSelectorModal').classList.add('show');
-}
-
-// 关闭心情选择模态框
-function closeMoodSelector() {
-    document.getElementById('moodSelectorModal').classList.remove('show');
-}
-
-// 选择心情
-async function selectMood(mood) {
-    if (mood === currentMood) {
-        closeMoodSelector();
-        return;
-    }
-
-    toggleLoading(true);
-    closeMoodSelector();
-
-    try {
-        const response = await fetch(`${API_BASE}/reflections/${reflectionId}`, getAuthOptions({
-            method: 'PUT',
-            body: JSON.stringify({ mood })
-        }));
-
-        if (!response.ok) {
-            throw new Error('更新心情失败');
-        }
-
-        // 更新本地数据
-        currentMood = mood;
-
-        // 添加到历史记录（前端临时显示）
-        const newMoodConfig = MOOD_CONFIG[mood];
-
-        if (!reflectionData.mood_history) {
-            reflectionData.mood_history = [];
-        }
-
-        reflectionData.mood_history.unshift({
-            id: Date.now(),
-            old_mood: reflectionData.mood,
-            new_mood: mood,
-            changed_at: new Date().toISOString()
-        });
-
-        reflectionData.mood = mood;
-
-        // 重新渲染心情显示
-        renderMoodDisplay();
-
-        showToast(`心情已更新为「${newMoodConfig.text}」`);
-
-        // 通知主页面刷新数据
-        notifyMainPageRefresh();
-    } catch (error) {
-        showToast(error.message, 'error');
-    } finally {
-        toggleLoading(false);
-    }
 }
 
 // 编辑内容

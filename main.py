@@ -69,24 +69,8 @@ class Reflection(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     content = Column(Text, nullable=False)
-    mood = Column(String(20), default="normal")  # 心情标签: happy, angry, confused, normal
     created_at = Column(DateTime, nullable=False, default=lambda: datetime.now(LOCAL_TZ))
     updated_at = Column(DateTime, nullable=False, default=lambda: datetime.now(LOCAL_TZ), onupdate=lambda: datetime.now(LOCAL_TZ))
-
-    # 关联变更记录
-    mood_history = relationship("MoodHistory", back_populates="reflection", cascade="all, delete-orphan")
-
-class MoodHistory(Base):
-    __tablename__ = "mood_history"
-
-    id = Column(Integer, primary_key=True, index=True)
-    reflection_id = Column(Integer, ForeignKey("reflections.id", ondelete="CASCADE"), nullable=False)
-    old_mood = Column(String(20))
-    new_mood = Column(String(20), nullable=False)
-    changed_at = Column(DateTime, nullable=False, default=lambda: datetime.now(LOCAL_TZ))
-
-    # 关联回反思记录
-    reflection = relationship("Reflection", back_populates="mood_history")
 
 class Memo(Base):
     __tablename__ = "memos"
@@ -191,11 +175,9 @@ class LoginRequest(BaseModel):
 
 class ReflectionCreate(BaseModel):
     content: str
-    mood: str = "normal"  # 默认心情为"正常"
 
 class ReflectionUpdate(BaseModel):
     content: Optional[str] = None
-    mood: Optional[str] = None
 
 class MemoCreate(BaseModel):
     content: str
@@ -263,16 +245,6 @@ async def read_app(request: Request):
         )
     return templates.TemplateResponse("index.html", {"request": request})
 
-@app.get("/reflection-detail", response_class=HTMLResponse)
-async def read_reflection_detail(request: Request):
-    # 检查是否已认证
-    if not request.session.get("authenticated"):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="未认证，请先登录"
-        )
-    return templates.TemplateResponse("reflection_detail.html", {"request": request})
-
 # 验证中间件
 def check_auth(request: Request):
     """检查是否已认证"""
@@ -304,7 +276,6 @@ async def get_reflections(
             {
                 "id": r.id,
                 "content": r.content,
-                "mood": r.mood,
                 "created_at": r.created_at.isoformat(),
                 "updated_at": r.updated_at.isoformat()
             }
@@ -318,36 +289,6 @@ async def get_reflections(
         }
     }
 
-@app.get("/api/reflections/{reflection_id}")
-async def get_reflection(request: Request, reflection_id: int, db: Session = Depends(get_db)):
-    """获取单条反思的详细信息，包括心情变更历史"""
-    check_auth(request)
-    reflection = db.query(Reflection).filter(Reflection.id == reflection_id).first()
-    if not reflection:
-        raise HTTPException(status_code=404, detail="Reflection not found")
-
-    # 获取心情变更历史，按时间倒序
-    history = db.query(MoodHistory).filter(
-        MoodHistory.reflection_id == reflection_id
-    ).order_by(MoodHistory.changed_at.desc()).all()
-
-    return {
-        "id": reflection.id,
-        "content": reflection.content,
-        "mood": reflection.mood,
-        "created_at": reflection.created_at.isoformat(),
-        "updated_at": reflection.updated_at.isoformat(),
-        "mood_history": [
-            {
-                "id": h.id,
-                "old_mood": h.old_mood,
-                "new_mood": h.new_mood,
-                "changed_at": h.changed_at.isoformat()
-            }
-            for h in history
-        ]
-    }
-
 @app.post("/api/reflections")
 async def create_reflection(
     request: Request,
@@ -355,14 +296,13 @@ async def create_reflection(
     db: Session = Depends(get_db)
 ):
     check_auth(request)
-    db_reflection = Reflection(content=reflection.content, mood=reflection.mood)
+    db_reflection = Reflection(content=reflection.content)
     db.add(db_reflection)
     db.commit()
     db.refresh(db_reflection)
     return {
         "id": db_reflection.id,
         "content": db_reflection.content,
-        "mood": db_reflection.mood,
         "created_at": db_reflection.created_at.isoformat(),
         "updated_at": db_reflection.updated_at.isoformat()
     }
@@ -379,16 +319,6 @@ async def update_reflection(
     if not db_reflection:
         raise HTTPException(status_code=404, detail="Reflection not found")
 
-    # 记录心情变更
-    if reflection.mood is not None and reflection.mood != db_reflection.mood:
-        mood_history = MoodHistory(
-            reflection_id=reflection_id,
-            old_mood=db_reflection.mood,
-            new_mood=reflection.mood
-        )
-        db.add(mood_history)
-        db_reflection.mood = reflection.mood
-
     if reflection.content is not None:
         db_reflection.content = reflection.content
 
@@ -398,7 +328,6 @@ async def update_reflection(
     return {
         "id": db_reflection.id,
         "content": db_reflection.content,
-        "mood": db_reflection.mood,
         "created_at": db_reflection.created_at.isoformat(),
         "updated_at": db_reflection.updated_at.isoformat()
     }
@@ -1249,19 +1178,11 @@ async def export_reflections_csv(request: Request, db: Session = Depends(get_db)
 
     output = StringIO()
     writer = csv.writer(output)
-    writer.writerow(['日期', '心情', '内容', '创建时间', '更新时间'])
-
-    mood_map = {
-        'happy': '开心',
-        'angry': '愤怒',
-        'confused': '迷茫',
-        'normal': '反省'
-    }
+    writer.writerow(['日期', '内容', '创建时间', '更新时间'])
 
     for ref in reflections:
         writer.writerow([
             ref.created_at.strftime('%Y-%m-%d'),
-            mood_map.get(ref.mood, ref.mood),
             ref.content,
             ref.created_at.strftime('%Y-%m-%d %H:%M:%S'),
             ref.updated_at.strftime('%Y-%m-%d %H:%M:%S')
@@ -1385,8 +1306,8 @@ async def export_reflections_sql(request: Request, db: Session = Depends(get_db)
 
     for ref in reflections:
         insert_statements.append(
-            f"INSERT INTO reflections (id, content, mood, created_at, updated_at) VALUES "
-            f"({ref.id}, {escape_sql_string(ref.content)}, '{ref.mood}', "
+            f"INSERT INTO reflections (id, content, created_at, updated_at) VALUES "
+            f"({ref.id}, {escape_sql_string(ref.content)}, "
             f"'{ref.created_at.strftime('%Y-%m-%d %H:%M:%S')}', '{ref.updated_at.strftime('%Y-%m-%d %H:%M:%S')}');"
         )
 

@@ -3,7 +3,6 @@ let currentTab = 'accounting';  // 默认显示记账标签
 let currentEditItem = null;
 let deleteItemId = null;
 let deleteItemType = null;
-let selectedMood = 'normal';  // 当前选中的心情
 
 // 分页状态管理 - 每个标签页独立的分页状态
 const paginationState = {
@@ -45,13 +44,6 @@ const dateGroupCollapseState = {
 const API_BASE = '/api';
 const ACCOUNTING_API_BASE = '/api/accounting';
 
-// 心情配置
-const MOOD_CONFIG = {
-    happy: { icon: '😄', text: '开心', class: 'mood-happy' },
-    angry: { icon: '😠', text: '愤怒', class: 'mood-angry' },
-    confused: { icon: '😕', text: '迷茫', class: 'mood-confused' },
-    normal: { icon: '🤔', text: '反省', class: 'mood-normal' }
-};
 
 // 获取请求头
 function getHeaders() {
@@ -477,17 +469,22 @@ function renderItems(items) {
         const updatedFull = formatFullDateTime(item.updated_at);
 
         if (currentTab === 'reflections') {
-            const moodConfig = MOOD_CONFIG[item.mood] || MOOD_CONFIG.normal;
+            // 将内容按第一个换行符分割为标题和内容
+            const firstNewlineIndex = item.content.indexOf('\n');
+            let title, content;
+            if (firstNewlineIndex === -1) {
+                title = item.content;
+                content = '';
+            } else {
+                title = item.content.substring(0, firstNewlineIndex);
+                content = item.content.substring(firstNewlineIndex + 1);
+            }
+
             return `
-                <div class="item-card reflection-card" data-id="${item.id}" onclick="viewReflectionDetail(${item.id})">
+                <div class="item-card reflection-card" data-id="${item.id}">
                     <div class="item-content">
-                        <p class="item-text">${item.content}</p>
-                    </div>
-                    <div class="item-meta">
-                        <span class="mood-badge ${moodConfig.class}">
-                            <span class="mood-icon-small">${moodConfig.icon}</span>
-                            ${moodConfig.text}
-                        </span>
+                        <h3 class="item-title">${title || '无标题'}</h3>
+                        <p class="item-text">${content || '无内容'}</p>
                     </div>
                     <div class="item-meta">
                         <span class="time">创建: ${createdFull}</span>
@@ -495,7 +492,7 @@ function renderItems(items) {
                     <div class="item-meta">
                         <span class="time">更新: ${updatedFull}</span>
                     </div>
-                    <div class="item-actions" onclick="event.stopPropagation()">
+                    <div class="item-actions">
                         <button class="btn-icon btn-edit" onclick="editItem(${item.id})" title="编辑">
                             <span>✏️</span>
                         </button>
@@ -534,55 +531,34 @@ function renderItems(items) {
     }).join('');
 }
 
-// 查看复盘详情
-function viewReflectionDetail(id) {
-    window.location.href = `/reflection-detail?id=${id}`;
-}
-
 // 显示添加模态框
 function showAddModal(type) {
     currentEditItem = null;
-    selectedMood = 'normal';  // 重置心情为默认
     document.getElementById('modalTitle').textContent =
         type === 'reflection' ? '添加复盘反思' : '添加备忘录';
+    document.getElementById('itemTitle').value = '';
     document.getElementById('itemContent').value = '';
 
     const checkboxGroup = document.getElementById('memoCheckboxGroup');
-    const moodSelectorGroup = document.getElementById('moodSelectorGroup');
     const isCompleted = document.getElementById('isCompleted');
+    const reflectionEditFields = document.getElementById('reflectionEditFields');
+    const memoEditFields = document.getElementById('memoEditFields');
 
     if (type === 'memo') {
         checkboxGroup.style.display = 'block';
-        moodSelectorGroup.style.display = 'none';
         isCompleted.checked = false;
+        reflectionEditFields.style.display = 'none';
+        memoEditFields.style.display = 'block';
     } else {
         checkboxGroup.style.display = 'none';
-        moodSelectorGroup.style.display = 'block';
+        reflectionEditFields.style.display = 'block';
+        memoEditFields.style.display = 'none';
     }
-
-    // 重置心情选择按钮状态
-    updateMoodButtons('normal');
 
     // 保存当前操作类型，用于saveItem判断
     window.currentModalType = type;
 
     document.getElementById('itemModal').classList.add('show');
-}
-
-// 选择心情
-function selectMood(mood) {
-    selectedMood = mood;
-    updateMoodButtons(mood);
-}
-
-// 更新心情按钮状态
-function updateMoodButtons(mood) {
-    document.querySelectorAll('.mood-btn').forEach(btn => {
-        btn.classList.remove('active');
-        if (btn.dataset.mood === mood) {
-            btn.classList.add('active');
-        }
-    });
 }
 
 // 编辑项目
@@ -602,22 +578,31 @@ async function editItem(id) {
         currentEditItem = item;
         document.getElementById('modalTitle').textContent =
             currentTab === 'reflections' ? '编辑复盘反思' : '编辑备忘录';
-        document.getElementById('itemContent').value = item.content;
 
         const checkboxGroup = document.getElementById('memoCheckboxGroup');
-        const moodSelectorGroup = document.getElementById('moodSelectorGroup');
         const isCompleted = document.getElementById('isCompleted');
+        const reflectionEditFields = document.getElementById('reflectionEditFields');
+        const memoEditFields = document.getElementById('memoEditFields');
 
         if (currentTab === 'memos') {
             checkboxGroup.style.display = 'block';
-            moodSelectorGroup.style.display = 'none';
             isCompleted.checked = item.is_completed;
+            reflectionEditFields.style.display = 'none';
+            memoEditFields.style.display = 'block';
+            document.getElementById('itemContent').value = item.content;
         } else {
             checkboxGroup.style.display = 'none';
-            moodSelectorGroup.style.display = 'block';
-            // 设置当前心情
-            selectedMood = item.mood || 'normal';
-            updateMoodButtons(selectedMood);
+            reflectionEditFields.style.display = 'block';
+            memoEditFields.style.display = 'none';
+            // 将内容按第一个换行符分割为标题和内容
+            const firstNewlineIndex = item.content.indexOf('\n');
+            if (firstNewlineIndex === -1) {
+                document.getElementById('itemTitle').value = item.content;
+                document.getElementById('itemContent').value = '';
+            } else {
+                document.getElementById('itemTitle').value = item.content.substring(0, firstNewlineIndex);
+                document.getElementById('itemContent').value = item.content.substring(firstNewlineIndex + 1);
+            }
         }
 
         document.getElementById('itemModal').classList.add('show');
@@ -628,12 +613,6 @@ async function editItem(id) {
 
 // 保存项目
 async function saveItem() {
-    const content = document.getElementById('itemContent').value.trim();
-    if (!content) {
-        showToast('请输入内容', 'error');
-        return;
-    }
-
     // 判断当前是新建还是编辑，以及类型
     const isEditing = currentEditItem !== null;
     const itemType = isEditing ? currentTab : (window.currentModalType || currentTab);
@@ -644,6 +623,26 @@ async function saveItem() {
     const endpoint = isReflection ? '/reflections' : '/memos';
     const isCompleted = document.getElementById('isCompleted').checked;
 
+    let content;
+    if (isReflection) {
+        // 反思：合并标题和内容
+        const title = document.getElementById('itemTitle').value.trim();
+        const contentText = document.getElementById('itemContent').value.trim();
+        if (!title && !contentText) {
+            showToast('请输入标题或内容', 'error');
+            return;
+        }
+        // 标题和内容用换行符连接
+        content = title + (contentText ? '\n' + contentText : '');
+    } else {
+        // 备忘录：只有内容
+        content = document.getElementById('itemContent').value.trim();
+        if (!content) {
+            showToast('请输入内容', 'error');
+            return;
+        }
+    }
+
     try {
         let response;
 
@@ -652,9 +651,6 @@ async function saveItem() {
             const updateData = { content };
             if (!isReflection) {
                 updateData.is_completed = isCompleted;
-            } else {
-                // 对于反思，包含心情
-                updateData.mood = selectedMood;
             }
 
             response = await fetch(`${API_BASE}${endpoint}/${currentEditItem.id}`, getAuthOptions({
@@ -666,9 +662,6 @@ async function saveItem() {
             const createData = { content };
             if (!isReflection) {
                 createData.is_completed = isCompleted;
-            } else {
-                // 对于反思，包含心情
-                createData.mood = selectedMood;
             }
 
             response = await fetch(`${API_BASE}${endpoint}`, getAuthOptions({

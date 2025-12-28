@@ -214,32 +214,14 @@
                 <button class="close-btn" onclick="closeModal()">&times;</button>
             </div>
             <div class="modal-body">
-                <textarea id="itemContent" placeholder="请输入内容..." rows="5"></textarea>
-
-                <!-- 心情选择器（仅反思显示） -->
-                <div class="mood-selector-group" id="moodSelectorGroup" style="display: none;">
-                    <label class="mood-selector-label">
-                        <span class="icon">💝</span>
-                        选择心情
-                    </label>
-                    <div class="mood-options-inline">
-                        <button type="button" class="mood-btn" data-mood="happy" onclick="selectMood('happy')">
-                            <span class="mood-emoji">😄</span>
-                            <span class="mood-name">开心</span>
-                        </button>
-                        <button type="button" class="mood-btn" data-mood="angry" onclick="selectMood('angry')">
-                            <span class="mood-emoji">😠</span>
-                            <span class="mood-name">愤怒</span>
-                        </button>
-                        <button type="button" class="mood-btn" data-mood="confused" onclick="selectMood('confused')">
-                            <span class="mood-emoji">😕</span>
-                            <span class="mood-name">迷茫</span>
-                        </button>
-                        <button type="button" class="mood-btn active" data-mood="normal" onclick="selectMood('normal')">
-                            <span class="mood-emoji">🤔</span>
-                            <span class="mood-name">反省</span>
-                        </button>
-                    </div>
+                <!-- 反思编辑：标题+内容 -->
+                <div id="reflectionEditFields" style="display: none;">
+                    <input type="text" id="itemTitle" placeholder="标题" style="width: 100%; padding: 12px 15px; border: 2px solid var(--border-color); border-radius: var(--radius-sm); font-size: 1rem; margin-bottom: 15px; outline: none; transition: var(--transition);">
+                    <textarea id="itemContent" placeholder="内容..." rows="5"></textarea>
+                </div>
+                <!-- 备忘录编辑：只有内容 -->
+                <div id="memoEditFields" style="display: none;">
+                    <textarea id="itemContent" placeholder="请输入内容..." rows="5"></textarea>
                 </div>
 
                 <div class="checkbox-group" id="memoCheckboxGroup" style="display: none;">
