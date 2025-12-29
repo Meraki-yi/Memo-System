@@ -28,6 +28,10 @@
     --radius-md: 10px;
     --radius-lg: 16px;
     --transition: all 0.2s ease;
+    --btn-save-color: #5BA3D8;
+    --btn-save-hover: #4A8BC2;
+    --btn-secondary-color: #B0BEC5;
+    --btn-secondary-hover: #90A4AE;
 }
 
 body {
@@ -75,10 +79,15 @@ body {
 }
 
 .save-top-btn {
-    background: var(--text-dark);
+    background: var(--btn-save-color);
     color: var(--bg-white);
     padding: 8px 18px;
     font-size: 0.9rem;
+    transition: var(--transition);
+}
+
+.save-top-btn:hover {
+    background: var(--btn-save-hover);
 }
 
 .page-title {
@@ -341,10 +350,16 @@ body {
 }
 
 .action-btn.primary {
-    background: var(--text-dark);
-    border-color: var(--text-dark);
+    background: var(--btn-save-color);
+    border-color: var(--btn-save-color);
     color: var(--bg-white);
     font-weight: 600;
+    transition: var(--transition);
+}
+
+.action-btn.primary:hover {
+    background: var(--btn-save-hover);
+    border-color: var(--btn-save-hover);
 }
 
 .action-btn.danger {
@@ -360,7 +375,7 @@ body {
     right: 24px;
     width: 52px;
     height: 52px;
-    background: var(--text-dark);
+    background: var(--btn-save-color);
     border: none;
     border-radius: 50%;
     font-size: 1.6rem;
@@ -371,6 +386,11 @@ body {
     align-items: center;
     justify-content: center;
     z-index: 50;
+    transition: var(--transition);
+}
+
+.fab-btn:hover {
+    background: var(--btn-save-hover);
 }
 
 /* 模态框样式 */
@@ -491,8 +511,8 @@ body {
 }
 
 .category-item.selected {
-    background: var(--text-dark);
-    border-color: var(--text-dark);
+    background: var(--btn-save-color);
+    border-color: var(--btn-save-color);
 }
 
 .category-item.selected .category-name {
@@ -527,8 +547,8 @@ body {
 }
 
 .subcategory-item.selected {
-    background: var(--text-dark);
-    border-color: var(--text-dark);
+    background: var(--btn-save-color);
+    border-color: var(--btn-save-color);
     color: var(--bg-white);
 }
 
@@ -616,8 +636,8 @@ body {
 }
 
 .cat-settings-tab.active {
-    background: var(--text-dark);
-    border-color: var(--text-dark);
+    background: var(--btn-save-color);
+    border-color: var(--btn-save-color);
     color: var(--bg-white);
 }
 
@@ -670,7 +690,7 @@ body {
 .add-category-btn {
     width: 100%;
     padding: 12px 16px;
-    background: var(--text-dark);
+    background: var(--btn-save-color);
     border: none;
     border-radius: var(--radius-md);
     font-weight: 600;
@@ -680,6 +700,12 @@ body {
     justify-content: center;
     gap: 8px;
     font-size: 0.9rem;
+    color: var(--bg-white);
+    transition: var(--transition);
+}
+
+.add-category-btn:hover {
+    background: var(--btn-save-hover);
 }
 
 /* 图标选择器 - 简洁设计 */
@@ -701,8 +727,8 @@ body {
 }
 
 .icon-option.selected {
-    background: var(--text-dark);
-    border-color: var(--text-dark);
+    background: var(--btn-save-color);
+    border-color: var(--btn-save-color);
 }
 
 /* 文本输入框 */
@@ -750,9 +776,14 @@ body {
 }
 
 .btn-primary {
-    background: var(--text-dark);
+    background: var(--btn-save-color);
     color: var(--bg-white);
     font-weight: 600;
+    transition: var(--transition);
+}
+
+.btn-primary:hover {
+    background: var(--btn-save-hover);
 }
 
 .btn-danger {
@@ -766,7 +797,7 @@ body {
     bottom: 30px;
     left: 50%;
     transform: translateX(-50%) translateY(100px);
-    background: var(--text-dark);
+    background: var(--btn-secondary-color);
     color: var(--bg-white);
     padding: 12px 24px;
     border-radius: var(--radius-md);
