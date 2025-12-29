@@ -278,25 +278,6 @@ body {
     font-size: 0.9rem;
 }
 
-.voice-btn {
-    background: var(--bg-gray);
-    border: 1px solid var(--border-color);
-    width: 36px;
-    height: 36px;
-    border-radius: var(--radius-sm);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 1rem;
-}
-
-.voice-btn.listening {
-    background: var(--expense-color);
-    border-color: var(--expense-color);
-    color: white;
-}
-
 .note-input {
     width: 100%;
     min-height: 80px;
@@ -366,31 +347,6 @@ body {
     background: var(--income-color);
     border-color: var(--income-color);
     color: white;
-}
-
-/* 悬浮按钮 - 简化设计 */
-.fab-btn {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    width: 52px;
-    height: 52px;
-    background: var(--btn-save-color);
-    border: none;
-    border-radius: 50%;
-    font-size: 1.6rem;
-    color: var(--bg-white);
-    cursor: pointer;
-    box-shadow: var(--shadow-md);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 50;
-    transition: var(--transition);
-}
-
-.fab-btn:hover {
-    background: var(--btn-save-hover);
 }
 
 /* 模态框样式 */
@@ -711,14 +667,17 @@ body {
 /* 图标选择器 - 简洁设计 */
 .icon-selector {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 8px;
     margin-top: 12px;
 }
 
 .icon-option {
-    font-size: 1.4rem;
-    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 10px 8px;
     background: var(--bg-gray);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-sm);
@@ -726,9 +685,22 @@ body {
     text-align: center;
 }
 
+.icon-icon {
+    font-size: 1.4rem;
+}
+
+.icon-label {
+    font-size: 0.75rem;
+    color: var(--text-light);
+}
+
 .icon-option.selected {
     background: var(--btn-save-color);
     border-color: var(--btn-save-color);
+}
+
+.icon-option.selected .icon-label {
+    color: var(--bg-white);
 }
 
 /* 文本输入框 */
@@ -930,14 +902,6 @@ body {
         padding: 12px 14px;
         font-size: 0.85rem;
         gap: 5px;
-    }
-
-    .fab-btn {
-        width: 48px;
-        height: 48px;
-        bottom: 20px;
-        right: 20px;
-        font-size: 1.4rem;
     }
 
     .input-row {

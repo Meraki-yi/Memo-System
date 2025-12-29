@@ -12,11 +12,16 @@ let editingRecordId = null;  // 正在编辑的记录ID，null表示新增模式
 
 // 类目图标选项
 const CATEGORY_ICONS = [
-    '🍔', '🍜', '☕', '🥤', '🍕', '🍰',
-    '🚗', '🚇', '🚌', '✈️', '🚕', '🚲',
-    '🛒', '👕', '👟', '💄', '🎮', '📱',
-    '🏠', '💡', '📱', '🎬', '📚', '💊',
-    '💰', '🏦', '📈', '💎', '🎁', '🏆'
+    { icon: '🍚', label: '吃饭' },
+    { icon: '🛍️', label: '购物' },
+    { icon: '🚗', label: '出行' },
+    { icon: '🏠', label: '居住' },
+    { icon: '🎬', label: '娱乐' },
+    { icon: '📚', label: '教育' },
+    { icon: '💊', label: '医疗' },
+    { icon: '🧾', label: '账单' },
+    { icon: '💰', label: '收入' },
+    { icon: '📈', label: '理财' }
 ];
 
 // 初始化
@@ -294,17 +299,17 @@ async function loadCategories() {
 // 初始化默认类目
 async function initDefaultCategories() {
     const defaultExpenseCategories = [
-        { name: '餐饮', icon: '🍔', subcategories: ['早餐', '午餐', '晚餐', '零食', '外卖'] },
+        { name: '餐饮', icon: '🍚', subcategories: ['早餐', '午餐', '晚餐', '零食', '外卖'] },
         { name: '交通', icon: '🚗', subcategories: ['地铁', '公交', '打车', '加油', '停车'] },
-        { name: '购物', icon: '🛒', subcategories: ['日用品', '服装', '数码', '其他'] },
-        { name: '娱乐', icon: '🎮', subcategories: ['游戏', '电影', 'KTV', '其他'] },
+        { name: '购物', icon: '🛍️', subcategories: ['日用品', '服装', '数码', '其他'] },
+        { name: '娱乐', icon: '🎬', subcategories: ['游戏', '电影', 'KTV', '其他'] },
         { name: '居住', icon: '🏠', subcategories: ['房租', '水电', '燃气', '物业'] }
     ];
 
     const defaultIncomeCategories = [
         { name: '工资', icon: '💰', subcategories: ['基本工资', '奖金', '提成'] },
         { name: '理财', icon: '📈', subcategories: ['股票', '基金', '利息'] },
-        { name: '兼职', icon: '💼', subcategories: ['项目收入', '咨询', '其他'] }
+        { name: '兼职', icon: '💰', subcategories: ['项目收入', '咨询', '其他'] }
     ];
 
     // 创建默认支出类目
@@ -474,42 +479,6 @@ function resetDate() {
     updateDateDisplay();
 }
 
-// 语音输入
-function startVoiceInput() {
-    const voiceBtn = document.querySelector('.voice-btn');
-
-    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-        showToast('您的浏览器不支持语音输入', 'error');
-        return;
-    }
-
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
-
-    recognition.lang = 'zh-CN';
-    recognition.continuous = false;
-    recognition.interimResults = false;
-
-    voiceBtn.classList.add('listening');
-
-    recognition.onresult = function(event) {
-        const transcript = event.results[0][0].transcript;
-        const noteInput = document.getElementById('noteInput');
-        noteInput.value = (noteInput.value + ' ' + transcript).trim();
-    };
-
-    recognition.onerror = function(event) {
-        showToast('语音识别失败: ' + event.error, 'error');
-        voiceBtn.classList.remove('listening');
-    };
-
-    recognition.onend = function() {
-        voiceBtn.classList.remove('listening');
-    };
-
-    recognition.start();
-}
-
 // 保存记录
 async function saveRecord() {
     const amount = parseFloat(document.getElementById('amountInput').value);
@@ -652,15 +621,6 @@ function clearForm() {
     document.getElementById('deleteBtn').style.display = 'none';
     // 显示"再记一笔"按钮（新增模式）
     document.getElementById('recordAnotherBtn').style.display = 'inline-flex';
-}
-
-// 快速添加
-function quickAdd() {
-    // 重置为今天
-    selectedDate = new Date();
-    updateDateDisplay();
-    // 聚焦金额输入框
-    document.getElementById('amountInput').focus();
 }
 
 // 显示模板模态框
@@ -842,10 +802,11 @@ function showAddCategoryModal() {
 // 渲染图标选择器
 function renderIconSelector() {
     const selector = document.getElementById('iconSelector');
-    selector.innerHTML = CATEGORY_ICONS.map(icon => `
-        <div class="icon-option ${selectedIcon === icon ? 'selected' : ''}"
-             onclick="selectIcon('${icon}')">
-            ${icon}
+    selector.innerHTML = CATEGORY_ICONS.map(item => `
+        <div class="icon-option ${selectedIcon === item.icon ? 'selected' : ''}"
+             onclick="selectIcon('${item.icon}')">
+            <span class="icon-icon">${item.icon}</span>
+            <span class="icon-label">${item.label}</span>
         </div>
     `).join('');
 }
