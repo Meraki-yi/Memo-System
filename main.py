@@ -185,6 +185,12 @@ class SubCategoryCreate(BaseModel):
     category_id: int
     name: str
 
+class CategoryUpdate(BaseModel):
+    name: str
+
+class SubCategoryUpdate(BaseModel):
+    name: str
+
 class DailyRecordCreate(BaseModel):
     record_type: str  # 'income' 或 'expense'
     category_id: int
@@ -565,6 +571,53 @@ async def delete_category(request: Request, category_id: int, db: Session = Depe
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=f"删除失败: {str(e)}")
+
+# 重命名一级类目
+@app.put("/api/accounting/categories/{category_id}")
+async def rename_category(request: Request, category_id: int, category_data: CategoryUpdate, db: Session = Depends(get_db)):
+    check_auth(request)
+    try:
+        db_category = db.query(Category).filter(Category.id == category_id).first()
+        if not db_category:
+            raise HTTPException(status_code=404, detail="一级类目不存在")
+
+        db_category.name = category_data.name
+        db.commit()
+        db.refresh(db_category)
+        return {
+            "id": db_category.id,
+            "name": db_category.name,
+            "record_type": db_category.record_type,
+            "icon": db_category.icon
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"重命名失败: {str(e)}")
+
+# 重命名二级类目
+@app.put("/api/accounting/subcategories/{subcategory_id}")
+async def rename_subcategory(request: Request, subcategory_id: int, subcategory_data: SubCategoryUpdate, db: Session = Depends(get_db)):
+    check_auth(request)
+    try:
+        db_subcategory = db.query(SubCategory).filter(SubCategory.id == subcategory_id).first()
+        if not db_subcategory:
+            raise HTTPException(status_code=404, detail="二级类目不存在")
+
+        db_subcategory.name = subcategory_data.name
+        db.commit()
+        db.refresh(db_subcategory)
+        return {
+            "id": db_subcategory.id,
+            "category_id": db_subcategory.category_id,
+            "name": db_subcategory.name
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"重命名失败: {str(e)}")
 
 # 获取记账记录
 @app.get("/api/accounting/records")

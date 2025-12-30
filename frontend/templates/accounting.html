@@ -224,6 +224,42 @@
         </div>
     </div>
 
+    <!-- 重命名一级类目模态框 -->
+    <div class="modal" id="renameCategoryModal">
+        <div class="modal-content small">
+            <div class="modal-header">
+                <h3>重命名一级类目</h3>
+                <button class="close-btn" onclick="closeRenameCategoryModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="text" class="text-input" id="renameCategoryName" placeholder="请输入新的类目名称">
+                <input type="hidden" id="renameCategoryId">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" onclick="closeRenameCategoryModal()">取消</button>
+                <button class="btn btn-primary" onclick="renameCategory()">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 重命名二级类目模态框 -->
+    <div class="modal" id="renameSubcategoryModal">
+        <div class="modal-content small">
+            <div class="modal-header">
+                <h3>重命名二级类目</h3>
+                <button class="close-btn" onclick="closeRenameSubcategoryModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="text" class="text-input" id="renameSubcategoryName" placeholder="请输入新的类目名称">
+                <input type="hidden" id="renameSubcategoryId">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" onclick="closeRenameSubcategoryModal()">取消</button>
+                <button class="btn btn-primary" onclick="renameSubcategory()">确定</button>
+            </div>
+        </div>
+    </div>
+
     <script src="/static/js/accounting.js"></script>
 </body>
 </html>

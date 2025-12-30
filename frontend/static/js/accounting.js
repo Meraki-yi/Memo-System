@@ -688,6 +688,9 @@ function renderCategoryManagement(type) {
                     <strong>${cat.name}</strong>
                 </div>
                 <div class="manage-category-actions">
+                    <button class="manage-btn" onclick="showRenameCategoryModal(${cat.id}, '${cat.name}')">
+                        重命名
+                    </button>
                     <button class="manage-btn" onclick="showAddSubcategoryModal(${cat.id})">
                         + 子类目
                     </button>
@@ -698,9 +701,12 @@ function renderCategoryManagement(type) {
             </div>
             <div style="width: 100%; margin-top: 8px; padding-left: 40px;">
                 ${cat.subcategories.map(sub => `
-                    <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #eee;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #eee;">
                         <span>${sub.name}</span>
-                        <button class="manage-btn delete" onclick="deleteSubcategory(${sub.id})">删除</button>
+                        <div style="display: flex; gap: 6px;">
+                            <button class="manage-btn" onclick="showRenameSubcategoryModal(${sub.id}, '${sub.name}')">重命名</button>
+                            <button class="manage-btn delete" onclick="deleteSubcategory(${sub.id})">删除</button>
+                        </div>
                     </div>
                 `).join('')}
             </div>
@@ -935,6 +941,126 @@ async function confirmDelete() {
 
     } catch (error) {
         console.error('删除异常:', error);
+        showToast(error.message, 'error');
+    } finally {
+        toggleLoading(false);
+    }
+}
+
+// ==================== 重命名功能 ====================
+
+// 显示重命名一级类目模态框
+function showRenameCategoryModal(categoryId, currentName) {
+    document.getElementById('renameCategoryId').value = categoryId;
+    document.getElementById('renameCategoryName').value = currentName;
+    document.getElementById('renameCategoryModal').classList.add('show');
+}
+
+// 关闭重命名一级类目模态框
+function closeRenameCategoryModal() {
+    document.getElementById('renameCategoryModal').classList.remove('show');
+}
+
+// 重命名一级类目
+async function renameCategory() {
+    const categoryId = parseInt(document.getElementById('renameCategoryId').value);
+    const newName = document.getElementById('renameCategoryName').value.trim();
+
+    if (!newName) {
+        showToast('请输入类目名称', 'error');
+        return;
+    }
+
+    toggleLoading(true);
+    try {
+        const response = await fetch(`${API_BASE}/categories/${categoryId}`, getAuthOptions({
+            method: 'PUT',
+            body: JSON.stringify({
+                name: newName
+            })
+        }));
+
+        if (!response.ok) {
+            const data = await response.json().catch(() => ({ detail: '重命名失败' }));
+            throw new Error(data.detail || data.message || '重命名失败');
+        }
+
+        showToast('一级类目重命名成功');
+        closeRenameCategoryModal();
+        await loadCategories();
+
+        const activeTab = document.querySelector('.cat-settings-tab.active');
+        const type = activeTab ? activeTab.dataset.type : 'expense';
+        renderCategoryManagement(type);
+
+        // 如果当前选择的分类是被重命名的分类，更新显示
+        if (selectedCategoryId === categoryId) {
+            updateCategoryDisplay();
+        }
+
+        // 通知主页面刷新数据
+        sessionStorage.setItem('memoSystem_refresh', Date.now().toString());
+        localStorage.setItem('memoSystem_refresh', Date.now().toString());
+    } catch (error) {
+        showToast(error.message, 'error');
+    } finally {
+        toggleLoading(false);
+    }
+}
+
+// 显示重命名二级类目模态框
+function showRenameSubcategoryModal(subcategoryId, currentName) {
+    document.getElementById('renameSubcategoryId').value = subcategoryId;
+    document.getElementById('renameSubcategoryName').value = currentName;
+    document.getElementById('renameSubcategoryModal').classList.add('show');
+}
+
+// 关闭重命名二级类目模态框
+function closeRenameSubcategoryModal() {
+    document.getElementById('renameSubcategoryModal').classList.remove('show');
+}
+
+// 重命名二级类目
+async function renameSubcategory() {
+    const subcategoryId = parseInt(document.getElementById('renameSubcategoryId').value);
+    const newName = document.getElementById('renameSubcategoryName').value.trim();
+
+    if (!newName) {
+        showToast('请输入类目名称', 'error');
+        return;
+    }
+
+    toggleLoading(true);
+    try {
+        const response = await fetch(`${API_BASE}/subcategories/${subcategoryId}`, getAuthOptions({
+            method: 'PUT',
+            body: JSON.stringify({
+                name: newName
+            })
+        }));
+
+        if (!response.ok) {
+            const data = await response.json().catch(() => ({ detail: '重命名失败' }));
+            throw new Error(data.detail || data.message || '重命名失败');
+        }
+
+        showToast('二级类目重命名成功');
+        closeRenameSubcategoryModal();
+        await loadCategories();
+
+        const activeTab = document.querySelector('.cat-settings-tab.active');
+        const type = activeTab ? activeTab.dataset.type : 'expense';
+        renderCategoryManagement(type);
+
+        // 如果当前选择的分类是被重命名的分类，更新显示
+        if (selectedSubcategoryId === subcategoryId) {
+            updateCategoryDisplay();
+        }
+
+        // 通知主页面刷新数据
+        sessionStorage.setItem('memoSystem_refresh', Date.now().toString());
+        localStorage.setItem('memoSystem_refresh', Date.now().toString());
+    } catch (error) {
         showToast(error.message, 'error');
     } finally {
         toggleLoading(false);

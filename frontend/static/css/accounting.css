@@ -177,7 +177,8 @@ body {
 
 .amount-input {
     font-size: 3.2rem;
-    font-weight: 600;
+    font-weight: 200;
+    font-family: 'Inter', 'SF Pro Display', 'Helvetica Neue Light', 'Arial', sans-serif;
     border: none;
     background: transparent;
     width: 100%;
@@ -185,14 +186,16 @@ body {
     text-align: right;
     color: var(--text-dark);
     outline: none;
-    letter-spacing: -1.5px;
-    line-height: 1;
+    letter-spacing: -3px;
+    line-height: 0.9;
+    font-variant-numeric: tabular-nums;
+    font-stretch: condensed;
 }
 
 .amount-input::placeholder {
     color: var(--text-muted);
     opacity: 0.4;
-    font-weight: 400;
+    font-weight: 200;
 }
 
 /* 输入行 - 清晰层级 */
@@ -323,6 +326,10 @@ body {
     gap: 6px;
     background: var(--bg-white);
     color: var(--text-dark);
+}
+
+.action-btn#recordAnotherBtn {
+    flex: 1.5;
 }
 
 .action-btn.secondary {
@@ -548,8 +555,12 @@ body {
 }
 
 .template-amount {
-    font-weight: 600;
+    font-weight: 200;
     font-size: 1rem;
+    font-family: 'Inter', 'SF Pro Display', 'Helvetica Neue Light', 'Arial', sans-serif;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -1px;
+    font-stretch: condensed;
 }
 
 .template-amount.income {
@@ -870,6 +881,11 @@ body {
     .amount-input {
         font-size: 2.8rem;
         max-width: 240px;
+        font-weight: 200;
+        font-family: 'Inter', 'SF Pro Display', 'Helvetica Neue Light', 'Arial', sans-serif;
+        letter-spacing: -2.5px;
+        font-variant-numeric: tabular-nums;
+        font-stretch: condensed;
     }
 
     .currency-symbol {
