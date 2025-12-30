@@ -1,137 +1,75 @@
-# 指定 docker-compose 文件的版本格式，3.8 是一个稳定且功能完整的版本
 version: '3.8'
 
-# 定义服务列表，每个服务对应一个容器
 services:
-  # ==================== MySQL 数据库服务 ====================
-  # 服务名称，可通过此名称在网络中访问该服务
   db:
-    # 使用的镜像版本，MySQL 8.0 官方镜像
+    # MySQL 数据库服务
     image: mysql:8.0
-    # 容器启动后的名称，便于查看和管理
     container_name: memo-system-db
-    # 重启策略：除非手动停止，否则总是重启（包括崩溃或宿主机重启）
     restart: unless-stopped
-    # 定义容器内的环境变量
     environment:
-      # MySQL root 用户密码，优先读取环境变量，默认为 rootpassword
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
-      # 启动时自动创建的数据库名，默认为 memo_system
       MYSQL_DATABASE: ${MYSQL_DATABASE:-memo_system}
-      # 创建的普通用户名，默认为 memo_user
-      MYSQL_USER: ${MYSQL_USER:-memo_user}
-      # 普通用户的密码，默认为 memo_password
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-memo_password}
-      # MySQL 默认字符集为 utf8mb4（支持 emoji 和多语言）
       MYSQL_CHARSET: utf8mb4
-      # 字符集排序规则，unicode_ci 表示不区分大小写
       MYSQL_COLLATION: utf8mb4_unicode_ci
-    # 端口映射配置，格式：宿主机端口:容器端口
     ports:
-      # 将 MySQL 容器的 3306 端口映射到宿主机的 3306 端口（可通过环境变量修改）
-      - "3309:3306"
-    # 数据卷挂载配置，用于数据持久化和文件共享
+      - "3309:3306"  # 宿主机端口:容器端口
     volumes:
-      # 将命名卷挂载到 MySQL 数据目录，实现数据持久化
-      - mysql_data:/var/lib/mysql
-      # 挂载初始化 SQL 脚本目录（:ro 表示只读），容器启动时会自动执行
-      - ./database/init:/docker-entrypoint-initdb.d:ro
-    # 覆盖容器默认启动命令，配置 MySQL 服务器参数
+      - mysql_data:/var/lib/mysql  # 数据持久化
+      - ./database/init:/docker-entrypoint-initdb.d:ro  # 初始化脚本
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
       - --default-authentication-plugin=mysql_native_password
-    # 健康检查配置，用于判断容器是否正常运行
     healthcheck:
-      # 健康检查命令，使用 mysqladmin ping 测试 MySQL 是否响应
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-rootpassword}"]
-      # 健康检查的执行间隔，每 10 秒检查一次
       interval: 10s
-      # 单次健康检查的超时时间，5 秒未响应视为失败
       timeout: 5s
-      # 连续失败 5 次后才判定容器为不健康
       retries: 5
-      # 容器启动后等待 30 秒才开始健康检查（给 MySQL 足够的初始化时间）
       start_period: 30s
-    # 网络配置，指定容器加入的网络
     networks:
-      # 加入名为 memo-network 的网络，使服务间可以相互通信
       - memo-network
 
-  # ==================== FastAPI 应用服务 ====================
-  # 服务名称
   web:
-    # 构建配置，用于从 Dockerfile 构建镜像
+    # FastAPI 应用服务
     build:
-      # 构建上下文路径，点号表示当前目录
       context: .
-      # 使用的 Dockerfile 文件名
       dockerfile: Dockerfile
-    # 容器启动后的名称
     container_name: memo-system-web
-    # 重启策略：除非手动停止，否则总是重启
     restart: unless-stopped
-    # 端口映射配置
     ports:
-      # 将应用容器的 8000 端口映射到宿主机的 8000 端口（可通过环境变量修改）
-      - "7361:8000"
-    # 定义应用容器的环境变量
+      - "7361:8000"  # 对外暴露端口
     environment:
-      # 数据库连接 URL，使用 'db' 作为主机名（服务名即容器名）
-      DATABASE_URL: mysql+pymysql://${MYSQL_USER:-memo_user}:${MYSQL_PASSWORD:-memo_password}@db:3306/${MYSQL_DATABASE:-memo_system}?charset=utf8mb4
-      # 应用名称
+      MYSQL_HOST: db  # Docker 网络内使用服务名作为主机名
+      MYSQL_USER: ${MYSQL_USER:-root}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-memo_system}
+      MYSQL_PORT: 3306
       APP_NAME: ${APP_NAME:-Memo System}
-      # 应用版本号
       VERSION: ${VERSION:-1.0.0}
-      # 调试模式开关
       DEBUG: ${DEBUG:-False}
-      # 应用监听地址，0.0.0.0 表示监听所有网络接口
-      HOST: 0.0.0.0
-      # 应用监听端口（容器内部）
-      PORT: 8000
-      # 应用访问密码
       ACCESS_PASSWORD: ${ACCESS_PASSWORD:-}
-    # 数据卷挂载配置
+      ALLOWED_ORIGINS: '["*"]'
+      ALLOWED_METHODS: '["*"]'
+      ALLOWED_HEADERS: '["*"]'
     volumes:
-      # 挂载静态文件目录（:ro 只读），方便开发时实时修改
       - ./frontend/static:/app/frontend/static:ro
-      # 挂载模板文件目录（:ro 只读），方便开发时实时修改
       - ./frontend/templates:/app/frontend/templates:ro
-    # 服务依赖配置，控制启动顺序
     depends_on:
-      # 依赖 db 服务
       db:
-        # 等待 db 服务健康检查通过后才启动当前服务
-        condition: service_healthy
-    # 健康检查配置
+        condition: service_healthy  # 等待 MySQL 健康检查通过后再启动
     healthcheck:
-      # 健康检查命令，尝试访问应用的登录 API
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/login')"]
-      # 健康检查的执行间隔，每 30 秒检查一次
       interval: 30s
-      # 单次健康检查的超时时间，10 秒未响应视为失败
       timeout: 10s
-      # 连续失败 3 次后才判定容器为不健康
       retries: 3
-      # 容器启动后等待 10 秒才开始健康检查（给应用足够的启动时间）
       start_period: 10s
-    # 网络配置
     networks:
-      # 加入名为 memo-network 的网络
       - memo-network
 
-# ==================== 数据卷定义 ====================
-# 定义命名卷，用于数据持久化
 volumes:
-  # 数据卷名称
   mysql_data:
-    # 使用本地驱动程序管理数据卷（数据存储在 Docker 的默认路径）
     driver: local
 
-# ==================== 网络定义 ====================
-# 定义网络，使容器间可以相互通信
 networks:
-  # 网络名称
   memo-network:
-    # 使用桥接网络驱动（默认的网络类型，隔离的容器网络环境）
     driver: bridge

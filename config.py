@@ -10,12 +10,23 @@ class Settings(BaseSettings):
     DEBUG: bool = False
     HOST: str = "0.0.0.0"
     PORT: int = 8000
+    APP_PORT: int = 7361
 
     # 安全配置
-    ACCESS_PASSWORD: str = ""  # 访问密码，从.env读取
+    ACCESS_PASSWORD: str = ""
 
     # 数据库配置
-    DATABASE_URL: str = "mysql+pymysql://root:password@localhost:3306/memo_system"
+    MYSQL_HOST: str = "localhost"
+    MYSQL_ROOT_PASSWORD: str = ""
+    MYSQL_DATABASE: str = "memo_system"
+    MYSQL_USER: str = ""
+    MYSQL_PASSWORD: str = ""
+    MYSQL_PORT: int = 3306
+
+    @property
+    def DATABASE_URL(self) -> str:
+        """动态构建数据库连接字符串"""
+        return f"mysql+pymysql://{self.MYSQL_USER}:{self.MYSQL_PASSWORD}@{self.MYSQL_HOST}:{self.MYSQL_PORT}/{self.MYSQL_DATABASE}"
 
     # CORS配置
     ALLOWED_ORIGINS: list = ["*"]
