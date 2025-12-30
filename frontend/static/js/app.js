@@ -536,8 +536,6 @@ function showAddModal(type) {
     currentEditItem = null;
     document.getElementById('modalTitle').textContent =
         type === 'reflection' ? '添加复盘反思' : '添加备忘录';
-    document.getElementById('itemTitle').value = '';
-    document.getElementById('itemContent').value = '';
 
     const checkboxGroup = document.getElementById('memoCheckboxGroup');
     const isCompleted = document.getElementById('isCompleted');
@@ -545,14 +543,32 @@ function showAddModal(type) {
     const memoEditFields = document.getElementById('memoEditFields');
 
     if (type === 'memo') {
+        // 先显示备忘录编辑字段
         checkboxGroup.style.display = 'block';
         isCompleted.checked = false;
         reflectionEditFields.style.display = 'none';
         memoEditFields.style.display = 'block';
+        // 使用 requestAnimationFrame 确保字段已经显示后再清空
+        requestAnimationFrame(() => {
+            document.getElementById('itemMemoContent').value = '';
+            document.getElementById('itemTitle').value = '';
+            document.getElementById('itemContent').value = '';
+            // 聚焦到备忘录输入框
+            document.getElementById('itemMemoContent').focus();
+        });
     } else {
+        // 先显示反思编辑字段
         checkboxGroup.style.display = 'none';
         reflectionEditFields.style.display = 'block';
         memoEditFields.style.display = 'none';
+        // 使用 requestAnimationFrame 确保字段已经显示后再清空
+        requestAnimationFrame(() => {
+            document.getElementById('itemTitle').value = '';
+            document.getElementById('itemContent').value = '';
+            document.getElementById('itemMemoContent').value = '';
+            // 聚焦到标题输入框
+            document.getElementById('itemTitle').focus();
+        });
     }
 
     // 保存当前操作类型，用于saveItem判断
@@ -585,11 +601,20 @@ async function editItem(id) {
         const memoEditFields = document.getElementById('memoEditFields');
 
         if (currentTab === 'memos') {
+            // 先显示字段
             checkboxGroup.style.display = 'block';
             isCompleted.checked = item.is_completed;
             reflectionEditFields.style.display = 'none';
             memoEditFields.style.display = 'block';
-            document.getElementById('itemContent').value = item.content;
+            // 使用 requestAnimationFrame 确保字段已经显示后再设置值
+            requestAnimationFrame(() => {
+                const textarea = document.getElementById('itemMemoContent');
+                if (textarea) {
+                    textarea.value = item.content;
+                    // 触发 input 事件以确保值被正确设置
+                    textarea.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+            });
         } else {
             checkboxGroup.style.display = 'none';
             reflectionEditFields.style.display = 'block';
@@ -621,7 +646,6 @@ async function saveItem() {
     // 如果是新建模式，itemType是 'reflection' 或 'memo'
     const isReflection = itemType === 'reflections' || itemType === 'reflection';
     const endpoint = isReflection ? '/reflections' : '/memos';
-    const isCompleted = document.getElementById('isCompleted').checked;
 
     let content;
     if (isReflection) {
@@ -636,12 +660,16 @@ async function saveItem() {
         content = title + (contentText ? '\n' + contentText : '');
     } else {
         // 备忘录：只有内容
-        content = document.getElementById('itemContent').value.trim();
+        const memoTextarea = document.getElementById('itemMemoContent');
+        content = memoTextarea.value.trim();
         if (!content) {
             showToast('请输入内容', 'error');
             return;
         }
     }
+
+    // 获取完成状态（仅备忘录）
+    const isCompleted = document.getElementById('isCompleted').checked;
 
     try {
         let response;

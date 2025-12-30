@@ -13,9 +13,9 @@ from io import StringIO
 
 # 本地时区配置（根据需要修改）
 LOCAL_TZ = ZoneInfo("Asia/Shanghai")  # 中国时区，如需其他时区请修改
-from sqlalchemy import create_engine, Column, Integer, String, Text, Boolean, DateTime, ForeignKey, Date, Numeric
+from sqlalchemy import create_engine, Column, Integer, String, Text, Boolean, DateTime, Date, Numeric
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, Session, relationship
+from sqlalchemy.orm import sessionmaker, Session
 
 # 导入配置
 from config import settings
@@ -93,23 +93,15 @@ class Category(Base):
     sort_order = Column(Integer, default=0)  # 排序
     created_at = Column(DateTime, nullable=False, default=lambda: datetime.now(LOCAL_TZ))
 
-    # 关联二级类目
-    subcategories = relationship("SubCategory", back_populates="category", cascade="all, delete-orphan")
-
 class SubCategory(Base):
     """二级类目表"""
     __tablename__ = "subcategories"
 
     id = Column(Integer, primary_key=True, index=True)
-    category_id = Column(Integer, ForeignKey("categories.id", ondelete="CASCADE"), nullable=False)
+    category_id = Column(Integer, nullable=False)
     name = Column(String(50), nullable=False)
     sort_order = Column(Integer, default=0)  # 排序
     created_at = Column(DateTime, nullable=False, default=lambda: datetime.now(LOCAL_TZ))
-
-    # 关联回一级类目
-    category = relationship("Category", back_populates="subcategories")
-    # 关联记录
-    records = relationship("DailyRecord", back_populates="subcategory")
 
 class DailyRecord(Base):
     """每日记账记录表"""
@@ -118,15 +110,12 @@ class DailyRecord(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, default=1)  # 用户ID，默认为1
     record_type = Column(String(10), nullable=False)  # 'income' 或 'expense'
-    category_id = Column(Integer, ForeignKey("categories.id"), nullable=False)
-    subcategory_id = Column(Integer, ForeignKey("subcategories.id"), nullable=False)
+    category_id = Column(Integer, nullable=False)  # 移除外键约束
+    subcategory_id = Column(Integer, nullable=False)  # 移除外键约束
     amount = Column(Numeric(10, 2), nullable=False)  # 金额：保留两位小数
     record_date = Column(Date, nullable=False)  # 记账日期
     note = Column(Text, nullable=True)  # 备注
     created_at = Column(DateTime, nullable=False, default=lambda: datetime.now(LOCAL_TZ))
-
-    # 关联二级类目
-    subcategory = relationship("SubCategory", back_populates="records")
 
 class RecordTemplate(Base):
     """记账模板表"""
@@ -135,8 +124,8 @@ class RecordTemplate(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, default=1)  # 用户ID
     record_type = Column(String(10), nullable=False)  # 'income' 或 'expense'
-    category_id = Column(Integer, ForeignKey("categories.id"), nullable=False)
-    subcategory_id = Column(Integer, ForeignKey("subcategories.id"), nullable=False)
+    category_id = Column(Integer, nullable=False)  # 移除外键约束
+    subcategory_id = Column(Integer, nullable=False)  # 移除外键约束
     amount = Column(Numeric(10, 2), nullable=False)  # 金额：保留两位小数
     note = Column(Text, nullable=True)
     name = Column(String(100), nullable=False)  # 模板名称
@@ -453,19 +442,24 @@ async def get_categories(request: Request, db: Session = Depends(get_db)):
     check_auth(request)
     categories = db.query(Category).order_by(Category.record_type, Category.sort_order).all()
 
+    # 获取所有二级类目
+    all_subcategories = db.query(SubCategory).order_by(SubCategory.sort_order).all()
+
     result = {
         "income": [],
         "expense": []
     }
 
     for cat in categories:
+        # 手动查询该一级类目下的二级类目
+        cat_subcategories = [sub for sub in all_subcategories if sub.category_id == cat.id]
         cat_data = {
             "id": cat.id,
             "name": cat.name,
             "icon": cat.icon,
             "subcategories": [
                 {"id": sub.id, "name": sub.name}
-                for sub in sorted(cat.subcategories, key=lambda x: x.sort_order)
+                for sub in sorted(cat_subcategories, key=lambda x: x.sort_order)
             ]
         }
         result[cat.record_type].append(cat_data)
@@ -543,9 +537,12 @@ async def delete_category(request: Request, category_id: int, db: Session = Depe
         if not db_category:
             raise HTTPException(status_code=404, detail="一级类目不存在")
 
+        # 手动查询该一级类目下的所有二级类目
+        subcategories = db.query(SubCategory).filter(SubCategory.category_id == category_id).all()
+
         # 检查所有二级类目下是否有关联记录
         total_records = 0
-        for subcategory in db_category.subcategories:
+        for subcategory in subcategories:
             record_count = db.query(DailyRecord).filter(DailyRecord.subcategory_id == subcategory.id).count()
             total_records += record_count
 
@@ -555,7 +552,11 @@ async def delete_category(request: Request, category_id: int, db: Session = Depe
                 detail=f"该一级类目下共有 {total_records} 条记账记录，无法删除。请先删除相关记录。"
             )
 
-        # 删除所有二级类目（cascade会自动处理）
+        # 先删除所有二级类目
+        for subcategory in subcategories:
+            db.delete(subcategory)
+
+        # 再删除一级类目
         db.delete(db_category)
         db.commit()
         return {"success": True, "message": "一级类目删除成功"}

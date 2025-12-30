@@ -284,76 +284,11 @@ async function loadCategories() {
         if (!response.ok) throw new Error('加载类目失败');
 
         categoriesData = await response.json();
-
-        // 初始化默认类目（如果没有数据）
-        if (categoriesData.expense.length === 0) {
-            await initDefaultCategories();
-        }
     } catch (error) {
         showToast(error.message, 'error');
     } finally {
         toggleLoading(false);
     }
-}
-
-// 初始化默认类目
-async function initDefaultCategories() {
-    const defaultExpenseCategories = [
-        { name: '餐饮', icon: '🍚', subcategories: ['早餐', '午餐', '晚餐', '零食', '外卖'] },
-        { name: '交通', icon: '🚗', subcategories: ['地铁', '公交', '打车', '加油', '停车'] },
-        { name: '购物', icon: '🛍️', subcategories: ['日用品', '服装', '数码', '其他'] },
-        { name: '娱乐', icon: '🎬', subcategories: ['游戏', '电影', 'KTV', '其他'] },
-        { name: '居住', icon: '🏠', subcategories: ['房租', '水电', '燃气', '物业'] }
-    ];
-
-    const defaultIncomeCategories = [
-        { name: '工资', icon: '💰', subcategories: ['基本工资', '奖金', '提成'] },
-        { name: '理财', icon: '📈', subcategories: ['股票', '基金', '利息'] },
-        { name: '兼职', icon: '💰', subcategories: ['项目收入', '咨询', '其他'] }
-    ];
-
-    // 创建默认支出类目
-    for (const cat of defaultExpenseCategories) {
-        try {
-            const catResponse = await fetch(`${API_BASE}/categories`, getAuthOptions({
-                method: 'POST',
-                body: JSON.stringify({ name: cat.name, record_type: 'expense', icon: cat.icon })
-            }));
-            const catData = await catResponse.json();
-
-            for (const subName of cat.subcategories) {
-                await fetch(`${API_BASE}/subcategories`, getAuthOptions({
-                    method: 'POST',
-                    body: JSON.stringify({ category_id: catData.id, name: subName })
-                }));
-            }
-        } catch (e) {
-            console.error('创建默认类目失败:', e);
-        }
-    }
-
-    // 创建默认收入类目
-    for (const cat of defaultIncomeCategories) {
-        try {
-            const catResponse = await fetch(`${API_BASE}/categories`, getAuthOptions({
-                method: 'POST',
-                body: JSON.stringify({ name: cat.name, record_type: 'income', icon: cat.icon })
-            }));
-            const catData = await catResponse.json();
-
-            for (const subName of cat.subcategories) {
-                await fetch(`${API_BASE}/subcategories`, getAuthOptions({
-                    method: 'POST',
-                    body: JSON.stringify({ category_id: catData.id, name: subName })
-                }));
-            }
-        } catch (e) {
-            console.error('创建默认类目失败:', e);
-        }
-    }
-
-    // 重新加载类目
-    await loadCategories();
 }
 
 // 显示分类选择器
