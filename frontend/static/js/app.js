@@ -302,7 +302,6 @@ function renderStatsArea(summary, records) {
     }
 
     // 更新分页信息显示
-    const state = paginationState.accounting;
     const currentPageEl = document.getElementById('accounting-current-page');
     const totalPagesEl = document.getElementById('accounting-total-pages');
     const totalItemsEl = document.getElementById('accounting-total-items');
