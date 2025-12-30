@@ -20,15 +20,12 @@
         <!-- 标签切换栏 -->
         <div class="record-tabs">
             <button class="record-tab-btn" data-type="income" onclick="switchRecordType('income')">
-                <span class="icon">💰</span>
                 收入
             </button>
             <button class="record-tab-btn active" data-type="expense" onclick="switchRecordType('expense')">
-                <span class="icon">💸</span>
                 支出
             </button>
             <button class="record-tab-btn" data-type="template" onclick="showTemplatesModal()">
-                <span class="icon">📋</span>
                 模板
             </button>
             <button class="settings-btn" onclick="showCategoriesSettings()">
@@ -51,7 +48,6 @@
             <!-- 分类选择区 -->
             <div class="input-row" onclick="showCategorySelector()">
                 <div class="input-row-left">
-                    <span class="input-icon">📁</span>
                     <span class="input-label">分类</span>
                 </div>
                 <div class="input-row-right">
@@ -63,7 +59,6 @@
             <!-- 时间选择区 -->
             <div class="input-row" onclick="showDatePicker()">
                 <div class="input-row-left">
-                    <span class="input-icon">🕐</span>
                     <span class="input-label">时间</span>
                 </div>
                 <div class="input-row-right">
@@ -76,7 +71,6 @@
             <div class="note-input-section">
                 <div class="note-header">
                     <div class="note-label">
-                        <span class="input-icon">📝</span>
                         <span>备注</span>
                     </div>
                 </div>
@@ -87,23 +81,18 @@
         <!-- 底部操作按钮 -->
         <div class="bottom-actions">
             <button class="action-btn danger" id="deleteBtn" onclick="showDeleteConfirm()" style="display: none;">
-                <span class="icon">🗑️</span>
                 删除
             </button>
             <button class="action-btn secondary" onclick="saveAsTemplate()">
-                <span class="icon">📋</span>
                 存为模板
             </button>
             <button class="action-btn secondary" id="recordAnotherBtn" onclick="recordAnother()">
-                <span class="icon">🔄</span>
                 再记一笔
             </button>
             <button class="action-btn primary" onclick="saveRecord()">
-                <span class="icon">💾</span>
                 保存
             </button>
         </div>
-
     </div>
 
     <!-- 分类选择模态框 -->

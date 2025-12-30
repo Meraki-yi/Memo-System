@@ -252,35 +252,6 @@ body {
     height: 100vh;
 }
 
-.app-header {
-    background: var(--bg-white);
-    padding: 12px 20px;
-    box-shadow: var(--shadow-sm);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    /* 固定顶部，禁止滚动 */
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 100;
-    flex-shrink: 0;
-    height: 56px;
-}
-
-.app-title {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: var(--text-dark);
-}
-
-.app-title .icon {
-    font-size: 1.4rem;
-    margin-right: 8px;
-    vertical-align: middle;
-}
-
 /* 顶部更多按钮和菜单 */
 .header-more-wrapper {
     position: relative;
@@ -363,8 +334,8 @@ body {
     max-width: 600px;
     margin: 0 auto;
     width: 100%;
-    /* 固定布局，为顶部header、标签栏和底部栏留出空间 */
-    padding-top: 110px; /* header(56px) + tabs(44px) + 间距(10px) */
+    /* 固定布局，为标签栏和底部栏留出空间 */
+    padding-top: 54px; /* tabs(44px) + 间距(10px) */
     padding-bottom: 82px; /* 为固定底部栏留出空间(72px + 10px) */
     /* 禁止app-main滚动 - 滚动仅在tab-content-scrollable中 */
     overflow: hidden;
@@ -380,7 +351,7 @@ body {
     align-items: center;
     /* 固定标签栏，确保始终可见 */
     position: fixed;
-    top: 56px; /* header高度 */
+    top: 0; /* 移到顶部 */
     left: 0;
     right: 0;
     z-index: 99;
@@ -394,8 +365,8 @@ body {
 .tab-btn {
     background: none;
     border: none;
-    padding: 0 20px;
-    font-size: 0.95rem;
+    padding: 0;
+    font-size: 0.9rem;
     font-weight: 600;
     color: var(--text-light);
     cursor: pointer;
@@ -404,10 +375,16 @@ body {
     margin-bottom: -2px;
     display: flex;
     align-items: center;
-    gap: 6px;
+    justify-content: center;
     height: 100%;
     flex: 1;
-    justify-content: center;
+    white-space: nowrap;
+}
+
+/* Tabs中的更多按钮容器 */
+.tabs .header-more-wrapper {
+    flex-shrink: 0;
+    width: 44px;
 }
 
 .tab-btn:hover {
@@ -429,7 +406,7 @@ body {
     display: flex;
     flex-direction: column;
     /* 使用固定高度，内部scrollable区域滚动 */
-    height: calc(100vh - 170px); /* 减去header(56px) + tabs(44px) + padding+b-bottom(70px) */
+    height: calc(100vh - 114px); /* 减去tabs(44px) + padding+b-bottom(70px) */
 }
 
 /* 标签页内容可滚动区域 - 唯一的滚动上下文 */
@@ -459,13 +436,29 @@ body {
 /* 统计区域 - 白色直角框风格 */
 #accounting-tab .stats-area {
     background: var(--bg-white);
-    margin: 0 0 15px 0;
+    margin: 0 0 0 0;
     border-radius: 0;
-    box-shadow: var(--shadow-sm);
-    border: 1px solid var(--border-color);
+    box-shadow: none;
+    border: none;
     overflow: visible;
     flex-shrink: 0;
     position: relative;
+}
+
+/* 统计区域底部渐变过渡 */
+#accounting-tab .stats-area::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg,
+        transparent 0%,
+        #E0E0E0 10%,
+        #E0E0E0 90%,
+        transparent 100%
+    );
 }
 
 /* 移除底部margin，使用padding代替避免滚动时的跳动 */
@@ -766,9 +759,9 @@ body {
 .add-record-btn {
     background: var(--primary-gradient);
     border: none;
-    padding: 8px 18px;
+    padding: 10px 24px;
     border-radius: 0;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     font-weight: 700;
     cursor: pointer;
     transition: var(--transition);
@@ -779,6 +772,7 @@ body {
     color: var(--text-dark);
     box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
     white-space: nowrap;
+    min-height: 40px;
 }
 
 /* 移除记一笔按钮hover效果 */
@@ -822,18 +816,18 @@ body {
 
 /* ==================== 列表样式调整 ==================== */
 .day-group {
-    margin-bottom: 15px;
+    margin-bottom: 2px;
 }
 
-/* 日期分组头部 - 白色直角框风格 */
+/* 日期分组头部 - 浅灰蓝底色 */
 .day-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 10px 12px;
-    background: var(--bg-light);
+    background: #E8F0F5;
     border-radius: 0;
-    margin-bottom: 8px;
+    margin-bottom: 0;
     font-size: 0.9rem;
     cursor: pointer;
     user-select: none;
@@ -842,7 +836,7 @@ body {
 }
 
 .day-header:hover {
-    background: var(--bg-light);
+    background: #DDE7EF;
 }
 
 .day-header.disabled {
@@ -850,7 +844,7 @@ body {
 }
 
 .day-header.disabled:hover {
-    background: var(--bg-light);
+    background: #E8F0F5;
 }
 
 .day-header-left {
@@ -894,21 +888,21 @@ body {
     display: flex;
     justify-content: space-between;
     padding: 10px 12px;
-    background: var(--bg-light);
+    background: #E8F0F5;
     border-radius: 0;
-    margin-bottom: 8px;
+    margin-bottom: 0;
     font-size: 0.9rem;
 }
 
-/* 记账记录卡片 - 白色直角框风格，紧密排列，渐变金线分隔 */
+/* 记账记录卡片 - 纯白底色，无边框 */
 .accounting-record-card {
     padding: 14px 16px;
     margin-bottom: 0;
     min-height: 72px;
     display: flex;
     align-items: center;
-    border: 1px solid var(--border-color);
-    background: var(--bg-white);
+    border: none;
+    background: #FFFFFF;
     border-radius: 0 !important;
     box-shadow: none !important;
     transition: none;
@@ -1071,6 +1065,11 @@ body {
     gap: 20px;
     /* 确保列表不破坏滚动上下文 */
     overflow: visible;
+}
+
+/* 记账标签下的列表紧密排列 */
+#accounting-tab .items-list {
+    gap: 0;
 }
 
 .item-card {
@@ -1594,18 +1593,18 @@ body {
 @media (max-width: 768px) {
     .app-main {
         padding: 15px;
-        padding-top: 110px;
+        padding-top: 54px;
         padding-bottom: 78px;
     }
 
     /* 移动端标签栏位置调整 */
     .tabs {
-        top: 56px;
+        top: 0;
     }
 
     /* 移动端标签页高度调整 */
     .tab-content.active {
-        height: calc(100vh - 170px);
+        height: calc(100vh - 114px);
     }
 
     /* 移动端底部栏调整 */
@@ -1711,29 +1710,20 @@ body {
 }
 
 @media (max-width: 480px) {
-    .app-header {
-        padding: 10px 15px;
-        height: 52px;
-    }
-
-    .app-title {
-        font-size: 1.1rem;
-    }
-
     .app-main {
         padding: 12px;
-        padding-top: 106px; /* header(52) + tabs(44) + 间距(10) */
+        padding-top: 50px; /* tabs(44) + 间距(6) */
         padding-bottom: 66px;
     }
 
     /* 小屏幕标签栏位置调整 */
     .tabs {
-        top: 52px;
+        top: 0;
     }
 
     /* 小屏幕标签页高度调整 */
     .tab-content.active {
-        height: calc(100vh - 164px);
+        height: calc(100vh - 108px);
     }
 
     /* 小屏幕底部栏 - 保持垂直布局，两行居中对齐 */

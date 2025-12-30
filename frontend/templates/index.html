@@ -8,45 +8,34 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- 顶部系统导航栏 -->
-        <header class="app-header">
-            <h1 class="app-title">
-                <span class="icon">📝</span>
-                备忘录
-            </h1>
-            <div class="header-more-wrapper">
-                <button class="more-btn" onclick="toggleMoreMenu()">
-                    <span class="icon">⋯</span>
-                </button>
-                <div class="more-menu" id="moreMenu">
-                    <button class="more-menu-item" onclick="exportCurrentTabData()">
-                        <span class="icon">📥</span>
-                        导出数据
-                    </button>
-                    <button class="more-menu-item logout" onclick="logout()">
-                        <span class="icon">🚪</span>
-                        退出
-                    </button>
-                </div>
-            </div>
-        </header>
-
         <!-- 主内容区 -->
         <main class="app-main">
             <!-- 顶部功能Tab栏 -->
             <div class="tabs">
                 <button class="tab-btn active" data-tab="accounting">
-                    <span class="icon">💰</span>
                     记一笔
                 </button>
                 <button class="tab-btn" data-tab="reflections">
-                    <span class="icon">💭</span>
                     复盘反思
                 </button>
                 <button class="tab-btn" data-tab="memos">
-                    <span class="icon">📌</span>
                     备忘录
                 </button>
+                <div class="header-more-wrapper">
+                    <button class="more-btn" onclick="toggleMoreMenu()">
+                        <span class="icon">⋯</span>
+                    </button>
+                    <div class="more-menu" id="moreMenu">
+                        <button class="more-menu-item" onclick="exportCurrentTabData()">
+                            <span class="icon">📥</span>
+                            导出数据
+                        </button>
+                        <button class="more-menu-item logout" onclick="logout()">
+                            <span class="icon">🚪</span>
+                            退出
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <!-- 标签页内容 -->
@@ -137,7 +126,6 @@
                 <div class="tab-content" id="reflections-tab">
                     <div class="tab-content-scrollable">
                         <div class="content-header">
-                            <h2>复盘反思</h2>
                             <div class="header-actions">
                                 <button class="add-btn" onclick="showAddModal('reflection')">
                                     <span class="icon">➕</span>
@@ -174,7 +162,6 @@
                 <div class="tab-content" id="memos-tab">
                     <div class="tab-content-scrollable">
                         <div class="content-header">
-                            <h2>备忘录</h2>
                             <div class="header-actions">
                                 <button class="add-btn" onclick="showAddModal('memo')">
                                     <span class="icon">➕</span>

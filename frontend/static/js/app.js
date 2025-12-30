@@ -277,27 +277,38 @@ function renderStatsArea(summary, records) {
     const weekNet = weekIncome - weekExpense;
 
     // 更新周报显示
-    document.getElementById('weekIncome').textContent = `+¥${weekIncome.toFixed(2)}`;
-    document.getElementById('weekExpense').textContent = `-¥${weekExpense.toFixed(2)}`;
-    document.getElementById('weekNet').textContent = `¥${weekNet.toFixed(2)}`;
+    const weekIncomeEl = document.getElementById('weekIncome');
+    const weekExpenseEl = document.getElementById('weekExpense');
+    const weekNetEl = document.getElementById('weekNet');
+    if (weekIncomeEl) weekIncomeEl.textContent = `+¥${weekIncome.toFixed(2)}`;
+    if (weekExpenseEl) weekExpenseEl.textContent = `-¥${weekExpense.toFixed(2)}`;
+    if (weekNetEl) weekNetEl.textContent = `¥${weekNet.toFixed(2)}`;
 
     // 更新月入口显示
-    document.getElementById('monthIncome').textContent = `¥${summary.total_income.toFixed(2)}`;
-    document.getElementById('monthExpense').textContent = `¥${summary.total_expense.toFixed(2)}`;
+    const monthIncomeEl = document.getElementById('monthIncome');
+    const monthExpenseEl = document.getElementById('monthExpense');
+    if (monthIncomeEl) monthIncomeEl.textContent = `¥${summary.total_income.toFixed(2)}`;
+    if (monthExpenseEl) monthExpenseEl.textContent = `¥${summary.total_expense.toFixed(2)}`;
 
     // 更新周轮次标签
     const state = paginationState.accounting;
     const weekBadge = document.getElementById('currentWeekBadge');
-    if (state.currentPage === 1) {
-        weekBadge.textContent = '本周';
-    } else {
-        weekBadge.textContent = `第${state.currentPage}周`;
+    if (weekBadge) {
+        if (state.currentPage === 1) {
+            weekBadge.textContent = '本周';
+        } else {
+            weekBadge.textContent = `第${state.currentPage}周`;
+        }
     }
 
     // 更新分页信息显示
-    document.getElementById('accounting-current-page').textContent = state.currentPage;
-    document.getElementById('accounting-total-pages').textContent = state.totalPages;
-    document.getElementById('accounting-total-items').textContent = state.totalItems;
+    const state = paginationState.accounting;
+    const currentPageEl = document.getElementById('accounting-current-page');
+    const totalPagesEl = document.getElementById('accounting-total-pages');
+    const totalItemsEl = document.getElementById('accounting-total-items');
+    if (currentPageEl) currentPageEl.textContent = state.currentPage;
+    if (totalPagesEl) totalPagesEl.textContent = state.totalPages;
+    if (totalItemsEl) totalItemsEl.textContent = state.totalItems;
 }
 
 // 跳转到分类收入统计页面
