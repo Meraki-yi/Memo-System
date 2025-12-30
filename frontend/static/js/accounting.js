@@ -682,34 +682,34 @@ function renderCategoryManagement(type) {
 
     management.innerHTML = categories.map(cat => `
         <div class="manage-category-item">
-            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                <div class="manage-category-info">
-                    <span>${cat.icon}</span>
-                    <strong>${cat.name}</strong>
-                </div>
-                <div class="manage-category-actions">
-                    <button class="manage-btn" onclick="showRenameCategoryModal(${cat.id}, '${cat.name}')">
-                        重命名
-                    </button>
-                    <button class="manage-btn" onclick="showAddSubcategoryModal(${cat.id})">
-                        + 子类目
-                    </button>
-                    <button class="manage-btn delete" onclick="deleteCategory(${cat.id})">
-                        删除
-                    </button>
-                </div>
+            <div class="manage-category-info">
+                <span>${cat.icon}</span>
+                <strong>${cat.name}</strong>
             </div>
-            <div style="width: 100%; margin-top: 8px; padding-left: 40px;">
-                ${cat.subcategories.map(sub => `
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #eee;">
-                        <span>${sub.name}</span>
-                        <div style="display: flex; gap: 6px;">
-                            <button class="manage-btn" onclick="showRenameSubcategoryModal(${sub.id}, '${sub.name}')">重命名</button>
-                            <button class="manage-btn delete" onclick="deleteSubcategory(${sub.id})">删除</button>
+            <div class="manage-category-actions">
+                <button class="manage-btn" onclick="showRenameCategoryModal(${cat.id}, '${cat.name}')">
+                    重命名
+                </button>
+                <button class="manage-btn" onclick="showAddSubcategoryModal(${cat.id})">
+                    + 子类目
+                </button>
+                <button class="manage-btn delete" onclick="deleteCategory(${cat.id})">
+                    删除
+                </button>
+            </div>
+            ${cat.subcategories.length > 0 ? `
+                <div class="subcategory-list">
+                    ${cat.subcategories.map(sub => `
+                        <div class="subcategory-item">
+                            <span>${sub.name}</span>
+                            <div class="subcategory-actions">
+                                <button class="manage-btn" onclick="showRenameSubcategoryModal(${sub.id}, '${sub.name}')">重命名</button>
+                                <button class="manage-btn delete" onclick="deleteSubcategory(${sub.id})">删除</button>
+                            </div>
                         </div>
-                    </div>
-                `).join('')}
-            </div>
+                    `).join('')}
+                </div>
+            ` : ''}
         </div>
     `).join('');
 }
