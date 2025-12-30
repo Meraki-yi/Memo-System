@@ -58,39 +58,43 @@
                         <div class="stats-area" id="statsArea">
                             <!-- 周报模块 -->
                             <div class="week-report-section">
+                                <!-- 周报header固定不动 -->
                                 <div class="section-header">
                                     <h3 class="section-title">周报</h3>
                                     <span class="week-date-range" id="weekDateRangeHeader">12月22日 - 12月28日</span>
                                     <span class="week-badge" id="currentWeekBadge">本周</span>
                                 </div>
-                                <div class="week-report-cards">
-                                    <div class="week-card income">
-                                        <div class="week-card-label">本周收入</div>
-                                        <div class="week-card-amount" id="weekIncome">+¥0.00</div>
+                                <!-- 可滚动内容区域 -->
+                                <div class="week-report-scrollable">
+                                    <div class="week-report-cards">
+                                        <div class="week-card income">
+                                            <div class="week-card-label">本周收入</div>
+                                            <div class="week-card-amount" id="weekIncome">+¥0.00</div>
+                                        </div>
+                                        <div class="week-card expense">
+                                            <div class="week-card-label">本周支出</div>
+                                            <div class="week-card-amount" id="weekExpense">-¥0.00</div>
+                                        </div>
+                                        <div class="week-card net">
+                                            <div class="week-card-label">本周净额</div>
+                                            <div class="week-card-amount" id="weekNet">¥0.00</div>
+                                        </div>
                                     </div>
-                                    <div class="week-card expense">
-                                        <div class="week-card-label">本周支出</div>
-                                        <div class="week-card-amount" id="weekExpense">-¥0.00</div>
-                                    </div>
-                                    <div class="week-card net">
-                                        <div class="week-card-label">本周净额</div>
-                                        <div class="week-card-amount" id="weekNet">¥0.00</div>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <!-- 月入口模块 -->
-                            <div class="month-entrance-section">
-                                <div class="month-entrance-cards">
-                                    <div class="month-entrance-card income" onclick="goToIncomeStats()">
-                                        <div class="month-entrance-label">本月收入</div>
-                                        <div class="month-entrance-amount" id="monthIncome">¥0.00</div>
-                                        <div class="month-entrance-arrow">›</div>
-                                    </div>
-                                    <div class="month-entrance-card expense" onclick="goToExpenseStats()">
-                                        <div class="month-entrance-label">本月支出</div>
-                                        <div class="month-entrance-amount" id="monthExpense">¥0.00</div>
-                                        <div class="month-entrance-arrow">›</div>
+                                    <!-- 月入口模块 -->
+                                    <div class="month-entrance-section">
+                                        <div class="month-entrance-cards">
+                                            <div class="month-entrance-card income" onclick="goToIncomeStats()">
+                                                <div class="month-entrance-label">本月收入</div>
+                                                <div class="month-entrance-amount" id="monthIncome">¥0.00</div>
+                                                <div class="month-entrance-arrow">›</div>
+                                            </div>
+                                            <div class="month-entrance-card expense" onclick="goToExpenseStats()">
+                                                <div class="month-entrance-label">本月支出</div>
+                                                <div class="month-entrance-amount" id="monthExpense">¥0.00</div>
+                                                <div class="month-entrance-arrow">›</div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
