@@ -86,7 +86,14 @@ function goBack() {
     if (fromYear) {
         window.location.href = `/yearly-overview?year=${fromYear}`;
     } else {
-        window.history.back();
+        // 检查是否有保存的周分页状态
+        const weekPage = sessionStorage.getItem('memoSystem_weekPage');
+        if (weekPage) {
+            // 返回到主页，周分页会自动恢复
+            window.location.href = '/app';
+        } else {
+            window.history.back();
+        }
     }
 }
 

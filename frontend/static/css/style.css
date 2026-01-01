@@ -414,7 +414,7 @@ body {
     flex: 1;
     /* 移除max-height，使用flex自动填充 */
     padding-right: 5px;
-    padding-bottom: 20px; /* 底部留出空间，确保最后一条记录不被遮挡 */
+    padding-bottom: 90px; /* 底部留出空间，确保最后一条记录不被底部导航栏遮挡（72px导航栏 + 18px间距） */
     /* 确保滚动行为流畅 */
     -webkit-overflow-scrolling: touch;
     /* 防止滚动穿透和下拉刷新 */

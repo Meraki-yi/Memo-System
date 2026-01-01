@@ -8,6 +8,14 @@ let endDate = null;
 let categoryData = null;
 let fromYear = null; // 来自年度概览的年份
 
+// 格式化日期为本地时区的 YYYY-MM-DD 字符串
+function formatDateToLocal(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
 // 初始化
 document.addEventListener('DOMContentLoaded', async function() {
     // 获取URL参数
@@ -138,9 +146,11 @@ function renderCategoryDetail(data) {
         yesterday.setDate(yesterday.getDate() - 1);
 
         let dateDisplay = formatDate(dateObj);
-        if (date === today.toISOString().split('T')[0]) {
+        const todayStr = formatDateToLocal(today);
+        const yesterdayStr = formatDateToLocal(yesterday);
+        if (date === todayStr) {
             dateDisplay = '今天';
-        } else if (date === yesterday.toISOString().split('T')[0]) {
+        } else if (date === yesterdayStr) {
             dateDisplay = '昨天';
         }
 

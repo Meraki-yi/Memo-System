@@ -208,15 +208,17 @@ async function loadItems() {
     }
 }
 
+// 格式化日期为本地时区的 YYYY-MM-DD 字符串
+function formatDateToLocal(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
 // 加载记账数据
 async function loadAccountingData() {
     try {
-        // 获取今日汇总
-        const today = new Date();
-        const todayStr = today.toISOString().split('T')[0];
-        const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-        const monthStartStr = monthStart.toISOString().split('T')[0];
-
         const state = paginationState.accounting;
 
         // 根据分页模式构建请求 URL
@@ -227,32 +229,64 @@ async function loadAccountingData() {
             recordsUrl = `${ACCOUNTING_API_BASE}/records?week_page=${state.currentPage}`;
         } else {
             // 普通分页：限制在本月
+            const today = new Date();
+            const todayStr = formatDateToLocal(today);
+            const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+            const monthStartStr = formatDateToLocal(monthStart);
             recordsUrl = `${ACCOUNTING_API_BASE}/records?start_date=${monthStartStr}&end_date=${todayStr}&page=${state.currentPage}&page_size=${state.pageSize}`;
         }
 
-        // 并行请求汇总和最近记录
-        const [summaryResponse, recordsResponse] = await Promise.all([
-            fetch(`${ACCOUNTING_API_BASE}/summary?start_date=${monthStartStr}&end_date=${todayStr}`, getAuthOptions()),
-            fetch(recordsUrl, getAuthOptions())
-        ]);
+        // 先获取记录数据（包含周信息）
+        const recordsResponse = await fetch(recordsUrl, getAuthOptions());
 
         // 检查认证状态
-        if (summaryResponse.status === 401 || recordsResponse.status === 401) {
+        if (recordsResponse.status === 401) {
             window.location.href = '/';
             return;
         }
 
-        if (!summaryResponse.ok || !recordsResponse.ok) {
+        if (!recordsResponse.ok) {
             throw new Error('加载记账数据失败');
         }
 
-        const summary = await summaryResponse.json();
         const recordsData = await recordsResponse.json();
 
         // 更新分页状态
         state.totalPages = recordsData.pagination.total_pages;
         state.totalItems = recordsData.pagination.total;
         state.currentPage = recordsData.pagination.page;
+
+        // 根据周日所在月份计算月收入/支出
+        let summary;
+        if (recordsData.week_info && recordsData.week_info.end_date) {
+            // 获取周日的日期，计算该月的汇总
+            const sundayDate = new Date(recordsData.week_info.end_date + 'T00:00:00');
+            const monthStart = new Date(sundayDate.getFullYear(), sundayDate.getMonth(), 1);
+            const monthEnd = new Date(sundayDate.getFullYear(), sundayDate.getMonth() + 1, 0);
+            const monthStartStr = formatDateToLocal(monthStart);
+            const monthEndStr = formatDateToLocal(monthEnd);
+
+            // 请求该月的汇总数据
+            const summaryResponse = await fetch(`${ACCOUNTING_API_BASE}/summary?start_date=${monthStartStr}&end_date=${monthEndStr}`, getAuthOptions());
+            if (summaryResponse.ok) {
+                summary = await summaryResponse.json();
+            } else {
+                // 如果请求失败，使用默认值
+                summary = { total_income: 0, total_expense: 0, net_amount: 0 };
+            }
+        } else {
+            // 如果没有周信息，使用当前月份
+            const today = new Date();
+            const todayStr = formatDateToLocal(today);
+            const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+            const monthStartStr = formatDateToLocal(monthStart);
+            const summaryResponse = await fetch(`${ACCOUNTING_API_BASE}/summary?start_date=${monthStartStr}&end_date=${todayStr}`, getAuthOptions());
+            if (summaryResponse.ok) {
+                summary = await summaryResponse.json();
+            } else {
+                summary = { total_income: 0, total_expense: 0, net_amount: 0 };
+            }
+        }
 
         // 渲染统计数据（周报 + 月入口）
         renderStatsArea(summary, recordsData.items, recordsData.week_info);
@@ -307,6 +341,23 @@ function renderStatsArea(summary, records, weekInfo) {
         }
     }
 
+    // 保存当前周周日所在月份的日期范围，用于跳转时传递
+    if (weekInfo && weekInfo.end_date) {
+        const sundayDate = new Date(weekInfo.end_date + 'T00:00:00');
+        const monthStart = new Date(sundayDate.getFullYear(), sundayDate.getMonth(), 1);
+        const monthEnd = new Date(sundayDate.getFullYear(), sundayDate.getMonth() + 1, 0);
+        const monthStartStr = formatDateToLocal(monthStart);
+        const monthEndStr = formatDateToLocal(monthEnd);
+
+        // 保存到全局变量，供跳转函数使用
+        window.currentMonthStart = monthStartStr;
+        window.currentMonthEnd = monthEndStr;
+
+        // 保存当前周分页状态，用于返回时恢复
+        const state = paginationState.accounting;
+        sessionStorage.setItem('memoSystem_weekPage', state.currentPage.toString());
+    }
+
     // 更新分页信息显示
     const state = paginationState.accounting;
     const currentPageEl = document.getElementById('accounting-current-page');
@@ -319,12 +370,16 @@ function renderStatsArea(summary, records, weekInfo) {
 
 // 跳转到分类收入统计页面
 function goToIncomeStats() {
-    window.location.href = '/income-stats';
+    const startDate = window.currentMonthStart || formatDateToLocal(new Date(new Date().getFullYear(), new Date().getMonth(), 1));
+    const endDate = window.currentMonthEnd || formatDateToLocal(new Date());
+    window.location.href = `/income-stats?start=${startDate}&end=${endDate}`;
 }
 
 // 跳转到分类支出统计页面
 function goToExpenseStats() {
-    window.location.href = '/category-stats';
+    const startDate = window.currentMonthStart || formatDateToLocal(new Date(new Date().getFullYear(), new Date().getMonth(), 1));
+    const endDate = window.currentMonthEnd || formatDateToLocal(new Date());
+    window.location.href = `/category-stats?start=${startDate}&end=${endDate}`;
 }
 
 // 跳转到年度概览页面
@@ -357,12 +412,12 @@ function renderRecentRecords(records) {
         grouped[date].push(record);
     });
 
-    // 获取今天和昨天的日期
+    // 获取今天和昨天的日期 - 使用本地时区避免时区转换问题
     const today = new Date();
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
-    const todayStr = today.toISOString().split('T')[0];
-    const yesterdayStr = yesterday.toISOString().split('T')[0];
+    const todayStr = formatDateToLocal(today);
+    const yesterdayStr = formatDateToLocal(yesterday);
 
     // 周几映射
     const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
@@ -438,8 +493,8 @@ function renderRecentRecords(records) {
 
 // 切换日期分组的折叠/展开状态
 function toggleDateGroup(date) {
-    // 获取今天日期
-    const today = new Date().toISOString().split('T')[0];
+    // 获取今天日期 - 使用本地时区避免时区转换问题
+    const today = formatDateToLocal(new Date());
 
     // 今天不允许折叠
     if (date === today) {
@@ -999,6 +1054,15 @@ function switchToTab(tabName) {
 // 初始化
 document.addEventListener('DOMContentLoaded', function() {
     setupTabs();
+
+    // 检查是否有保存的周分页状态，如果有则恢复
+    const weekPage = sessionStorage.getItem('memoSystem_weekPage');
+    if (weekPage) {
+        const page = parseInt(weekPage);
+        paginationState.accounting.currentPage = page;
+        // 清除标记，避免影响后续操作
+        sessionStorage.removeItem('memoSystem_weekPage');
+    }
 
     // 检查是否有返回标签页的请求
     const returnTab = sessionStorage.getItem('memoSystem_return_tab');
