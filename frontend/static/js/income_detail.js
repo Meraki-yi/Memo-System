@@ -6,6 +6,7 @@ let categoryId = null;
 let startDate = null;
 let endDate = null;
 let categoryData = null;
+let fromYear = null; // 来自年度概览的年份
 
 // 初始化
 document.addEventListener('DOMContentLoaded', async function() {
@@ -14,6 +15,11 @@ document.addEventListener('DOMContentLoaded', async function() {
     categoryId = parseInt(urlParams.get('id'));
     startDate = urlParams.get('start');
     endDate = urlParams.get('end');
+    const yearParam = urlParams.get('year');
+
+    if (yearParam) {
+        fromYear = parseInt(yearParam);
+    }
 
     if (!categoryId) {
         showToast('缺少分类ID参数', 'error');
@@ -55,7 +61,12 @@ function toggleLoading(show) {
 
 // 返回上一页
 function goBack() {
-    window.history.back();
+    // 如果来自年度概览，返回到收入统计页面（带年份）
+    if (fromYear) {
+        window.location.href = `/income-stats?start=${startDate}&end=${endDate}&year=${fromYear}`;
+    } else {
+        window.history.back();
+    }
 }
 
 // 加载分类详情数据

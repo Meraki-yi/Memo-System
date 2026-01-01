@@ -1099,7 +1099,7 @@ async def get_category_stats(
         }
 
     # 计算总收入/支出
-    total_amount = sum(r.amount for r in records)
+    total_amount = float(sum(r.amount for r in records))
 
     # 按一级类目分组统计
     from collections import defaultdict
@@ -1108,7 +1108,7 @@ async def get_category_stats(
     for record in records:
         category = db.query(Category).filter(Category.id == record.category_id).first()
         if category:
-            category_stats[category.id]["amount"] += record.amount
+            category_stats[category.id]["amount"] += float(record.amount)
             category_stats[category.id]["count"] += 1
             category_stats[category.id]["icon"] = category.icon
             category_stats[category.id]["name"] = category.name
@@ -1121,9 +1121,9 @@ async def get_category_stats(
             "id": cat_id,
             "name": stats["name"],
             "icon": stats["icon"],
-            "amount": stats["amount"],
+            "amount": round(stats["amount"], 2),
             "record_count": stats["count"],
-            "percent": percent
+            "percent": round(percent, 2)
         })
 
     # 按金额降序排序

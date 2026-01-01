@@ -137,130 +137,93 @@ body {
     padding: 0 0 20px;
     display: flex;
     flex-direction: column;
-}
-
-/* 月份卡片 */
-.month-card {
     background: var(--bg-white);
-    position: relative;
 }
 
-.month-card-inner {
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
+/* 表头行 */
+.month-header-row {
+    display: grid;
+    grid-template-columns: 50px 1fr 1fr;
     gap: 12px;
-}
-
-/* 分隔线 */
-.month-card:not(:last-child) .month-card-inner::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 16px;
-    right: 16px;
-    height: 1px;
-    background: var(--divider-color);
-}
-
-.month-header {
-    display: flex;
-    justify-content: space-between;
+    padding: 12px 16px;
+    background: rgba(135, 206, 250, 0.15);
     align-items: center;
-    gap: 12px;
+    border-bottom: 1px solid var(--divider-color);
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
-.month-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex: 1;
-}
-
-.month-icon {
-    font-size: 1.5rem;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255, 215, 0, 0.1);
-    border-radius: 10px;
-    flex-shrink: 0;
-}
-
-.month-name {
-    font-size: 1rem;
+.header-label {
+    font-size: 0.85rem;
     font-weight: 500;
-    color: var(--text-dark);
-}
-
-.month-arrow {
-    font-size: 1.2rem;
-    color: var(--text-muted);
-}
-
-/* 月度统计 */
-.month-stats {
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-    background: var(--divider-color);
-    border-radius: var(--radius-sm);
-    overflow: hidden;
-}
-
-.month-stat-item {
-    padding: 14px 16px;
-    background: var(--bg-white);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer;
-    transition: background 0.15s ease;
-}
-
-.month-stat-item:active {
-    background: var(--bg-light);
-}
-
-.stat-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex: 1;
-}
-
-.stat-label {
-    font-size: 0.9rem;
     color: var(--text-light);
-    font-weight: 400;
 }
 
-.stat-amount {
-    font-size: 1.1rem;
-    font-weight: 600;
-    letter-spacing: -0.3px;
-}
-
-.stat-amount.income {
+.header-label.income {
     background: linear-gradient(135deg, #FF6B6B 0%, #FF5252 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
 
-.stat-amount.expense {
+.header-label.expense {
     background: linear-gradient(135deg, #66BB6A 0%, #4CAF50 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
 
-.stat-arrow {
-    font-size: 1.2rem;
-    color: var(--text-muted);
-    font-weight: bold;
+/* 月份行 - 一行显示月份、收入、支出 */
+.month-row {
+    display: grid;
+    grid-template-columns: 50px 1fr 1fr;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--bg-white);
+    align-items: center;
+    border-bottom: 1px solid var(--divider-color);
+}
+
+/* 月份行的收入和支出列背景 */
+.month-row .month-amount {
+    background: rgba(79, 172, 254, 0.08);
+    border-radius: 6px;
+    padding: 6px 10px;
+    margin: -6px -10px;
+}
+
+.month-name {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-dark);
+}
+
+.month-amount {
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+    text-align: left;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+}
+
+.month-amount:active {
+    opacity: 0.7;
+}
+
+.month-amount.income {
+    background: linear-gradient(135deg, #FF6B6B 0%, #FF5252 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.month-amount.expense {
+    background: linear-gradient(135deg, #66BB6A 0%, #4CAF50 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 /* 空状态 */
@@ -365,14 +328,26 @@ body {
         font-size: 1.8rem;
     }
 
-    .month-card-inner {
-        padding: 14px;
+    .month-header-row {
+        padding: 10px 12px;
+        gap: 8px;
     }
 
-    .month-icon {
-        width: 36px;
-        height: 36px;
-        font-size: 1.3rem;
+    .month-row {
+        padding: 12px;
+        gap: 8px;
+    }
+
+    .header-label {
+        font-size: 0.8rem;
+    }
+
+    .month-name {
+        font-size: 0.9rem;
+    }
+
+    .month-amount {
+        font-size: 0.9rem;
     }
 }
 
@@ -388,13 +363,13 @@ body {
     }
 }
 
-.month-card {
+.month-row {
     animation: fadeInUp 0.3s ease-out both;
 }
 
-.month-card:nth-child(1) { animation-delay: 0.02s; }
-.month-card:nth-child(2) { animation-delay: 0.04s; }
-.month-card:nth-child(3) { animation-delay: 0.06s; }
-.month-card:nth-child(4) { animation-delay: 0.08s; }
-.month-card:nth-child(5) { animation-delay: 0.1s; }
-.month-card:nth-child(6) { animation-delay: 0.12s; }
+.month-row:nth-child(1) { animation-delay: 0.02s; }
+.month-row:nth-child(2) { animation-delay: 0.04s; }
+.month-row:nth-child(3) { animation-delay: 0.06s; }
+.month-row:nth-child(4) { animation-delay: 0.08s; }
+.month-row:nth-child(5) { animation-delay: 0.1s; }
+.month-row:nth-child(6) { animation-delay: 0.12s; }

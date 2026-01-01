@@ -5,6 +5,9 @@ const API_BASE = '/api/accounting';
 let currentYear = new Date().getFullYear();
 let currentMonth = new Date().getMonth() + 1; // 1-12
 let categoryStatsData = null;
+let customStartDate = null;
+let customEndDate = null;
+let fromYear = null; // 来自年度概览的年份
 
 // 类目颜色池 - 精美渐变色
 // 收入类：工资、兼职、理财、其他
@@ -26,6 +29,25 @@ function getCategoryGradient(index) {
 
 // 初始化
 document.addEventListener('DOMContentLoaded', async function() {
+    // 从URL参数获取自定义日期范围和年份
+    const urlParams = new URLSearchParams(window.location.search);
+    const startDateParam = urlParams.get('start');
+    const endDateParam = urlParams.get('end');
+    const yearParam = urlParams.get('year');
+
+    if (yearParam) {
+        fromYear = parseInt(yearParam);
+    }
+
+    if (startDateParam && endDateParam) {
+        customStartDate = startDateParam;
+        customEndDate = endDateParam;
+        // 从日期中解析年月
+        const startDate = new Date(startDateParam);
+        currentYear = startDate.getFullYear();
+        currentMonth = startDate.getMonth() + 1;
+    }
+
     await loadCategoryStats();
 });
 
@@ -60,19 +82,31 @@ function toggleLoading(show) {
 
 // 返回上一页
 function goBack() {
-    window.history.back();
+    // 如果来自年度概览，返回到对应年份
+    if (fromYear) {
+        window.location.href = `/yearly-overview?year=${fromYear}`;
+    } else {
+        window.history.back();
+    }
 }
 
 // 加载分类统计数据
 async function loadCategoryStats() {
     toggleLoading(true);
     try {
-        // 计算当前月份的开始和结束日期
-        const startDate = new Date(currentYear, currentMonth - 1, 1);
-        const endDate = new Date(currentYear, currentMonth, 0); // 月末最后一天
+        // 使用自定义日期范围或当前月份
+        let startDateStr, endDateStr;
 
-        const startDateStr = formatDateToString(startDate);
-        const endDateStr = formatDateToString(endDate);
+        if (customStartDate && customEndDate) {
+            startDateStr = customStartDate;
+            endDateStr = customEndDate;
+        } else {
+            // 计算当前月份的开始和结束日期
+            const startDate = new Date(currentYear, currentMonth - 1, 1);
+            const endDate = new Date(currentYear, currentMonth, 0); // 月末最后一天
+            startDateStr = formatDateToString(startDate);
+            endDateStr = formatDateToString(endDate);
+        }
 
         // 获取分类统计数据（收入类型）
         const response = await fetch(
@@ -229,6 +263,7 @@ function goToCategoryDetail(categoryId) {
     const startDateStr = formatDateToString(startDate);
     const endDateStr = formatDateToString(endDate);
 
-    // 跳转到分类详情页面，传递分类ID和时间范围（收入类型）
-    window.location.href = `/income-detail?id=${categoryId}&start=${startDateStr}&end=${endDateStr}`;
+    // 跳转到分类详情页面，传递分类ID、时间范围和年份（收入类型）
+    const yearParam = fromYear ? `&year=${fromYear}` : '';
+    window.location.href = `/income-detail?id=${categoryId}&start=${startDateStr}&end=${endDateStr}${yearParam}`;
 }

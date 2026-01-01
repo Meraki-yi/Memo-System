@@ -51,9 +51,9 @@ function toggleLoading(show) {
     loading.style.display = show ? 'flex' : 'none';
 }
 
-// 返回上一页
+// 返回主页
 function goBack() {
-    window.history.back();
+    window.location.href = '/app';
 }
 
 // 加载年度数据
@@ -97,22 +97,9 @@ async function loadYearlyData() {
             const incomeData = incomeResponse.ok ? await incomeResponse.json() : {};
             const expenseData = expenseResponse.ok ? await expenseResponse.json() : {};
 
-            // 调试：打印API返回的数据
-            console.log(`${currentYear}年${month}月收入数据:`, incomeData);
-            console.log(`${currentYear}年${month}月支出数据:`, expenseData);
-
-            // 获取收入总额（API对income类型返回total_income）
+            // API返回total_income(收入)或total_expense(支出)
             const incomeTotal = incomeData.total_income || 0;
-
-            // 获取支出总额（API对expense类型可能返回total_expense或其他字段）
-            let expenseTotal = 0;
-            if (expenseData.total_expense !== undefined) {
-                expenseTotal = expenseData.total_expense;
-            } else if (expenseData.total_income !== undefined) {
-                expenseTotal = expenseData.total_income;
-            }
-
-            console.log(`${currentYear}年${month}月 - 收入: ${incomeTotal}, 支出: ${expenseTotal}`);
+            const expenseTotal = expenseData.total_expense || 0;
 
             monthlyData.push({
                 month: month,
@@ -160,38 +147,23 @@ function renderYearlyData() {
     emptyStateEl.style.display = 'none';
     monthlyListEl.style.display = 'block';
 
-    // 渲染月份列表
-    monthlyListEl.innerHTML = yearlyData.monthly.map(data => {
+    // 渲染表头和月份列表
+    monthlyListEl.innerHTML = `
+        <div class="month-header-row">
+            <span class="header-label">月份</span>
+            <span class="header-label income">收入</span>
+            <span class="header-label expense">支出</span>
+        </div>
+    ` + yearlyData.monthly.map(data => {
         const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月',
                            '7月', '8月', '9月', '10月', '11月', '12月'];
         const monthName = monthNames[data.month - 1];
 
         return `
-            <div class="month-card">
-                <div class="month-card-inner">
-                    <div class="month-header">
-                        <div class="month-left">
-                            <span class="month-icon">📅</span>
-                            <span class="month-name">${monthName}</span>
-                        </div>
-                    </div>
-                    <div class="month-stats">
-                        <div class="month-stat-item" onclick="goToIncomeStats('${data.startDate}', '${data.endDate}')">
-                            <div class="stat-left">
-                                <span class="stat-label">收入</span>
-                                <span class="stat-amount income">¥${data.income.toFixed(2)}</span>
-                            </div>
-                            <span class="stat-arrow">›</span>
-                        </div>
-                        <div class="month-stat-item" onclick="goToExpenseStats('${data.startDate}', '${data.endDate}')">
-                            <div class="stat-left">
-                                <span class="stat-label">支出</span>
-                                <span class="stat-amount expense">¥${data.expense.toFixed(2)}</span>
-                            </div>
-                            <span class="stat-arrow">›</span>
-                        </div>
-                    </div>
-                </div>
+            <div class="month-row">
+                <span class="month-name">${monthName}</span>
+                <span class="month-amount income" onclick="goToIncomeStats('${data.startDate}', '${data.endDate}')">${data.income.toFixed(2)}</span>
+                <span class="month-amount expense" onclick="goToExpenseStats('${data.startDate}', '${data.endDate}')">${data.expense.toFixed(2)}</span>
             </div>
         `;
     }).join('');
@@ -214,12 +186,12 @@ function updateYearDisplay() {
 
 // 跳转到收入统计页面
 function goToIncomeStats(startDate, endDate) {
-    window.location.href = `/income-stats?start=${startDate}&end=${endDate}`;
+    window.location.href = `/income-stats?start=${startDate}&end=${endDate}&year=${currentYear}`;
 }
 
 // 跳转到支出统计页面
 function goToExpenseStats(startDate, endDate) {
-    window.location.href = `/category-stats?start=${startDate}&end=${endDate}`;
+    window.location.href = `/category-stats?start=${startDate}&end=${endDate}&year=${currentYear}`;
 }
 
 // 切换年份
