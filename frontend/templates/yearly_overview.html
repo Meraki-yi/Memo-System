@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>年度概览 - 备忘录系统</title>
+    <link rel="stylesheet" href="/static/css/yearly_overview.css">
+</head>
+<body>
+    <div class="yearly-container">
+        <!-- 顶部导航栏 -->
+        <header class="yearly-header">
+            <button class="back-btn" onclick="goBack()">
+                ←
+            </button>
+            <h1 class="page-title">年度概览</h1>
+            <div class="header-spacer"></div>
+        </header>
+
+        <!-- 年份显示区 -->
+        <div class="year-display-section">
+            <button class="year-nav-btn" id="prevYearBtn" onclick="changeYear(-1)">
+                ‹
+            </button>
+            <div class="year-display" id="yearDisplay">
+                <!-- 动态显示年份 -->
+            </div>
+            <button class="year-nav-btn" id="nextYearBtn" onclick="changeYear(1)">
+                ›
+            </button>
+        </div>
+
+        <!-- 月度列表 -->
+        <div class="monthly-list" id="monthlyList">
+            <!-- 动态加载月度数据 -->
+        </div>
+
+        <!-- 空状态 -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <span class="icon">📊</span>
+            <p>本年度暂无数据</p>
+        </div>
+    </div>
+
+    <!-- Loading遮罩 -->
+    <div class="loading-overlay" id="loading">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Toast提示 -->
+    <div class="toast" id="toast"></div>
+
+    <script src="/static/js/yearly_overview.js"></script>
+</body>
+</html>

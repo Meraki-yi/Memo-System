@@ -290,18 +290,15 @@ function renderStatsArea(summary, records) {
     if (monthIncomeEl) monthIncomeEl.textContent = `¥${summary.total_income.toFixed(2)}`;
     if (monthExpenseEl) monthExpenseEl.textContent = `¥${summary.total_expense.toFixed(2)}`;
 
-    // 更新周轮次标签
-    const state = paginationState.accounting;
-    const weekBadge = document.getElementById('currentWeekBadge');
-    if (weekBadge) {
-        if (state.currentPage === 1) {
-            weekBadge.textContent = '本周';
-        } else {
-            weekBadge.textContent = `第${state.currentPage}周`;
-        }
+    // 更新年份显示
+    const currentYear = new Date().getFullYear();
+    const yearNumberEl = document.getElementById('currentYearNumber');
+    if (yearNumberEl) {
+        yearNumberEl.textContent = currentYear.toString();
     }
 
     // 更新分页信息显示
+    const state = paginationState.accounting;
     const currentPageEl = document.getElementById('accounting-current-page');
     const totalPagesEl = document.getElementById('accounting-total-pages');
     const totalItemsEl = document.getElementById('accounting-total-items');
@@ -318,6 +315,12 @@ function goToIncomeStats() {
 // 跳转到分类支出统计页面
 function goToExpenseStats() {
     window.location.href = '/category-stats';
+}
+
+// 跳转到年度概览页面
+function goToYearlyOverview() {
+    const currentYear = new Date().getFullYear();
+    window.location.href = `/yearly-overview?year=${currentYear}`;
 }
 
 // 渲染最近记录

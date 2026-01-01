@@ -3,7 +3,8 @@
     "allow": [
       "Bash(find:*)",
       "Bash(git checkout:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(git restore:*)"
     ]
   }
 }

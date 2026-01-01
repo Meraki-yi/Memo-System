@@ -1062,6 +1062,12 @@ async def read_income_detail(request: Request):
     check_auth(request)
     return templates.TemplateResponse("income_detail.html", {"request": request})
 
+# 年度概览页面路由
+@app.get("/yearly-overview", response_class=HTMLResponse)
+async def read_yearly_overview(request: Request):
+    check_auth(request)
+    return templates.TemplateResponse("yearly_overview.html", {"request": request})
+
 # ==================== 分类统计API ====================
 
 # 获取分类统计数据（支持收入和支出）

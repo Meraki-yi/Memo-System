@@ -559,6 +559,74 @@ body {
     flex-shrink: 0;
 }
 
+/* 年份日历图标 */
+.year-calendar-icon {
+    position: relative;
+    width: 56px;
+    height: 50px;
+    background: linear-gradient(135deg, #FFF5F5, #FFF9E6);
+    border: 2px solid #FFD700;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: var(--transition);
+    box-shadow: 0 2px 6px rgba(255, 215, 0, 0.2);
+    padding-bottom: 6px;
+    user-select: none;
+}
+
+.year-calendar-icon:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(255, 215, 0, 0.3);
+    border-color: #FFA500;
+}
+
+.year-calendar-icon:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(255, 215, 0, 0.2);
+}
+
+/* 日历图标顶部装饰条 */
+.year-calendar-icon::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 18px;
+    background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+    border-radius: 8px 8px 0 0;
+    pointer-events: none;
+}
+
+/* 日历图标顶部两个小圆圈（装订环效果） */
+.year-calendar-icon::after {
+    content: '';
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 24px;
+    height: 6px;
+    background:
+        radial-gradient(circle, #CC4444 3px, transparent 3.5px) top left / 50% 100% no-repeat,
+        radial-gradient(circle, #CC4444 3px, transparent 3.5px) top right / 50% 100% no-repeat;
+    pointer-events: none;
+}
+
+.year-number {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--primary-dark);
+    letter-spacing: -0.5px;
+    z-index: 1;
+    pointer-events: none;
+}
+
 /* 周报内容区域 - 随页面滚动，内容自动向上推移 */
 .week-report-scrollable {
     /* 不再设置flex: 1和overflow-y，让内容随页面自然滚动 */
