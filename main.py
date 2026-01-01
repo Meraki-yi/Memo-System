@@ -694,7 +694,10 @@ async def get_records(
 
         # 获取请求的周（week_page 从 1 开始）
         week_index = week_page - 1
-        if week_index < 0 or week_index >= total_weeks:
+
+        # 如果请求的页码超出范围，返回空数据
+        # 但保留分页信息，这样前端可以正确显示按钮状态
+        if week_index < 0 or week_index >= total_weeks or total_weeks == 0:
             return {
                 "items": [],
                 "week_info": None,

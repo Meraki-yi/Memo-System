@@ -220,10 +220,13 @@ async function loadAccountingData() {
         const state = paginationState.accounting;
 
         // 根据分页模式构建请求 URL
+        // 注意：周分页时不限制日期范围，允许跨年查看所有历史数据
         let recordsUrl;
         if (state.useWeekPagination) {
-            recordsUrl = `${ACCOUNTING_API_BASE}/records?start_date=${monthStartStr}&end_date=${todayStr}&week_page=${state.currentPage}`;
+            // 周分页：不设置日期限制，获取所有历史数据
+            recordsUrl = `${ACCOUNTING_API_BASE}/records?week_page=${state.currentPage}`;
         } else {
+            // 普通分页：限制在本月
             recordsUrl = `${ACCOUNTING_API_BASE}/records?start_date=${monthStartStr}&end_date=${todayStr}&page=${state.currentPage}&page_size=${state.pageSize}`;
         }
 
@@ -252,7 +255,7 @@ async function loadAccountingData() {
         state.currentPage = recordsData.pagination.page;
 
         // 渲染统计数据（周报 + 月入口）
-        renderStatsArea(summary, recordsData.items);
+        renderStatsArea(summary, recordsData.items, recordsData.week_info);
         renderRecentRecords(recordsData.items);
 
         // 如果有周信息，显示周范围
@@ -270,7 +273,7 @@ async function loadAccountingData() {
 }
 
 // 渲染统计区（周报 + 月入口）
-function renderStatsArea(summary, records) {
+function renderStatsArea(summary, records, weekInfo) {
     // 计算本周数据（从当前记录中计算）
     const weekIncome = records.filter(r => r.record_type === 'income').reduce((sum, r) => sum + r.amount, 0);
     const weekExpense = records.filter(r => r.record_type === 'expense').reduce((sum, r) => sum + r.amount, 0);
@@ -290,11 +293,18 @@ function renderStatsArea(summary, records) {
     if (monthIncomeEl) monthIncomeEl.textContent = `¥${summary.total_income.toFixed(2)}`;
     if (monthExpenseEl) monthExpenseEl.textContent = `¥${summary.total_expense.toFixed(2)}`;
 
-    // 更新年份显示
-    const currentYear = new Date().getFullYear();
+    // 更新年份显示：根据本周周日日期的年份
     const yearNumberEl = document.getElementById('currentYearNumber');
     if (yearNumberEl) {
-        yearNumberEl.textContent = currentYear.toString();
+        if (weekInfo && weekInfo.end_date) {
+            // 根据周日日期的年份显示
+            const sundayDate = new Date(weekInfo.end_date);
+            yearNumberEl.textContent = sundayDate.getFullYear().toString();
+        } else {
+            // 如果没有周信息，显示当前年份
+            const currentYear = new Date().getFullYear();
+            yearNumberEl.textContent = currentYear.toString();
+        }
     }
 
     // 更新分页信息显示
@@ -1091,10 +1101,13 @@ function updatePaginationUI(tab) {
 }
 
 // 记账分页切换
+// 注意：周分页中，页码越大代表周越早（时间越久远）
+// 第1页 = 最新周，第2页 = 上一周，第3页 = 上上周
 function changeAccountingPage(delta) {
     const state = paginationState.accounting;
     const newPage = state.currentPage + delta;
 
+    // 检查页码是否在有效范围内
     if (newPage >= 1 && newPage <= state.totalPages) {
         state.currentPage = newPage;
         loadAccountingData();
@@ -1154,6 +1167,18 @@ function updateBottomBarButtons() {
     const prevBtn = document.getElementById('prevWeekBtn');
     const nextBtn = document.getElementById('nextWeekBtn');
 
-    prevBtn.disabled = state.currentPage <= 1;
-    nextBtn.disabled = state.currentPage >= state.totalPages;
+    // 只有当没有数据时才禁用所有按钮
+    const hasNoData = state.totalPages === 0 || state.totalItems === 0;
+
+    // "上一周"（看更早的数据）：当已经是最早的一周时禁用
+    // "下一周"（看更新的数据）：当已经是最新的一周（第1页）时禁用
+    if (hasNoData) {
+        prevBtn.disabled = true;
+        nextBtn.disabled = true;
+    } else {
+        // 上一周：可以查看更早的周（页码增加）
+        prevBtn.disabled = state.currentPage >= state.totalPages;
+        // 下一周：可以查看更新的周（页码减少），但在第1页时禁用
+        nextBtn.disabled = state.currentPage <= 1;
+    }
 }
