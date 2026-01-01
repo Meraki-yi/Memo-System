@@ -431,33 +431,20 @@ body {
     flex-direction: column;
 }
 
-/* 统计区域 - 白色直角框风格 */
+/* 统计区域 - 白色直角框风格 + 蓝金渐变边框 */
 #accounting-tab .stats-area {
     background: var(--bg-white);
     margin: 0 0 0 0;
     border-radius: 0;
     box-shadow: none;
-    border: none;
+    border: 1.5px solid;
+    border-image: linear-gradient(135deg, #4A90D9 0%, #FFD700 50%, #D4AF37 100%) 1;
     overflow: visible;
     flex-shrink: 0;
     position: relative;
 }
 
-/* 统计区域底部渐变过渡 */
-#accounting-tab .stats-area::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg,
-        transparent 0%,
-        #E0E0E0 10%,
-        #E0E0E0 90%,
-        transparent 100%
-    );
-}
+/* 移除底部渐变线，保持与下方内容自然过渡 */
 
 /* 移除底部margin，使用padding代替避免滚动时的跳动 */
 #accounting-tab .stats-area > *:last-child {
@@ -524,7 +511,7 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 15px 15px 8px 15px;
-    gap: 8px;
+    gap: 12px;
     flex-shrink: 0;
     background: var(--bg-white);
     /* 固定在容器顶部 */
@@ -534,19 +521,63 @@ body {
     border-radius: 0;
 }
 
+/* 周日期范围日历图标 */
+.week-calendar-icon {
+    position: relative;
+    min-width: 120px;
+    height: 50px;
+    background: linear-gradient(135deg, #E3F2FD, #F0F8FF);
+    border: 2px solid #4A90D9;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 16px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: var(--transition);
+    box-shadow: 0 2px 6px rgba(74, 144, 217, 0.2);
+    user-select: none;
+}
+
+.week-calendar-icon:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(74, 144, 217, 0.3);
+    border-color: #357ABD;
+}
+
+.week-calendar-icon:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(74, 144, 217, 0.2);
+}
+
+/* 日历图标顶部装饰条（周日期） */
+.week-calendar-icon::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(135deg, #4A90D9, #5BA3F0);
+    border-radius: 8px 8px 0 0;
+    pointer-events: none;
+}
+
+.week-calendar-icon .week-date-range {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    text-align: center;
+    letter-spacing: 0.3px;
+    line-height: 1.2;
+}
+
 .section-title {
     font-size: 1rem;
     font-weight: 700;
     color: var(--text-dark);
     flex-shrink: 0;
-}
-
-.week-date-range {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--text-light);
-    flex: 1;
-    text-align: center;
 }
 
 .week-badge {
@@ -621,7 +652,7 @@ body {
 .year-number {
     font-size: 0.95rem;
     font-weight: 800;
-    color: var(--primary-dark);
+    color: var(--text-dark);
     letter-spacing: -0.5px;
     z-index: 1;
     pointer-events: none;
@@ -1837,8 +1868,13 @@ body {
         /* 移除max-height，让内容自然撑开 */
     }
 
-    .week-date-range {
-        font-size: 0.75rem;
+    .week-calendar-icon {
+        min-width: 100px;
+        padding: 0 12px;
+    }
+
+    .week-calendar-icon .week-date-range {
+        font-size: 0.7rem;
     }
 
     .item-meta {
