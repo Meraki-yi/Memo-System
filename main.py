@@ -80,7 +80,6 @@ class Memo(Base):
     content = Column(Text, nullable=False)
     is_completed = Column(Boolean, default=False)
     is_frequent = Column(Boolean, default=False)  # 是否标记为常用
-    images = Column(JSON, nullable=True)  # 存储图片base64数组
     created_at = Column(DateTime, nullable=False, default=lambda: datetime.now(LOCAL_TZ))
     updated_at = Column(DateTime, nullable=False, default=lambda: datetime.now(LOCAL_TZ), onupdate=lambda: datetime.now(LOCAL_TZ))
 
@@ -175,13 +174,11 @@ class MemoCreate(BaseModel):
     content: str
     is_completed: Optional[bool] = False
     is_frequent: Optional[bool] = False
-    images: Optional[list] = None  # 图片base64数组
 
 class MemoUpdate(BaseModel):
     content: Optional[str] = None
     is_completed: Optional[bool] = None
     is_frequent: Optional[bool] = None
-    images: Optional[list] = None  # 图片base64数组
 
 # 记账功能 Pydantic 模型
 class CategoryCreate(BaseModel):
@@ -395,7 +392,6 @@ async def get_memos(
                     "content": m.content,
                     "is_completed": getattr(m, 'is_completed', False),
                     "is_frequent": getattr(m, 'is_frequent', False),
-                    "images": m.images if m.images else [],
                     "created_at": m.created_at.isoformat(),
                     "updated_at": m.updated_at.isoformat()
                 }
@@ -423,8 +419,7 @@ async def create_memo(
     db_memo = Memo(
         content=memo.content,
         is_completed=memo.is_completed if memo.is_completed is not None else False,
-        is_frequent=memo.is_frequent if memo.is_frequent is not None else False,
-        images=memo.images if memo.images else []
+        is_frequent=memo.is_frequent if memo.is_frequent is not None else False
     )
     db.add(db_memo)
     db.commit()
@@ -434,7 +429,6 @@ async def create_memo(
         "content": db_memo.content,
         "is_completed": getattr(db_memo, 'is_completed', False),
         "is_frequent": getattr(db_memo, 'is_frequent', False),
-        "images": db_memo.images if db_memo.images else [],
         "created_at": db_memo.created_at.isoformat(),
         "updated_at": db_memo.updated_at.isoformat()
     }
@@ -473,7 +467,6 @@ async def get_frequent_memos(
                 "content": m.content,
                 "is_completed": getattr(m, 'is_completed', False),
                 "is_frequent": getattr(m, 'is_frequent', False),
-                "images": m.images if m.images else [],
                 "created_at": m.created_at.isoformat(),
                 "updated_at": m.updated_at.isoformat()
             }
@@ -504,7 +497,6 @@ async def get_memo(
         "content": db_memo.content,
         "is_completed": getattr(db_memo, 'is_completed', False),
         "is_frequent": getattr(db_memo, 'is_frequent', False),
-        "images": db_memo.images if db_memo.images else [],
         "created_at": db_memo.created_at.isoformat(),
         "updated_at": db_memo.updated_at.isoformat()
     }
@@ -529,8 +521,6 @@ async def update_memo(
     if memo.is_frequent is not None:
         if hasattr(db_memo, 'is_frequent'):
             db_memo.is_frequent = memo.is_frequent
-    if memo.images is not None:
-        db_memo.images = memo.images
 
     db_memo.updated_at = datetime.now(LOCAL_TZ)
     db.commit()
@@ -540,7 +530,6 @@ async def update_memo(
         "content": db_memo.content,
         "is_completed": getattr(db_memo, 'is_completed', False),
         "is_frequent": getattr(db_memo, 'is_frequent', False),
-        "images": db_memo.images if db_memo.images else [],
         "created_at": db_memo.created_at.isoformat(),
         "updated_at": db_memo.updated_at.isoformat()
     }
@@ -1533,15 +1522,10 @@ async def export_memos_sql(request: Request, db: Session = Depends(get_db)):
     insert_statements = []
 
     for memo in memos:
-        # 处理图片数据 - 将JSON数组转换为SQL JSON格式
-        images_json = 'NULL'
-        if memo.images:
-            images_json = "'" + json.dumps(memo.images).replace("'", "''") + "'"
-
         insert_statements.append(
-            f"INSERT INTO memos (id, content, is_completed, images, created_at, updated_at) VALUES "
-            f"({memo.id}, {escape_sql_string(memo.content)}, {1 if memo.is_completed else 0}, "
-            f"{images_json}, "
+            f"INSERT INTO memos (id, content, is_completed, is_frequent, created_at, updated_at) VALUES "
+            f"({memo.id}, {escape_sql_string(memo.content)}, {1 if getattr(memo, 'is_completed', False) else 0}, "
+            f"{1 if getattr(memo, 'is_frequent', False) else 0}, "
             f"'{memo.created_at.strftime('%Y-%m-%d %H:%M:%S')}', '{memo.updated_at.strftime('%Y-%m-%d %H:%M:%S')}');"
         )
 

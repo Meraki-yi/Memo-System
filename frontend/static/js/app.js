@@ -4,9 +4,6 @@ let currentEditItem = null;
 let deleteItemId = null;
 let deleteItemType = null;
 
-// 图片上传相关变量
-let uploadedImages = []; // 存储上传的图片数据 (base64或文件对象)
-
 // 分页状态管理 - 每个标签页独立的分页状态
 const paginationState = {
     accounting: {
@@ -143,73 +140,6 @@ function formatFullDateTime(dateString) {
     const seconds = String(date.getSeconds()).padStart(2, '0');
 
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-}
-
-// ==================== 图片上传相关功能 ====================
-
-// 处理图片上传
-function handleImageUpload(event) {
-    const files = event.target.files;
-    if (!files || files.length === 0) return;
-
-    Array.from(files).forEach(file => {
-        if (!file.type.startsWith('image/')) {
-            showToast('请选择图片文件', 'error');
-            return;
-        }
-
-        // 限制文件大小（例如 5MB）
-        if (file.size > 5 * 1024 * 1024) {
-            showToast('图片大小不能超过5MB', 'error');
-            return;
-        }
-
-        // 读取图片并转换为 base64
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const imageData = {
-                id: Date.now() + Math.random(), // 生成唯一ID
-                data: e.target.result, // base64 数据
-                name: file.name
-            };
-            uploadedImages.push(imageData);
-            updateImagePreview();
-        };
-        reader.readAsDataURL(file);
-    });
-
-    // 清空 input 以允许重复上传同一文件
-    event.target.value = '';
-}
-
-// 更新图片预览
-function updateImagePreview() {
-    const container = document.getElementById('imagePreviewContainer');
-    if (!container) return;
-
-    if (uploadedImages.length === 0) {
-        container.innerHTML = '';
-        return;
-    }
-
-    container.innerHTML = uploadedImages.map(img => `
-        <div class="image-preview-item">
-            <img src="${img.data}" alt="${img.name}">
-            <button class="image-preview-remove" onclick="removeImage(${img.id})" title="删除">×</button>
-        </div>
-    `).join('');
-}
-
-// 删除图片
-function removeImage(imageId) {
-    uploadedImages = uploadedImages.filter(img => img.id !== imageId);
-    updateImagePreview();
-}
-
-// 清空图片
-function clearImages() {
-    uploadedImages = [];
-    updateImagePreview();
 }
 
 // 标签页切换
@@ -651,17 +581,7 @@ function renderItems(items) {
                 </div>
             `;
         } else {
-            // 备忘录卡片 - 添加图片显示支持
-            const imagesHtml = item.images && item.images.length > 0 ? `
-                <div class="memo-images">
-                    ${item.images.map(img => `
-                        <div class="memo-image-item">
-                            <img src="${img}" alt="备忘录图片">
-                        </div>
-                    `).join('')}
-                </div>
-            ` : '';
-
+            // 备忘录卡片
             return `
                 <div class="item-card memo-card ${item.is_completed ? 'completed' : ''}" data-id="${item.id}">
                     <div class="item-content">
@@ -672,7 +592,6 @@ function renderItems(items) {
                         </label>
                         <p class="item-text">${item.content.replace(/\n/g, '<br>')}</p>
                     </div>
-                    ${imagesHtml}
                     <div class="memo-card-footer">
                         <div class="memo-times">
                             <span class="time">创建: ${createdFull}</span>
@@ -708,13 +627,11 @@ function showAddModal(type) {
         reflectionEditFields.style.display = 'none';
         memoEditFields.style.display = 'block';
         document.getElementById('itemMemoContent').value = '';
-        clearImages();
     } else {
         reflectionEditFields.style.display = 'block';
         memoEditFields.style.display = 'none';
         document.getElementById('itemTitle').value = '';
         document.getElementById('itemContent').value = '';
-        clearImages();
     }
 
     // 保存当前操作类型，用于saveItem判断
@@ -758,18 +675,6 @@ async function editItem(id) {
                     textarea.dispatchEvent(new Event('input', { bubbles: true }));
                 }
             });
-            // 加载已有的图片（如果有）
-            clearImages();
-            if (item.images && item.images.length > 0) {
-                item.images.forEach((imgData, index) => {
-                    uploadedImages.push({
-                        id: Date.now() + index,
-                        data: imgData,
-                        name: `image_${index}.jpg`
-                    });
-                });
-                updateImagePreview();
-            }
         } else {
             reflectionEditFields.style.display = 'block';
             memoEditFields.style.display = 'none';
@@ -782,8 +687,6 @@ async function editItem(id) {
                 document.getElementById('itemTitle').value = item.content.substring(0, firstNewlineIndex);
                 document.getElementById('itemContent').value = item.content.substring(firstNewlineIndex + 1);
             }
-            // 反思不使用图片，清空图片数组
-            clearImages();
         }
 
         document.getElementById('itemModal').classList.add('show');
@@ -836,10 +739,6 @@ async function saveItem() {
             if (!isReflection) {
                 updateData.is_completed = isCompleted;
             }
-            // 如果有新上传的图片，添加到更新数据中
-            if (uploadedImages.length > 0) {
-                updateData.images = uploadedImages.map(img => img.data);
-            }
 
             response = await fetch(`${API_BASE}${endpoint}/${currentEditItem.id}`, getAuthOptions({
                 method: 'PUT',
@@ -850,10 +749,6 @@ async function saveItem() {
             const createData = { content };
             if (!isReflection) {
                 createData.is_completed = isCompleted;
-            }
-            // 如果有上传的图片，添加到创建数据中
-            if (uploadedImages.length > 0) {
-                createData.images = uploadedImages.map(img => img.data);
             }
 
             response = await fetch(`${API_BASE}${endpoint}`, getAuthOptions({
@@ -916,8 +811,6 @@ function showDeleteModal(id) {
 function closeModal() {
     document.getElementById('itemModal').classList.remove('show');
     currentEditItem = null;
-    // 清空已上传的图片
-    clearImages();
 }
 
 function closeDeleteModal() {
