@@ -9,11 +9,12 @@ from datetime import datetime
 from decimal import Decimal
 from zoneinfo import ZoneInfo
 import csv
+import json
 from io import StringIO
 
 # 本地时区配置（根据需要修改）
 LOCAL_TZ = ZoneInfo("Asia/Shanghai")  # 中国时区，如需其他时区请修改
-from sqlalchemy import create_engine, Column, Integer, String, Text, Boolean, DateTime, Date, Numeric
+from sqlalchemy import create_engine, Column, Integer, String, Text, Boolean, DateTime, Date, Numeric, JSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 
@@ -78,6 +79,8 @@ class Memo(Base):
     id = Column(Integer, primary_key=True,index=True)
     content = Column(Text, nullable=False)
     is_completed = Column(Boolean, default=False)
+    is_frequent = Column(Boolean, default=False)  # 是否标记为常用
+    images = Column(JSON, nullable=True)  # 存储图片base64数组
     created_at = Column(DateTime, nullable=False, default=lambda: datetime.now(LOCAL_TZ))
     updated_at = Column(DateTime, nullable=False, default=lambda: datetime.now(LOCAL_TZ), onupdate=lambda: datetime.now(LOCAL_TZ))
 
@@ -170,10 +173,14 @@ class ReflectionUpdate(BaseModel):
 
 class MemoCreate(BaseModel):
     content: str
+    is_frequent: Optional[bool] = False
+    images: Optional[list] = None  # 图片base64数组
 
 class MemoUpdate(BaseModel):
     content: Optional[str] = None
     is_completed: Optional[bool] = None
+    is_frequent: Optional[bool] = None
+    images: Optional[list] = None  # 图片base64数组
 
 # 记账功能 Pydantic 模型
 class CategoryCreate(BaseModel):
@@ -240,6 +247,16 @@ async def read_app(request: Request):
         )
     return templates.TemplateResponse("index.html", {"request": request})
 
+@app.get("/frequents", response_class=HTMLResponse)
+async def read_frequents(request: Request):
+    # 检查是否已认证
+    if not request.session.get("authenticated"):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="未认证，请先登录"
+        )
+    return templates.TemplateResponse("frequents.html", {"request": request})
+
 # 验证中间件
 def check_auth(request: Request):
     """检查是否已认证"""
@@ -263,9 +280,9 @@ async def get_reflections(
     total = db.query(Reflection).count()
     # 计算总页数
     total_pages = (total + page_size - 1) // page_size if total > 0 else 1
-    # 分页查询
+    # 分页查询 - 按更新时间排序（修改过的排在前面）
     offset = (page - 1) * page_size
-    reflections = db.query(Reflection).order_by(Reflection.created_at.desc()).offset(offset).limit(page_size).all()
+    reflections = db.query(Reflection).order_by(Reflection.updated_at.desc()).offset(offset).limit(page_size).all()
     return {
         "items": [
             {
@@ -355,15 +372,28 @@ async def get_memos(
     total = db.query(Memo).count()
     # 计算总页数
     total_pages = (total + page_size - 1) // page_size if total > 0 else 1
-    # 分页查询
+    # 分页查询 - 使用子查询避免对大JSON字段排序
+    # 按更新时间排序（修改过的排在前面）
     offset = (page - 1) * page_size
-    memos = db.query(Memo).order_by(Memo.created_at.desc()).offset(offset).limit(page_size).all()
+    # 先获取排序后的ID列表
+    memo_ids_query = db.query(Memo.id).order_by(Memo.updated_at.desc()).offset(offset).limit(page_size)
+    memo_ids = [id[0] for id in memo_ids_query.all()]
+    # 再根据ID列表获取完整数据
+    if memo_ids:
+        memos = db.query(Memo).filter(Memo.id.in_(memo_ids)).all()
+        # 按原始ID顺序排序
+        memos_dict = {m.id: m for m in memos}
+        memos = [memos_dict[id] for id in memo_ids]
+    else:
+        memos = []
     return {
         "items": [
             {
                 "id": m.id,
                 "content": m.content,
                 "is_completed": m.is_completed,
+                "is_frequent": m.is_frequent,
+                "images": m.images if m.images else [],
                 "created_at": m.created_at.isoformat(),
                 "updated_at": m.updated_at.isoformat()
             }
@@ -384,7 +414,12 @@ async def create_memo(
     db: Session = Depends(get_db)
 ):
     check_auth(request)
-    db_memo = Memo(content=memo.content, is_completed=False)
+    db_memo = Memo(
+        content=memo.content,
+        is_completed=memo.is_completed if hasattr(memo, 'is_completed') else False,
+        is_frequent=memo.is_frequent if memo.is_frequent else False,
+        images=memo.images if memo.images else []
+    )
     db.add(db_memo)
     db.commit()
     db.refresh(db_memo)
@@ -392,6 +427,78 @@ async def create_memo(
         "id": db_memo.id,
         "content": db_memo.content,
         "is_completed": db_memo.is_completed,
+        "is_frequent": db_memo.is_frequent,
+        "images": db_memo.images if db_memo.images else [],
+        "created_at": db_memo.created_at.isoformat(),
+        "updated_at": db_memo.updated_at.isoformat()
+    }
+
+@app.get("/api/memos/frequents")
+async def get_frequent_memos(
+    request: Request,
+    page: int = 1,
+    page_size: int = 5,
+    db: Session = Depends(get_db)
+):
+    """获取常用备忘录列表"""
+    check_auth(request)
+    # 计算常用备忘录总数
+    total = db.query(Memo).filter(Memo.is_frequent == True).count()
+    # 计算总页数
+    total_pages = (total + page_size - 1) // page_size if total > 0 else 1
+    # 分页查询 - 使用子查询避免对大JSON字段排序
+    # 按更新时间排序（修改过的排在前面）
+    offset = (page - 1) * page_size
+    # 先获取排序后的常用备忘录ID列表
+    frequent_memo_ids_query = db.query(Memo.id).filter(Memo.is_frequent == True).order_by(Memo.updated_at.desc()).offset(offset).limit(page_size)
+    memo_ids = [id[0] for id in frequent_memo_ids_query.all()]
+    # 再根据ID列表获取完整数据
+    if memo_ids:
+        memos = db.query(Memo).filter(Memo.id.in_(memo_ids)).all()
+        # 按原始ID顺序排序
+        memos_dict = {m.id: m for m in memos}
+        memos = [memos_dict[id] for id in memo_ids]
+    else:
+        memos = []
+    return {
+        "items": [
+            {
+                "id": m.id,
+                "content": m.content,
+                "is_completed": m.is_completed,
+                "is_frequent": m.is_frequent,
+                "images": m.images if m.images else [],
+                "created_at": m.created_at.isoformat(),
+                "updated_at": m.updated_at.isoformat()
+            }
+            for m in memos
+        ],
+        "pagination": {
+            "page": page,
+            "page_size": page_size,
+            "total": total,
+            "total_pages": total_pages
+        }
+    }
+
+@app.get("/api/memos/{memo_id}")
+async def get_memo(
+    request: Request,
+    memo_id: int,
+    db: Session = Depends(get_db)
+):
+    """获取单个备忘录"""
+    check_auth(request)
+    db_memo = db.query(Memo).filter(Memo.id == memo_id).first()
+    if not db_memo:
+        raise HTTPException(status_code=404, detail="Memo not found")
+
+    return {
+        "id": db_memo.id,
+        "content": db_memo.content,
+        "is_completed": db_memo.is_completed,
+        "is_frequent": db_memo.is_frequent,
+        "images": db_memo.images if db_memo.images else [],
         "created_at": db_memo.created_at.isoformat(),
         "updated_at": db_memo.updated_at.isoformat()
     }
@@ -412,6 +519,10 @@ async def update_memo(
         db_memo.content = memo.content
     if memo.is_completed is not None:
         db_memo.is_completed = memo.is_completed
+    if memo.is_frequent is not None:
+        db_memo.is_frequent = memo.is_frequent
+    if memo.images is not None:
+        db_memo.images = memo.images
 
     db_memo.updated_at = datetime.now(LOCAL_TZ)
     db.commit()
@@ -420,6 +531,8 @@ async def update_memo(
         "id": db_memo.id,
         "content": db_memo.content,
         "is_completed": db_memo.is_completed,
+        "is_frequent": db_memo.is_frequent,
+        "images": db_memo.images if db_memo.images else [],
         "created_at": db_memo.created_at.isoformat(),
         "updated_at": db_memo.updated_at.isoformat()
     }
@@ -1237,7 +1350,8 @@ async def export_accounting_csv(request: Request, db: Session = Depends(get_db))
 @app.get("/api/reflections/export/csv")
 async def export_reflections_csv(request: Request, db: Session = Depends(get_db)):
     check_auth(request)
-    reflections = db.query(Reflection).order_by(Reflection.created_at.desc()).all()
+    # 按更新时间排序
+    reflections = db.query(Reflection).order_by(Reflection.updated_at.desc()).all()
 
     output = StringIO()
     writer = csv.writer(output)
@@ -1266,7 +1380,14 @@ async def export_reflections_csv(request: Request, db: Session = Depends(get_db)
 @app.get("/api/memos/export/csv")
 async def export_memos_csv(request: Request, db: Session = Depends(get_db)):
     check_auth(request)
-    memos = db.query(Memo).order_by(Memo.created_at.desc()).all()
+    # 使用子查询避免对大JSON字段排序，按更新时间排序
+    memo_ids_query = db.query(Memo.id).order_by(Memo.updated_at.desc())
+    memo_ids = [id[0] for id in memo_ids_query.all()]
+    if memo_ids:
+        memos_dict = {m.id: m for m in db.query(Memo).filter(Memo.id.in_(memo_ids)).all()}
+        memos = [memos_dict[id] for id in memo_ids]
+    else:
+        memos = []
 
     output = StringIO()
     writer = csv.writer(output)
@@ -1361,8 +1482,8 @@ async def export_accounting_sql(request: Request, db: Session = Depends(get_db))
 async def export_reflections_sql(request: Request, db: Session = Depends(get_db)):
     check_auth(request)
 
-    # 获取所有反思记录
-    reflections = db.query(Reflection).order_by(Reflection.created_at.desc()).all()
+    # 获取所有反思记录，按更新时间排序
+    reflections = db.query(Reflection).order_by(Reflection.updated_at.desc()).all()
 
     # 生成INSERT语句
     insert_statements = []
@@ -1391,16 +1512,28 @@ async def export_reflections_sql(request: Request, db: Session = Depends(get_db)
 async def export_memos_sql(request: Request, db: Session = Depends(get_db)):
     check_auth(request)
 
-    # 获取所有备忘录
-    memos = db.query(Memo).order_by(Memo.created_at.desc()).all()
+    # 使用子查询避免对大JSON字段排序，按更新时间排序
+    memo_ids_query = db.query(Memo.id).order_by(Memo.updated_at.desc())
+    memo_ids = [id[0] for id in memo_ids_query.all()]
+    if memo_ids:
+        memos_dict = {m.id: m for m in db.query(Memo).filter(Memo.id.in_(memo_ids)).all()}
+        memos = [memos_dict[id] for id in memo_ids]
+    else:
+        memos = []
 
     # 生成INSERT语句
     insert_statements = []
 
     for memo in memos:
+        # 处理图片数据 - 将JSON数组转换为SQL JSON格式
+        images_json = 'NULL'
+        if memo.images:
+            images_json = "'" + json.dumps(memo.images).replace("'", "''") + "'"
+
         insert_statements.append(
-            f"INSERT INTO memos (id, content, is_completed, created_at, updated_at) VALUES "
+            f"INSERT INTO memos (id, content, is_completed, images, created_at, updated_at) VALUES "
             f"({memo.id}, {escape_sql_string(memo.content)}, {1 if memo.is_completed else 0}, "
+            f"{images_json}, "
             f"'{memo.created_at.strftime('%Y-%m-%d %H:%M:%S')}', '{memo.updated_at.strftime('%Y-%m-%d %H:%M:%S')}');"
         )
 

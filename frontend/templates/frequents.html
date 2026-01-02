@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>常用备忘录</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 主内容区 -->
+        <main class="app-main">
+            <!-- 顶部导航栏 -->
+            <div class="tabs">
+                <button class="tab-btn back-btn" onclick="window.location.href='/app?tab=memos'">
+                    <span class="icon">‹</span>
+                    返回
+                </button>
+                <button class="tab-btn active">
+                    常用备忘
+                </button>
+                <div class="header-more-wrapper">
+                    <button class="more-btn" onclick="toggleMoreMenu()">
+                        <span class="icon">⋯</span>
+                    </button>
+                    <div class="more-menu" id="moreMenu">
+                        <button class="more-menu-item logout" onclick="logout()">
+                            <span class="icon">🚪</span>
+                            退出
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 常用备忘录内容 -->
+            <div class="tab-contents">
+                <div class="tab-content active" id="frequents-tab">
+                    <div class="tab-content-scrollable">
+                        <div class="content-header">
+                            <div class="header-actions">
+                                <button class="add-btn" onclick="showAddModal('memo')">
+                                    <span class="icon">➕</span>
+                                    添加备忘
+                                </button>
+                            </div>
+                        </div>
+                        <div class="items-list" id="frequents-list">
+                            <!-- 动态加载内容 -->
+                        </div>
+                    </div>
+                    <!-- 备忘录分页组件 -->
+                    <div class="pagination-container fixed-bottom" id="frequents-pagination">
+                        <div class="pagination">
+                            <button class="pagination-btn" id="frequents-prev-btn" onclick="changeFrequentsPage(-1)" disabled>
+                                <span class="icon">‹</span>
+                                上一页
+                            </button>
+                            <div class="pagination-info">
+                                <span class="pagination-current">第 <span id="frequents-current-page">1</span> 页</span>
+                                <span class="pagination-divider">/</span>
+                                <span class="pagination-total">共 <span id="frequents-total-pages">1</span> 页</span>
+                                <span class="pagination-items">（<span id="frequents-total-items">0</span> 条记录）</span>
+                            </div>
+                            <button class="pagination-btn" id="frequents-next-btn" onclick="changeFrequentsPage(1)">
+                                下一页
+                                <span class="icon">›</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 添加/编辑模态框 -->
+    <div class="modal" id="itemModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">添加新内容</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- 备忘录编辑：只有内容 -->
+                <div id="memoEditFields" style="display: none;">
+                    <div id="imagePreviewContainer" class="image-preview-container"></div>
+                    <textarea id="itemMemoContent" placeholder="请输入内容..." style="width: 100%; padding: 12px 15px; border: 2px solid var(--border-color); border-radius: var(--radius-sm); font-size: 1rem; min-height: 120px; resize: vertical; outline: none; transition: var(--transition);"></textarea>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+                        <div class="image-upload-section">
+                            <label class="image-upload-label">
+                                <input type="file" id="memoImageInput" accept="image/*" multiple style="display: none;" onchange="handleImageUpload(event)">
+                                <div class="image-upload-btn">
+                                    <span class="icon">📷</span>
+                                    <span>上传图片</span>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="checkbox-group" id="memoCheckboxGroup">
+                            <label>
+                                <input type="checkbox" id="isCompleted">
+                                <span>已完成</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary" onclick="saveItem()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 删除确认模态框 -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content small">
+            <div class="modal-header">
+                <h3>确认删除</h3>
+            </div>
+            <div class="modal-body">
+                <p>确定要删除这条记录吗？</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" onclick="closeDeleteModal()">取消</button>
+                <button class="btn btn-danger" onclick="confirmDelete()">删除</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast提示 -->
+    <div class="toast" id="toast"></div>
+
+    <script src="/static/js/frequents.js"></script>
+</body>
+</html>

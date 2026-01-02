@@ -4,6 +4,9 @@ let currentEditItem = null;
 let deleteItemId = null;
 let deleteItemType = null;
 
+// 图片上传相关变量
+let uploadedImages = []; // 存储上传的图片数据 (base64或文件对象)
+
 // 分页状态管理 - 每个标签页独立的分页状态
 const paginationState = {
     accounting: {
@@ -140,6 +143,73 @@ function formatFullDateTime(dateString) {
     const seconds = String(date.getSeconds()).padStart(2, '0');
 
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
+// ==================== 图片上传相关功能 ====================
+
+// 处理图片上传
+function handleImageUpload(event) {
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+
+    Array.from(files).forEach(file => {
+        if (!file.type.startsWith('image/')) {
+            showToast('请选择图片文件', 'error');
+            return;
+        }
+
+        // 限制文件大小（例如 5MB）
+        if (file.size > 5 * 1024 * 1024) {
+            showToast('图片大小不能超过5MB', 'error');
+            return;
+        }
+
+        // 读取图片并转换为 base64
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const imageData = {
+                id: Date.now() + Math.random(), // 生成唯一ID
+                data: e.target.result, // base64 数据
+                name: file.name
+            };
+            uploadedImages.push(imageData);
+            updateImagePreview();
+        };
+        reader.readAsDataURL(file);
+    });
+
+    // 清空 input 以允许重复上传同一文件
+    event.target.value = '';
+}
+
+// 更新图片预览
+function updateImagePreview() {
+    const container = document.getElementById('imagePreviewContainer');
+    if (!container) return;
+
+    if (uploadedImages.length === 0) {
+        container.innerHTML = '';
+        return;
+    }
+
+    container.innerHTML = uploadedImages.map(img => `
+        <div class="image-preview-item">
+            <img src="${img.data}" alt="${img.name}">
+            <button class="image-preview-remove" onclick="removeImage(${img.id})" title="删除">×</button>
+        </div>
+    `).join('');
+}
+
+// 删除图片
+function removeImage(imageId) {
+    uploadedImages = uploadedImages.filter(img => img.id !== imageId);
+    updateImagePreview();
+}
+
+// 清空图片
+function clearImages() {
+    uploadedImages = [];
+    updateImagePreview();
 }
 
 // 标签页切换
@@ -564,23 +634,34 @@ function renderItems(items) {
                         <h3 class="item-title">${title || '无标题'}</h3>
                         <p class="item-text">${content || '无内容'}</p>
                     </div>
-                    <div class="item-meta">
-                        <span class="time">创建: ${createdFull}</span>
-                    </div>
-                    <div class="item-meta">
-                        <span class="time">更新: ${updatedFull}</span>
-                    </div>
-                    <div class="item-actions">
-                        <button class="btn-icon btn-edit" onclick="editItem(${item.id})" title="编辑">
-                            <span>✏️</span>
-                        </button>
-                        <button class="btn-icon btn-delete" onclick="showDeleteModal(${item.id})" title="删除">
-                            <span>🗑️</span>
-                        </button>
+                    <div class="reflection-card-footer">
+                        <div class="reflection-times">
+                            <span class="time">创建: ${createdFull}</span>
+                            <span class="time">更新: ${updatedFull}</span>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn-icon btn-edit" onclick="editItem(${item.id})" title="编辑">
+                                <span>✏️</span>
+                            </button>
+                            <button class="btn-icon btn-delete" onclick="showDeleteModal(${item.id})" title="删除">
+                                <span>🗑️</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             `;
         } else {
+            // 备忘录卡片 - 添加图片显示支持
+            const imagesHtml = item.images && item.images.length > 0 ? `
+                <div class="memo-images">
+                    ${item.images.map(img => `
+                        <div class="memo-image-item">
+                            <img src="${img}" alt="备忘录图片">
+                        </div>
+                    `).join('')}
+                </div>
+            ` : '';
+
             return `
                 <div class="item-card memo-card ${item.is_completed ? 'completed' : ''}" data-id="${item.id}">
                     <div class="item-content">
@@ -589,19 +670,22 @@ function renderItems(items) {
                                    onchange="toggleMemoComplete(${item.id})">
                             <span class="checkmark"></span>
                         </label>
-                        <p class="item-text">${item.content}</p>
+                        <p class="item-text">${item.content.replace(/\n/g, '<br>')}</p>
                     </div>
-                    <div class="item-meta">
-                        <span class="time">创建: ${createdFull}</span>
-                        <span class="time">更新: ${updatedFull}</span>
-                    </div>
-                    <div class="item-actions" onclick="event.stopPropagation()">
-                        <button class="btn-icon btn-edit" onclick="editItem(${item.id})" title="编辑">
-                            <span>✏️</span>
-                        </button>
-                        <button class="btn-icon btn-delete" onclick="showDeleteModal(${item.id})" title="删除">
-                            <span>🗑️</span>
-                        </button>
+                    ${imagesHtml}
+                    <div class="memo-card-footer">
+                        <div class="memo-times">
+                            <span class="time">创建: ${createdFull}</span>
+                            <span class="time">更新: ${updatedFull}</span>
+                        </div>
+                        <div class="item-actions" onclick="event.stopPropagation()">
+                            <button class="btn-icon btn-edit" onclick="editItem(${item.id})" title="编辑">
+                                <span>✏️</span>
+                            </button>
+                            <button class="btn-icon btn-delete" onclick="showDeleteModal(${item.id})" title="删除">
+                                <span>🗑️</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             `;
@@ -615,38 +699,22 @@ function showAddModal(type) {
     document.getElementById('modalTitle').textContent =
         type === 'reflection' ? '添加复盘反思' : '添加备忘录';
 
-    const checkboxGroup = document.getElementById('memoCheckboxGroup');
     const isCompleted = document.getElementById('isCompleted');
     const reflectionEditFields = document.getElementById('reflectionEditFields');
     const memoEditFields = document.getElementById('memoEditFields');
 
     if (type === 'memo') {
-        // 先显示备忘录编辑字段
-        checkboxGroup.style.display = 'block';
         isCompleted.checked = false;
         reflectionEditFields.style.display = 'none';
         memoEditFields.style.display = 'block';
-        // 使用 requestAnimationFrame 确保字段已经显示后再清空
-        requestAnimationFrame(() => {
-            document.getElementById('itemMemoContent').value = '';
-            document.getElementById('itemTitle').value = '';
-            document.getElementById('itemContent').value = '';
-            // 聚焦到备忘录输入框
-            document.getElementById('itemMemoContent').focus();
-        });
+        document.getElementById('itemMemoContent').value = '';
+        clearImages();
     } else {
-        // 先显示反思编辑字段
-        checkboxGroup.style.display = 'none';
         reflectionEditFields.style.display = 'block';
         memoEditFields.style.display = 'none';
-        // 使用 requestAnimationFrame 确保字段已经显示后再清空
-        requestAnimationFrame(() => {
-            document.getElementById('itemTitle').value = '';
-            document.getElementById('itemContent').value = '';
-            document.getElementById('itemMemoContent').value = '';
-            // 聚焦到标题输入框
-            document.getElementById('itemTitle').focus();
-        });
+        document.getElementById('itemTitle').value = '';
+        document.getElementById('itemContent').value = '';
+        clearImages();
     }
 
     // 保存当前操作类型，用于saveItem判断
@@ -673,14 +741,11 @@ async function editItem(id) {
         document.getElementById('modalTitle').textContent =
             currentTab === 'reflections' ? '编辑复盘反思' : '编辑备忘录';
 
-        const checkboxGroup = document.getElementById('memoCheckboxGroup');
         const isCompleted = document.getElementById('isCompleted');
         const reflectionEditFields = document.getElementById('reflectionEditFields');
         const memoEditFields = document.getElementById('memoEditFields');
 
         if (currentTab === 'memos') {
-            // 先显示字段
-            checkboxGroup.style.display = 'block';
             isCompleted.checked = item.is_completed;
             reflectionEditFields.style.display = 'none';
             memoEditFields.style.display = 'block';
@@ -693,8 +758,19 @@ async function editItem(id) {
                     textarea.dispatchEvent(new Event('input', { bubbles: true }));
                 }
             });
+            // 加载已有的图片（如果有）
+            clearImages();
+            if (item.images && item.images.length > 0) {
+                item.images.forEach((imgData, index) => {
+                    uploadedImages.push({
+                        id: Date.now() + index,
+                        data: imgData,
+                        name: `image_${index}.jpg`
+                    });
+                });
+                updateImagePreview();
+            }
         } else {
-            checkboxGroup.style.display = 'none';
             reflectionEditFields.style.display = 'block';
             memoEditFields.style.display = 'none';
             // 将内容按第一个换行符分割为标题和内容
@@ -706,6 +782,8 @@ async function editItem(id) {
                 document.getElementById('itemTitle').value = item.content.substring(0, firstNewlineIndex);
                 document.getElementById('itemContent').value = item.content.substring(firstNewlineIndex + 1);
             }
+            // 反思不使用图片，清空图片数组
+            clearImages();
         }
 
         document.getElementById('itemModal').classList.add('show');
@@ -758,6 +836,10 @@ async function saveItem() {
             if (!isReflection) {
                 updateData.is_completed = isCompleted;
             }
+            // 如果有新上传的图片，添加到更新数据中
+            if (uploadedImages.length > 0) {
+                updateData.images = uploadedImages.map(img => img.data);
+            }
 
             response = await fetch(`${API_BASE}${endpoint}/${currentEditItem.id}`, getAuthOptions({
                 method: 'PUT',
@@ -768,6 +850,10 @@ async function saveItem() {
             const createData = { content };
             if (!isReflection) {
                 createData.is_completed = isCompleted;
+            }
+            // 如果有上传的图片，添加到创建数据中
+            if (uploadedImages.length > 0) {
+                createData.images = uploadedImages.map(img => img.data);
             }
 
             response = await fetch(`${API_BASE}${endpoint}`, getAuthOptions({
@@ -818,6 +904,7 @@ async function toggleMemoComplete(id) {
     }
 }
 
+
 // 显示删除确认模态框
 function showDeleteModal(id) {
     deleteItemId = id;
@@ -829,6 +916,8 @@ function showDeleteModal(id) {
 function closeModal() {
     document.getElementById('itemModal').classList.remove('show');
     currentEditItem = null;
+    // 清空已上传的图片
+    clearImages();
 }
 
 function closeDeleteModal() {
@@ -1064,13 +1153,23 @@ document.addEventListener('DOMContentLoaded', function() {
         sessionStorage.removeItem('memoSystem_weekPage');
     }
 
+    // 检查URL参数中是否有tab指定
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlTab = urlParams.get('tab');
+
     // 检查是否有返回标签页的请求
     const returnTab = sessionStorage.getItem('memoSystem_return_tab');
-    if (returnTab) {
+    const targetTab = urlTab || returnTab;
+
+    if (targetTab) {
         // 清除标记
         sessionStorage.removeItem('memoSystem_return_tab');
         // 切换到指定标签页
-        switchToTab(returnTab);
+        switchToTab(targetTab);
+        // 清除URL参数，避免刷新时再次切换
+        if (urlTab) {
+            window.history.replaceState({}, '', window.location.pathname);
+        }
     } else {
         // 默认加载当前标签页的数据
         loadItems();

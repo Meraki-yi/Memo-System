@@ -1132,6 +1132,16 @@ body {
     box-shadow: var(--shadow-md);
 }
 
+.frequent-btn {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: white;
+}
+
+.frequent-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+}
+
 .export-btn {
     background: var(--secondary-color);
     color: white;
@@ -1340,6 +1350,23 @@ body {
 
 .btn-delete:hover {
     background: #FFCDD2;
+}
+
+.btn-frequent {
+    font-size: 1.2rem;
+}
+
+.btn-frequent.active {
+    color: #FFD700;
+    background: rgba(255, 215, 0, 0.1);
+}
+
+.btn-frequent:hover {
+    background: rgba(255, 215, 0, 0.2);
+}
+
+.memo-card.frequent {
+    border-left: 3px solid #FFD700;
 }
 
 /* 复选框样式 */
@@ -1919,6 +1946,183 @@ body {
     transform: translateY(0);
 }
 
+/* ==================== 图片上传相关样式 ==================== */
+.image-upload-section {
+    margin-top: 15px;
+}
+
+.image-upload-label {
+    display: block;
+    cursor: pointer;
+}
+
+.image-upload-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: var(--bg-light);
+    border: 2px dashed var(--border-color);
+    border-radius: var(--radius-sm);
+    color: var(--text-light);
+    font-size: 0.9rem;
+    transition: var(--transition);
+}
+
+.image-upload-btn:hover {
+    border-color: var(--primary-light);
+    background: linear-gradient(135deg, #FFF9E6, #F0F9FF);
+    color: var(--text-dark);
+}
+
+.image-upload-btn .icon {
+    font-size: 1.1rem;
+}
+
+.image-preview-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.image-preview-item {
+    position: relative;
+    width: 100%;
+    padding-top: 100%; /* 1:1 正方形 */
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.image-preview-item img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.image-preview-remove {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #FF5252;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+}
+
+.image-preview-remove:hover {
+    background: #FF5252;
+    color: white;
+    transform: scale(1.1);
+}
+
+/* 备忘录卡片中的图片展示 */
+.memo-card .memo-images {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 12px;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.memo-card .memo-image-item {
+    position: relative;
+    max-width: 200px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    border: 2px solid var(--border-color);
+    background: var(--bg-light);
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    transition: var(--transition);
+    flex-shrink: 0;
+}
+
+.memo-card .memo-image-item:hover {
+    transform: scale(1.05);
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-light);
+}
+
+.memo-card .memo-image-item img {
+    max-width: 200px;
+    height: auto;
+    display: block;
+    object-fit: contain;
+}
+
+/* 备忘录卡片底部时间显示区域优化 */
+.memo-card .memo-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-color);
+}
+
+.memo-card .memo-times {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.memo-card .memo-times .time {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* 操作按钮水平布局 */
+.memo-card .item-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+/* 反思卡片的时间也调整为右下角显示 */
+.reflection-card .reflection-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-color);
+}
+
+.reflection-card .reflection-times {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.reflection-card .reflection-times .time {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.reflection-card .item-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    align-items: center;
+}
+
 /* 周日期范围显示样式（通用） */
 .week-range-display {
     display: flex;
@@ -2021,3 +2225,163 @@ body {
     color: var(--primary-dark);
     font-weight: 600;
 }
+/* ==================== 常用备忘录样式 ==================== */
+
+.frequent-badge,
+.completed-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-right: 8px;
+}
+
+.frequent-badge {
+    background: rgba(255, 215, 0, 0.15);
+    color: #B8860B;
+}
+
+.completed-badge {
+    background: rgba(76, 175, 80, 0.15);
+    color: #2E7D32;
+}
+
+.memo-status {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+/* 返回按钮样式 */
+.back-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.back-btn .icon {
+    font-size: 1.2rem;
+}
+
+/* 常用页面空状态 */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+    font-size: 1rem;
+}
+
+.empty-state::before {
+    content: '⭐';
+    display: block;
+    font-size: 3rem;
+    margin-bottom: 16px;
+    opacity: 0.3;
+}
+
+/* ==================== 富文本内容样式 ==================== */
+.html-content {
+    flex: 1;
+    font-size: 1rem;
+    line-height: 1.6;
+    word-wrap: break-word;
+}
+
+/* 富文本内容中的图片样式 */
+.html-content img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 10px 0;
+    border-radius: var(--radius-sm);
+}
+
+/* 富文本内容中的段落 */
+.html-content p {
+    margin: 8px 0;
+}
+
+/* 富文本内容中的标题 */
+.html-content h1,
+.html-content h2,
+.html-content h3 {
+    margin: 12px 0 8px 0;
+    font-weight: 600;
+}
+
+.html-content h1 {
+    font-size: 1.5rem;
+}
+
+.html-content h2 {
+    font-size: 1.3rem;
+}
+
+.html-content h3 {
+    font-size: 1.1rem;
+}
+
+/* 富文本内容中的列表 */
+.html-content ul,
+.html-content ol {
+    margin: 8px 0;
+    padding-left: 24px;
+}
+
+.html-content li {
+    margin: 4px 0;
+}
+
+/* 富文本内容中的引用块 */
+.html-content blockquote {
+    border-left: 4px solid var(--primary-color);
+    padding-left: 12px;
+    margin: 12px 0;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* 富文本内容中的代码块 */
+.html-content pre {
+    background: var(--bg-light);
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    overflow-x: auto;
+    margin: 12px 0;
+}
+
+.html-content code {
+    background: var(--bg-light);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+}
+
+/* 富文本内容中的链接 */
+.html-content a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.html-content a:hover {
+    text-decoration: underline;
+}
+
+/* 富文本内容中的加粗、斜体、下划线 */
+.html-content strong {
+    font-weight: 600;
+}
+
+.html-content em {
+    font-style: italic;
+}
+
+.html-content u {
+    text-decoration: underline;
+}
+
