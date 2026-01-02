@@ -173,6 +173,7 @@ class ReflectionUpdate(BaseModel):
 
 class MemoCreate(BaseModel):
     content: str
+    is_completed: Optional[bool] = False
     is_frequent: Optional[bool] = False
     images: Optional[list] = None  # 图片base64数组
 
@@ -368,44 +369,49 @@ async def get_memos(
     db: Session = Depends(get_db)
 ):
     check_auth(request)
-    # 计算总数
-    total = db.query(Memo).count()
-    # 计算总页数
-    total_pages = (total + page_size - 1) // page_size if total > 0 else 1
-    # 分页查询 - 使用子查询避免对大JSON字段排序
-    # 按更新时间排序（修改过的排在前面）
-    offset = (page - 1) * page_size
-    # 先获取排序后的ID列表
-    memo_ids_query = db.query(Memo.id).order_by(Memo.updated_at.desc()).offset(offset).limit(page_size)
-    memo_ids = [id[0] for id in memo_ids_query.all()]
-    # 再根据ID列表获取完整数据
-    if memo_ids:
-        memos = db.query(Memo).filter(Memo.id.in_(memo_ids)).all()
-        # 按原始ID顺序排序
-        memos_dict = {m.id: m for m in memos}
-        memos = [memos_dict[id] for id in memo_ids]
-    else:
-        memos = []
-    return {
-        "items": [
-            {
-                "id": m.id,
-                "content": m.content,
-                "is_completed": m.is_completed,
-                "is_frequent": m.is_frequent,
-                "images": m.images if m.images else [],
-                "created_at": m.created_at.isoformat(),
-                "updated_at": m.updated_at.isoformat()
+    try:
+        # 计算总数
+        total = db.query(Memo).count()
+        # 计算总页数
+        total_pages = (total + page_size - 1) // page_size if total > 0 else 1
+        # 分页查询 - 使用子查询避免对大JSON字段排序
+        # 按更新时间排序（修改过的排在前面）
+        offset = (page - 1) * page_size
+        # 先获取排序后的ID列表
+        memo_ids_query = db.query(Memo.id).order_by(Memo.updated_at.desc()).offset(offset).limit(page_size)
+        memo_ids = [id[0] for id in memo_ids_query.all()]
+        # 再根据ID列表获取完整数据
+        if memo_ids:
+            memos = db.query(Memo).filter(Memo.id.in_(memo_ids)).all()
+            # 按原始ID顺序排序
+            memos_dict = {m.id: m for m in memos}
+            memos = [memos_dict[id] for id in memo_ids]
+        else:
+            memos = []
+        return {
+            "items": [
+                {
+                    "id": m.id,
+                    "content": m.content,
+                    "is_completed": getattr(m, 'is_completed', False),
+                    "is_frequent": getattr(m, 'is_frequent', False),
+                    "images": m.images if m.images else [],
+                    "created_at": m.created_at.isoformat(),
+                    "updated_at": m.updated_at.isoformat()
+                }
+                for m in memos
+            ],
+            "pagination": {
+                "page": page,
+                "page_size": page_size,
+                "total": total,
+                "total_pages": total_pages
             }
-            for m in memos
-        ],
-        "pagination": {
-            "page": page,
-            "page_size": page_size,
-            "total": total,
-            "total_pages": total_pages
         }
-    }
+    except Exception as e:
+        import traceback
+        error_detail = traceback.format_exc()
+        raise HTTPException(status_code=500, detail=f"获取备忘录失败: {str(e)}\n{error_detail}")
 
 @app.post("/api/memos")
 async def create_memo(
@@ -416,8 +422,8 @@ async def create_memo(
     check_auth(request)
     db_memo = Memo(
         content=memo.content,
-        is_completed=memo.is_completed if hasattr(memo, 'is_completed') else False,
-        is_frequent=memo.is_frequent if memo.is_frequent else False,
+        is_completed=memo.is_completed if memo.is_completed is not None else False,
+        is_frequent=memo.is_frequent if memo.is_frequent is not None else False,
         images=memo.images if memo.images else []
     )
     db.add(db_memo)
@@ -426,8 +432,8 @@ async def create_memo(
     return {
         "id": db_memo.id,
         "content": db_memo.content,
-        "is_completed": db_memo.is_completed,
-        "is_frequent": db_memo.is_frequent,
+        "is_completed": getattr(db_memo, 'is_completed', False),
+        "is_frequent": getattr(db_memo, 'is_frequent', False),
         "images": db_memo.images if db_memo.images else [],
         "created_at": db_memo.created_at.isoformat(),
         "updated_at": db_memo.updated_at.isoformat()
@@ -465,8 +471,8 @@ async def get_frequent_memos(
             {
                 "id": m.id,
                 "content": m.content,
-                "is_completed": m.is_completed,
-                "is_frequent": m.is_frequent,
+                "is_completed": getattr(m, 'is_completed', False),
+                "is_frequent": getattr(m, 'is_frequent', False),
                 "images": m.images if m.images else [],
                 "created_at": m.created_at.isoformat(),
                 "updated_at": m.updated_at.isoformat()
@@ -496,8 +502,8 @@ async def get_memo(
     return {
         "id": db_memo.id,
         "content": db_memo.content,
-        "is_completed": db_memo.is_completed,
-        "is_frequent": db_memo.is_frequent,
+        "is_completed": getattr(db_memo, 'is_completed', False),
+        "is_frequent": getattr(db_memo, 'is_frequent', False),
         "images": db_memo.images if db_memo.images else [],
         "created_at": db_memo.created_at.isoformat(),
         "updated_at": db_memo.updated_at.isoformat()
@@ -518,9 +524,11 @@ async def update_memo(
     if memo.content is not None:
         db_memo.content = memo.content
     if memo.is_completed is not None:
-        db_memo.is_completed = memo.is_completed
+        if hasattr(db_memo, 'is_completed'):
+            db_memo.is_completed = memo.is_completed
     if memo.is_frequent is not None:
-        db_memo.is_frequent = memo.is_frequent
+        if hasattr(db_memo, 'is_frequent'):
+            db_memo.is_frequent = memo.is_frequent
     if memo.images is not None:
         db_memo.images = memo.images
 
@@ -530,8 +538,8 @@ async def update_memo(
     return {
         "id": db_memo.id,
         "content": db_memo.content,
-        "is_completed": db_memo.is_completed,
-        "is_frequent": db_memo.is_frequent,
+        "is_completed": getattr(db_memo, 'is_completed', False),
+        "is_frequent": getattr(db_memo, 'is_frequent', False),
         "images": db_memo.images if db_memo.images else [],
         "created_at": db_memo.created_at.isoformat(),
         "updated_at": db_memo.updated_at.isoformat()
