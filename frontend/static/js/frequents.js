@@ -4,11 +4,40 @@ let currentPage = 1;
 let pageSize = 5;
 let totalPages = 1;
 let totalItems = 0;
-let uploadedImages = []; // 存储上传的图片数据
 
 // ==================== 页面加载 ====================
 document.addEventListener('DOMContentLoaded', function() {
     loadFrequents();
+
+    // ESC键关闭模态框
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeModal();
+            closeDeleteModal();
+        }
+    });
+
+    // 点击模态框外部关闭
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                if (this.id === 'itemModal') {
+                    closeModal();
+                } else if (this.id === 'deleteModal') {
+                    closeDeleteModal();
+                }
+            }
+        });
+    });
+
+    // 点击其他地方关闭菜单
+    document.addEventListener('click', function(event) {
+        const menu = document.getElementById('moreMenu');
+        const button = document.querySelector('.more-btn');
+        if (menu && button && !menu.contains(event.target) && !button.contains(event.target)) {
+            menu.classList.remove('active');
+        }
+    });
 });
 
 // ==================== API 基础配置 ====================
@@ -28,9 +57,13 @@ function getAuthOptions(options = {}) {
 // ==================== 加载常用备忘录 ====================
 async function loadFrequents() {
     try {
-        const response = await fetch(`/api/memos/frequents?page=${currentPage}&page_size=${pageSize}`, {
-            credentials: 'include'
-        });
+        const response = await fetch(`${API_BASE}/memos/frequents?page=${currentPage}&page_size=${pageSize}`, getAuthOptions());
+
+        if (response.status === 401) {
+            window.location.href = '/';
+            return;
+        }
+
         if (!response.ok) {
             throw new Error('获取常用备忘录失败');
         }
@@ -43,7 +76,15 @@ async function loadFrequents() {
         // 渲染备忘录列表
         const list = document.getElementById('frequents-list');
         if (data.items.length === 0) {
-            list.innerHTML = '<div class="empty-state">暂无常用备忘录</div>';
+            list.innerHTML = `
+                <div class="empty-state">
+                    <span class="icon">⭐</span>
+                    <p>暂无常用备忘录</p>
+                    <p style="font-size: 0.9rem; color: var(--text-light); margin-top: 8px;">
+                        在备忘录中点击星号标记为常用
+                    </p>
+                </div>
+            `;
         } else {
             list.innerHTML = data.items.map(item => renderMemoCard(item)).join('');
         }
@@ -63,21 +104,8 @@ function renderMemoCard(item) {
     const createdFull = formatFullDateTime(createdDate);
     const updatedFull = formatFullDateTime(updatedDate);
 
-    // 生成图片HTML - 居中显示，美观布局
-    let imagesHtml = '';
-    if (item.images && item.images.length > 0) {
-        imagesHtml = '<div class="memo-images">';
-        item.images.forEach(img => {
-            imagesHtml += `
-                <div class="memo-image-item">
-                    <img src="${img}" alt="备忘录图片" onclick="viewImage('${img}')">
-                </div>`;
-        });
-        imagesHtml += '</div>';
-    }
-
     return `
-        <div class="item-card memo-card ${item.is_completed ? 'completed' : ''} ${item.is_frequent ? 'frequent' : ''}" data-id="${item.id}">
+        <div class="item-card memo-card ${item.is_completed ? 'completed' : ''} frequent" data-id="${item.id}">
             <div class="item-content">
                 <label class="checkbox-wrapper">
                     <input type="checkbox" ${item.is_completed ? 'checked' : ''}
@@ -86,15 +114,14 @@ function renderMemoCard(item) {
                 </label>
                 <p class="item-text">${escapeHtml(item.content)}</p>
             </div>
-            ${imagesHtml}
             <div class="memo-card-footer">
                 <div class="memo-times">
                     <span class="time">创建: ${createdFull}</span>
                     <span class="time">更新: ${updatedFull}</span>
                 </div>
                 <div class="item-actions" onclick="event.stopPropagation()">
-                    <button class="btn-icon btn-frequent ${item.is_frequent ? 'active' : ''}" onclick="toggleMemoFrequent(${item.id})" title="${item.is_frequent ? '取消常用' : '设为常用'}">
-                        <span>${item.is_frequent ? '⭐' : '☆'}</span>
+                    <button class="btn-icon btn-frequent active" onclick="toggleMemoFrequent(${item.id})" title="取消常用">
+                        <span>⭐</span>
                     </button>
                     <button class="btn-icon btn-edit" onclick="editItem(${item.id})" title="编辑">
                         <span>✏️</span>
@@ -145,6 +172,14 @@ function updatePagination() {
 
     prevBtn.disabled = currentPage <= 1;
     nextBtn.disabled = currentPage >= totalPages;
+
+    // 如果没有数据，隐藏分页
+    const paginationContainer = document.getElementById('frequents-pagination');
+    if (totalItems === 0) {
+        paginationContainer.style.display = 'none';
+    } else {
+        paginationContainer.style.display = 'block';
+    }
 }
 
 // ==================== 模态框操作 ====================
@@ -155,50 +190,38 @@ function showAddModal(type) {
     document.getElementById('memoEditFields').style.display = 'block';
     document.getElementById('itemMemoContent').value = '';
     document.getElementById('isCompleted').checked = false;
-    clearImages();
+    document.getElementById('isFrequent').checked = true; // 默认标记为常用
 
     document.getElementById('itemModal').classList.add('show');
 }
 
-function editItem(id) {
+async function editItem(id) {
     currentEditId = id;
 
-    fetch(`/api/memos/${id}`, {
-        credentials: 'include'
-    })
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('modalTitle').textContent = '编辑备忘录';
-            document.getElementById('memoEditFields').style.display = 'block';
+    try {
+        const response = await fetch(`${API_BASE}/memos/${id}`, getAuthOptions());
 
-            document.getElementById('itemMemoContent').value = data.content;
-            document.getElementById('isCompleted').checked = data.is_completed;
+        if (!response.ok) throw new Error('获取数据失败');
 
-            // 加载已有图片
-            clearImages();
-            if (data.images && data.images.length > 0) {
-                data.images.forEach((imgData, index) => {
-                    uploadedImages.push({
-                        id: Date.now() + index,
-                        data: imgData,
-                        name: `image_${index}.jpg`
-                    });
-                });
-                updateImagePreview();
-            }
+        const data = await response.json();
 
-            document.getElementById('itemModal').classList.add('show');
-        })
-        .catch(error => {
-            console.error('获取数据失败:', error);
-            showToast('获取数据失败', 'error');
-        });
+        document.getElementById('modalTitle').textContent = '编辑备忘录';
+        document.getElementById('memoEditFields').style.display = 'block';
+
+        document.getElementById('itemMemoContent').value = data.content;
+        document.getElementById('isCompleted').checked = data.is_completed;
+        document.getElementById('isFrequent').checked = data.is_frequent;
+
+        document.getElementById('itemModal').classList.add('show');
+    } catch (error) {
+        console.error('获取数据失败:', error);
+        showToast('获取数据失败', 'error');
+    }
 }
 
 function closeModal() {
     document.getElementById('itemModal').classList.remove('show');
     currentEditId = null;
-    clearImages();
 }
 
 // ==================== 保存操作 ====================
@@ -210,23 +233,22 @@ async function saveItem() {
     }
 
     const isCompleted = document.getElementById('isCompleted').checked;
+    const isFrequent = document.getElementById('isFrequent').checked;
+
     const data = {
         content: content,
         is_completed: isCompleted,
-        is_frequent: true, // 常用页面创建的备忘录默认标记为常用
-        images: uploadedImages.length > 0 ? uploadedImages.map(img => img.data) : []
+        is_frequent: isFrequent
     };
 
     try {
-        const url = currentEditId ? `/api/memos/${currentEditId}` : '/api/memos';
+        const url = currentEditId ? `${API_BASE}/memos/${currentEditId}` : `${API_BASE}/memos`;
         const method = currentEditId ? 'PUT' : 'POST';
 
-        const response = await fetch(url, {
+        const response = await fetch(url, getAuthOptions({
             method: method,
-            credentials: 'include',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
-        });
+        }));
 
         if (!response.ok) throw new Error('保存失败');
 
@@ -242,10 +264,8 @@ async function saveItem() {
 // ==================== 切换完成状态 ====================
 async function toggleMemoComplete(id) {
     try {
-        // 获取当前数据
-        const response = await fetch('/api/memos', {
-            credentials: 'include'
-        });
+        // 先获取所有常用备忘录
+        const response = await fetch(`${API_BASE}/memos/frequents`, getAuthOptions());
 
         if (!response.ok) throw new Error('获取数据失败');
 
@@ -255,19 +275,18 @@ async function toggleMemoComplete(id) {
 
         if (!memo) throw new Error('备忘录不存在');
 
-        const updateResponse = await fetch(`/api/memos/${id}`, {
+        const updateResponse = await fetch(`${API_BASE}/memos/${id}`, getAuthOptions({
             method: 'PUT',
-            credentials: 'include',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 is_completed: !memo.is_completed
             })
-        });
+        }));
 
         if (!updateResponse.ok) throw new Error('更新失败');
 
         loadFrequents();
     } catch (error) {
+        console.error('切换完成状态失败:', error);
         showToast(error.message, 'error');
     }
 }
@@ -275,9 +294,8 @@ async function toggleMemoComplete(id) {
 // ==================== 切换常用状态 ====================
 async function toggleMemoFrequent(id) {
     try {
-        const response = await fetch('/api/memos', {
-            credentials: 'include'
-        });
+        // 先获取所有常用备忘录
+        const response = await fetch(`${API_BASE}/memos/frequents`, getAuthOptions());
 
         if (!response.ok) throw new Error('获取数据失败');
 
@@ -287,20 +305,19 @@ async function toggleMemoFrequent(id) {
 
         if (!memo) throw new Error('备忘录不存在');
 
-        const updateResponse = await fetch(`/api/memos/${id}`, {
+        const updateResponse = await fetch(`${API_BASE}/memos/${id}`, getAuthOptions({
             method: 'PUT',
-            credentials: 'include',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 is_frequent: !memo.is_frequent
             })
-        });
+        }));
 
         if (!updateResponse.ok) throw new Error('更新失败');
 
-        showToast(memo.is_frequent ? '已取消常用标记' : '已设为常用', 'success');
+        showToast('已取消常用标记', 'success');
         loadFrequents();
     } catch (error) {
+        console.error('切换常用状态失败:', error);
         showToast(error.message, 'error');
     }
 }
@@ -322,10 +339,9 @@ async function confirmDelete() {
     if (!deleteItemId) return;
 
     try {
-        const response = await fetch(`/api/memos/${deleteItemId}`, {
-            method: 'DELETE',
-            credentials: 'include'
-        });
+        const response = await fetch(`${API_BASE}/memos/${deleteItemId}`, getAuthOptions({
+            method: 'DELETE'
+        }));
 
         if (!response.ok) throw new Error('删除失败');
 
@@ -338,70 +354,9 @@ async function confirmDelete() {
     }
 }
 
-// ==================== 图片上传功能 ====================
-function handleImageUpload(event) {
-    const files = event.target.files;
-    if (!files || files.length === 0) return;
-
-    Array.from(files).forEach(file => {
-        if (!file.type.startsWith('image/')) {
-            showToast('请选择图片文件', 'error');
-            return;
-        }
-
-        // 检查文件大小（5MB）
-        if (file.size > 5 * 1024 * 1024) {
-            showToast('图片大小不能超过5MB', 'error');
-            return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const imageData = {
-                id: Date.now() + Math.random(),
-                data: e.target.result,
-                name: file.name
-            };
-            uploadedImages.push(imageData);
-            updateImagePreview();
-        };
-        reader.readAsDataURL(file);
-    });
-
-    // 清空input
-    event.target.value = '';
-}
-
-function updateImagePreview() {
-    const container = document.getElementById('imagePreviewContainer');
-    if (!container) return;
-
-    if (uploadedImages.length === 0) {
-        container.innerHTML = '';
-        return;
-    }
-
-    container.innerHTML = uploadedImages.map(img => `
-        <div class="image-preview-item">
-            <img src="${img.data}" alt="${img.name}">
-            <button class="image-preview-remove" onclick="removeImage(${img.id})" title="删除">×</button>
-        </div>
-    `).join('');
-}
-
-function removeImage(imageId) {
-    uploadedImages = uploadedImages.filter(img => img.id !== imageId);
-    updateImagePreview();
-}
-
-function clearImages() {
-    uploadedImages = [];
-    updateImagePreview();
-}
-
-function viewImage(src) {
-    const viewer = window.open('', '_blank');
-    viewer.document.write(`<img src="${src}" style="max-width:100%;height:auto;">`);
+// ==================== 返回功能 ====================
+function goBack() {
+    window.location.href = '/app?tab=memos';
 }
 
 // ==================== Toast提示 ====================
@@ -421,26 +376,14 @@ function toggleMoreMenu() {
     menu.classList.toggle('active');
 }
 
-// 点击其他地方关闭菜单
-document.addEventListener('click', function(event) {
-    const menu = document.getElementById('moreMenu');
-    const button = document.querySelector('.more-btn');
-    if (menu && button && !menu.contains(event.target) && !button.contains(event.target)) {
-        menu.classList.remove('active');
-    }
-});
-
 // ==================== 退出登录 ====================
-function logout() {
-    fetch('/api/logout', {
-        method: 'POST',
-        credentials: 'include'
-    })
-        .then(() => {
-            window.location.href = '/';
-        })
-        .catch(error => {
-            console.error('退出失败:', error);
-            window.location.href = '/';
-        });
+async function logout() {
+    try {
+        await fetch(`${API_BASE}/logout`, getAuthOptions({
+            method: 'POST'
+        }));
+    } catch (error) {
+        console.error('退出失败:', error);
+    }
+    window.location.href = '/';
 }

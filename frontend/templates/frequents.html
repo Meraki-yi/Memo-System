@@ -12,12 +12,12 @@
         <main class="app-main">
             <!-- 顶部导航栏 -->
             <div class="tabs">
-                <button class="tab-btn back-btn" onclick="window.location.href='/app?tab=memos'">
+                <button class="tab-btn back-btn" onclick="goBack()">
                     <span class="icon">‹</span>
                     返回
                 </button>
                 <button class="tab-btn active">
-                    常用备忘
+                    ⭐ 常用备忘
                 </button>
                 <div class="header-more-wrapper">
                     <button class="more-btn" onclick="toggleMoreMenu()">
@@ -82,22 +82,18 @@
             <div class="modal-body">
                 <!-- 备忘录编辑：只有内容 -->
                 <div id="memoEditFields" style="display: none;">
-                    <div id="imagePreviewContainer" class="image-preview-container"></div>
                     <textarea id="itemMemoContent" placeholder="请输入内容..." style="width: 100%; padding: 12px 15px; border: 2px solid var(--border-color); border-radius: var(--radius-sm); font-size: 1rem; min-height: 120px; resize: vertical; outline: none; transition: var(--transition);"></textarea>
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
-                        <div class="image-upload-section">
-                            <label class="image-upload-label">
-                                <input type="file" id="memoImageInput" accept="image/*" multiple style="display: none;" onchange="handleImageUpload(event)">
-                                <div class="image-upload-btn">
-                                    <span class="icon">📷</span>
-                                    <span>上传图片</span>
-                                </div>
-                            </label>
-                        </div>
                         <div class="checkbox-group" id="memoCheckboxGroup">
                             <label>
                                 <input type="checkbox" id="isCompleted">
                                 <span>已完成</span>
+                            </label>
+                        </div>
+                        <div class="checkbox-group">
+                            <label>
+                                <input type="checkbox" id="isFrequent">
+                                <span>⭐ 标记为常用</span>
                             </label>
                         </div>
                     </div>

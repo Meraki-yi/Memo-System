@@ -1132,6 +1132,7 @@ body {
     box-shadow: var(--shadow-md);
 }
 
+/* 常用按钮样式 */
 .frequent-btn {
     background: linear-gradient(135deg, #FFD700, #FFA500);
     color: white;

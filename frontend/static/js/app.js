@@ -388,6 +388,13 @@ function goToYearlyOverview() {
     window.location.href = `/yearly-overview?year=${currentYear}`;
 }
 
+// 跳转到常用备忘录页面
+function goToFrequents() {
+    // 保存当前标签页，以便返回时恢复
+    sessionStorage.setItem('memoSystem_return_tab', 'memos');
+    window.location.href = '/frequents';
+}
+
 // 渲染最近记录
 function renderRecentRecords(records) {
     const list = document.getElementById('recent-records');
@@ -583,7 +590,7 @@ function renderItems(items) {
         } else {
             // 备忘录卡片
             return `
-                <div class="item-card memo-card ${item.is_completed ? 'completed' : ''}" data-id="${item.id}">
+                <div class="item-card memo-card ${item.is_completed ? 'completed' : ''} ${item.is_frequent ? 'frequent' : ''}" data-id="${item.id}">
                     <div class="item-content">
                         <label class="checkbox-wrapper">
                             <input type="checkbox" ${item.is_completed ? 'checked' : ''}
@@ -598,6 +605,9 @@ function renderItems(items) {
                             <span class="time">更新: ${updatedFull}</span>
                         </div>
                         <div class="item-actions" onclick="event.stopPropagation()">
+                            <button class="btn-icon btn-frequent ${item.is_frequent ? 'active' : ''}" onclick="toggleMemoFrequent(${item.id})" title="${item.is_frequent ? '取消常用' : '设为常用'}">
+                                <span>${item.is_frequent ? '⭐' : '☆'}</span>
+                            </button>
                             <button class="btn-icon btn-edit" onclick="editItem(${item.id})" title="编辑">
                                 <span>✏️</span>
                             </button>
@@ -619,11 +629,13 @@ function showAddModal(type) {
         type === 'reflection' ? '添加复盘反思' : '添加备忘录';
 
     const isCompleted = document.getElementById('isCompleted');
+    const isFrequent = document.getElementById('isFrequent');
     const reflectionEditFields = document.getElementById('reflectionEditFields');
     const memoEditFields = document.getElementById('memoEditFields');
 
     if (type === 'memo') {
         isCompleted.checked = false;
+        isFrequent.checked = false;
         reflectionEditFields.style.display = 'none';
         memoEditFields.style.display = 'block';
         document.getElementById('itemMemoContent').value = '';
@@ -659,11 +671,13 @@ async function editItem(id) {
             currentTab === 'reflections' ? '编辑复盘反思' : '编辑备忘录';
 
         const isCompleted = document.getElementById('isCompleted');
+        const isFrequent = document.getElementById('isFrequent');
         const reflectionEditFields = document.getElementById('reflectionEditFields');
         const memoEditFields = document.getElementById('memoEditFields');
 
         if (currentTab === 'memos') {
             isCompleted.checked = item.is_completed;
+            isFrequent.checked = item.is_frequent;
             reflectionEditFields.style.display = 'none';
             memoEditFields.style.display = 'block';
             // 使用 requestAnimationFrame 确保字段已经显示后再设置值
@@ -729,6 +743,7 @@ async function saveItem() {
 
     // 获取完成状态（仅备忘录）
     const isCompleted = document.getElementById('isCompleted').checked;
+    const isFrequent = document.getElementById('isFrequent').checked;
 
     try {
         let response;
@@ -738,6 +753,7 @@ async function saveItem() {
             const updateData = { content };
             if (!isReflection) {
                 updateData.is_completed = isCompleted;
+                updateData.is_frequent = isFrequent;
             }
 
             response = await fetch(`${API_BASE}${endpoint}/${currentEditItem.id}`, getAuthOptions({
@@ -749,6 +765,7 @@ async function saveItem() {
             const createData = { content };
             if (!isReflection) {
                 createData.is_completed = isCompleted;
+                createData.is_frequent = isFrequent;
             }
 
             response = await fetch(`${API_BASE}${endpoint}`, getAuthOptions({
@@ -793,6 +810,35 @@ async function toggleMemoComplete(id) {
 
         if (!updateResponse.ok) throw new Error('更新失败');
 
+        loadItems();
+    } catch (error) {
+        showToast(error.message, 'error');
+    }
+}
+
+// 切换备忘录常用状态
+async function toggleMemoFrequent(id) {
+    try {
+        const response = await fetch(`${API_BASE}/memos`, getAuthOptions());
+
+        if (!response.ok) throw new Error('获取数据失败');
+
+        const data = await response.json();
+        const memos = data.items || [];
+        const memo = memos.find(m => m.id === id);
+
+        if (!memo) throw new Error('备忘录不存在');
+
+        const updateResponse = await fetch(`${API_BASE}/memos/${id}`, getAuthOptions({
+            method: 'PUT',
+            body: JSON.stringify({
+                is_frequent: !memo.is_frequent
+            })
+        }));
+
+        if (!updateResponse.ok) throw new Error('更新失败');
+
+        showToast(memo.is_frequent ? '已取消常用标记' : '已设为常用', 'success');
         loadItems();
     } catch (error) {
         showToast(error.message, 'error');

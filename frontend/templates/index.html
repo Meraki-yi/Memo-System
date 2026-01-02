@@ -166,6 +166,10 @@
                     <div class="tab-content-scrollable">
                         <div class="content-header">
                             <div class="header-actions">
+                                <button class="add-btn frequent-btn" onclick="goToFrequents()">
+                                    <span class="icon">⭐</span>
+                                    常用
+                                </button>
                                 <button class="add-btn" onclick="showAddModal('memo')">
                                     <span class="icon">➕</span>
                                     添加备忘
@@ -216,11 +220,17 @@
                 <!-- 备忘录编辑：只有内容 -->
                 <div id="memoEditFields" style="display: none;">
                     <textarea id="itemMemoContent" placeholder="请输入内容..." style="width: 100%; padding: 12px 15px; border: 2px solid var(--border-color); border-radius: var(--radius-sm); font-size: 1rem; min-height: 120px; resize: vertical; outline: none; transition: var(--transition);"></textarea>
-                    <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 15px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
                         <div class="checkbox-group" id="memoCheckboxGroup">
                             <label>
                                 <input type="checkbox" id="isCompleted">
                                 <span>已完成</span>
+                            </label>
+                        </div>
+                        <div class="checkbox-group">
+                            <label>
+                                <input type="checkbox" id="isFrequent">
+                                <span>⭐ 标记为常用</span>
                             </label>
                         </div>
                     </div>
