@@ -1177,11 +1177,11 @@ body {
     padding-top: 15px;
 }
 
-/* 备忘录标签页的添加按钮 - 蓝绿渐变设计 */
-#memos-tab .add-btn {
+/* 备忘录标签页的添加按钮 - 浅粉色纯色设计（用于底部导航栏） */
+#memos-pagination .add-btn {
     width: 140px;
     height: 36px;
-    background: linear-gradient(90deg, #007BFF, #28C76F);
+    background: #FFB6C1;
     color: #FFFFFF;
     border: none;
     border-radius: 8px;
@@ -1192,12 +1192,12 @@ body {
     justify-content: center;
 }
 
-#memos-tab .add-btn:hover {
-    filter: brightness(1.1);
-    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+#memos-pagination .add-btn:hover {
+    background: #FFA5B0;
+    box-shadow: 0 2px 8px rgba(255, 182, 193, 0.4);
 }
 
-#memos-tab .add-btn .icon {
+#memos-pagination .add-btn .icon {
     font-size: 16px;
 }
 

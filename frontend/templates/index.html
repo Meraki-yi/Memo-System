@@ -140,7 +140,6 @@
                                 上一页
                             </button>
                             <button class="add-btn" onclick="showAddModal('reflection')">
-                                <span class="icon">➕</span>
                                 添加反思
                             </button>
                             <button class="pagination-btn" id="reflections-next-btn" onclick="changeReflectionsPage(1)">
@@ -166,10 +165,6 @@
                                     <span class="icon">⭐</span>
                                     常用
                                 </button>
-                                <button class="add-btn" onclick="showAddModal('memo')">
-                                    <span class="icon">➕</span>
-                                    添加备忘
-                                </button>
                             </div>
                         </div>
                         <div class="items-list" id="memos-list">
@@ -183,16 +178,19 @@
                                 <span class="icon">‹</span>
                                 上一页
                             </button>
-                            <div class="pagination-info">
-                                <span class="pagination-current">第 <span id="memos-current-page">1</span> 页</span>
-                                <span class="pagination-divider">/</span>
-                                <span class="pagination-total">共 <span id="memos-total-pages">1</span> 页</span>
-                                <span class="pagination-items">（<span id="memos-total-items">0</span> 条记录）</span>
-                            </div>
+                            <button class="add-btn" onclick="showAddModal('memo')">
+                                添加备忘
+                            </button>
                             <button class="pagination-btn" id="memos-next-btn" onclick="changeMemosPage(1)">
                                 下一页
                                 <span class="icon">›</span>
                             </button>
+                        </div>
+                        <div class="pagination-info">
+                            <span class="pagination-current">第 <span id="memos-current-page">1</span> 页</span>
+                            <span class="pagination-divider">/</span>
+                            <span class="pagination-total">共 <span id="memos-total-pages">1</span> 页</span>
+                            <span class="pagination-items">（<span id="memos-total-items">0</span> 条记录）</span>
                         </div>
                     </div>
                 </div>
