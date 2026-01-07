@@ -916,12 +916,12 @@ body {
 
 .day-header-right .income-total {
     font-size: 12px;
-    color: #4CAF50;
+    color: #F44336;
 }
 
 .day-header-right .expense-total {
     font-size: 12px;
-    color: #F44336;
+    color: #4CAF50;
 }
 
 /* 折叠图标 */
@@ -1037,11 +1037,11 @@ body {
 }
 
 .accounting-record-amount.income {
-    color: #4CAF50;
+    color: #F44336;
 }
 
 .accounting-record-amount.expense {
-    color: #F44336;
+    color: #4CAF50;
 }
 
 .accounting-record-note {
@@ -1541,11 +1541,11 @@ body {
     }
 }
 
-/* 反思标签页的添加按钮 - 淡蓝色设计 */
+/* 反思标签页的添加按钮 - 浅蓝色和浅红色渐变设计 */
 #reflections-tab .add-btn {
     width: 140px;
     height: 36px;
-    background: #87CEEB;
+    background: linear-gradient(135deg, #87CEEB, #FFB6C1);
     color: #FFFFFF;
     border: none;
     border-radius: 8px;
@@ -1610,8 +1610,8 @@ body {
     color: #333333;
     margin: 0 0 12px 0;
     line-height: 1.4;
-    padding-bottom: 0;
-    border-bottom: none;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #EEEEEE;
 }
 
 /* 反思卡片内容区域 */
@@ -1637,10 +1637,11 @@ body {
 .item-card.reflection-card .reflection-card-footer {
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items: flex-start;
     margin-top: 0;
     padding-top: 12px;
     border-top: 1px solid #EEEEEE;
+    gap: 16px;
 }
 
 /* 反思卡片时间信息 */
@@ -1659,9 +1660,10 @@ body {
 /* 反思卡片操作按钮 */
 .item-card.reflection-card .item-actions {
     display: flex;
-    gap: 12px;
+    gap: 8px;
     justify-content: flex-end;
     align-items: center;
+    flex-shrink: 0;
 }
 
 /* 反思卡片编辑按钮 - 绿色 */
