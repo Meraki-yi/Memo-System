@@ -1168,6 +1168,379 @@ body {
     padding-top: 15px;
 }
 
+/* ==================== 备忘录页面样式 v6.3 ==================== */
+
+/* 备忘录标签页特殊布局 */
+#memos-tab .tab-content-scrollable {
+    background: #FAFAFA;
+    /* 确保顶部有固定空间，避免被导航栏覆盖 */
+    padding-top: 15px;
+}
+
+/* 备忘录标签页的添加按钮 - 蓝绿渐变设计 */
+#memos-tab .add-btn {
+    width: 140px;
+    height: 36px;
+    background: linear-gradient(90deg, #007BFF, #28C76F);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 0;
+    gap: 4px;
+    justify-content: center;
+}
+
+#memos-tab .add-btn:hover {
+    filter: brightness(1.1);
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+}
+
+#memos-tab .add-btn .icon {
+    font-size: 16px;
+}
+
+/* 备忘录标签页的常用按钮 - 金黄渐变设计 */
+#memos-tab .frequent-btn {
+    width: auto;
+    min-width: 100px;
+    height: 36px;
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 0 16px;
+    gap: 4px;
+    justify-content: center;
+}
+
+#memos-tab .frequent-btn:hover {
+    filter: brightness(1.1);
+    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
+}
+
+/* 备忘录标签页的列表容器 */
+#memos-tab .items-list {
+    padding: 0 15px;
+}
+
+/* 备忘录卡片样式 - 现代简约设计 */
+.item-card.memo-card {
+    background: #FFFFFF;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    cursor: default;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 相邻备忘录卡片之间的浅绿色细线分隔 */
+#memos-list .item-card.memo-card:not(:first-child) {
+    margin-top: 0;
+    position: relative;
+}
+
+#memos-list .item-card.memo-card:not(:first-child)::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #C8E6C9;
+}
+
+#memos-list .item-card.memo-card:not(:last-child) {
+    margin-bottom: 20px;
+}
+
+/* 备忘录卡片hover效果 - 轻微上浮 */
+.item-card.memo-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+/* 备忘录卡片内容区域 */
+.item-card.memo-card .item-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #EEEEEE;
+    margin-bottom: 0;
+}
+
+/* 备忘录卡片内容文本 */
+.item-card.memo-card .item-text {
+    flex: 1;
+    font-size: 14px;
+    color: #555555;
+    line-height: 1.6;
+    margin: 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: 'Segoe UI', 'Roboto', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+}
+
+/* 备忘录卡片已完成状态 */
+.item-card.memo-card.completed .item-text {
+    color: #999999;
+    text-decoration: line-through;
+}
+
+.item-card.memo-card.completed {
+    opacity: 0.7;
+}
+
+/* 备忘录卡片底部区域 */
+.item-card.memo-card .memo-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #EEEEEE;
+}
+
+/* 备忘录卡片时间信息 */
+.item-card.memo-card .memo-times {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.item-card.memo-card .memo-times .time {
+    font-size: 12px;
+    color: #999999;
+    line-height: 1.5;
+    font-family: 'Segoe UI', 'Roboto', 'PingFang SC', sans-serif;
+}
+
+/* 备忘录卡片操作按钮 */
+.item-card.memo-card .item-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+/* 备忘录卡片收藏按钮 - 金黄色 */
+.item-card.memo-card .btn-frequent {
+    color: #BDBDBD;
+    background: transparent;
+    width: auto;
+    height: auto;
+    padding: 4px;
+    border-radius: 4px;
+    font-size: 18px;
+    transition: all 0.2s ease;
+}
+
+.item-card.memo-card .btn-frequent:hover {
+    background: rgba(255, 215, 0, 0.1);
+    transform: scale(1.1);
+}
+
+.item-card.memo-card .btn-frequent.active {
+    color: #FFD700;
+}
+
+.item-card.memo-card .btn-frequent.active:hover {
+    background: rgba(255, 215, 0, 0.2);
+}
+
+/* 备忘录卡片编辑按钮 - 绿色 */
+.item-card.memo-card .btn-edit {
+    color: #4CAF50;
+    background: transparent;
+    width: auto;
+    height: auto;
+    padding: 4px;
+    border-radius: 4px;
+    font-size: 18px;
+    transition: all 0.2s ease;
+}
+
+.item-card.memo-card .btn-edit:hover {
+    background: rgba(76, 175, 80, 0.1);
+    transform: scale(1.1);
+}
+
+/* 备忘录卡片删除按钮 - 红色 */
+.item-card.memo-card .btn-delete {
+    color: #F44336;
+    background: transparent;
+    width: auto;
+    height: auto;
+    padding: 4px;
+    border-radius: 4px;
+    font-size: 18px;
+    transition: all 0.2s ease;
+}
+
+.item-card.memo-card .btn-delete:hover {
+    background: rgba(244, 67, 54, 0.1);
+    transform: scale(1.1);
+}
+
+/* 备忘录卡片常用标记 - 左侧金边 */
+.item-card.memo-card.frequent {
+    border-left: 3px solid #FFD700;
+}
+
+/* 备忘录卡片底部分页控件样式 */
+#memos-pagination {
+    background: #FFFFFF;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+#memos-pagination .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+#memos-pagination .pagination-info {
+    display: flex;
+    justify-content: center;
+}
+
+/* 分页按钮样式 - 浅灰背景 */
+#memos-pagination .pagination-btn {
+    background: #F5F5F5;
+    border: 1px solid #DDDDDD;
+    color: #666666;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 400;
+}
+
+#memos-pagination .pagination-btn:hover:not(:disabled) {
+    background: #E8E8E8;
+    border-color: #CCCCCC;
+}
+
+#memos-pagination .pagination-btn:disabled {
+    background: #CCCCCC;
+    color: #999999;
+    cursor: not-allowed;
+}
+
+/* 分页信息文字样式 */
+#memos-pagination .pagination-info {
+    font-size: 12px;
+    color: #999999;
+    gap: 6px;
+}
+
+#memos-pagination .pagination-current span,
+#memos-pagination .pagination-total span,
+#memos-pagination .pagination-items span {
+    font-weight: 400;
+    color: #999999;
+}
+
+/* 复选框样式优化 */
+.memo-card .checkbox-wrapper {
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.memo-card .checkmark {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #DDDDDD;
+    border-radius: 50%;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: #FFFFFF;
+}
+
+.memo-card .checkbox-wrapper:hover .checkmark {
+    border-color: #007BFF;
+}
+
+.memo-card .checkbox-wrapper input[type="checkbox"]:checked + .checkmark {
+    background: linear-gradient(135deg, #007BFF, #28C76F);
+    border-color: #007BFF;
+}
+
+.memo-card .checkbox-wrapper input[type="checkbox"]:checked + .checkmark::after {
+    content: '✓';
+    color: #FFFFFF;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+/* 空状态优化 */
+#memos-list .empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    color: #999999;
+    font-size: 14px;
+    font-family: 'Segoe UI', 'Roboto', 'PingFang SC', sans-serif;
+}
+
+#memos-list .empty-state::before {
+    content: '📝';
+    display: block;
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+/* 响应式优化 - 移动端 */
+@media (max-width: 768px) {
+    /* 备忘录卡片在移动端的优化 */
+    .item-card.memo-card {
+        padding: 14px;
+        margin-bottom: 16px;
+    }
+
+    .item-card.memo-card .item-text {
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .item-card.memo-card .memo-times .time {
+        font-size: 11px;
+    }
+
+    .item-card.memo-card .item-actions {
+        gap: 6px;
+    }
+
+    .item-card.memo-card .btn-frequent,
+    .item-card.memo-card .btn-edit,
+    .item-card.memo-card .btn-delete {
+        font-size: 16px;
+        padding: 3px;
+    }
+
+    #memos-tab .add-btn,
+    #memos-tab .frequent-btn {
+        width: auto;
+        min-width: 90px;
+        height: 32px;
+        font-size: 13px;
+        padding: 0 12px;
+    }
+}
+
 /* 反思标签页的添加按钮 - 淡蓝色设计 */
 #reflections-tab .add-btn {
     width: 140px;
@@ -1504,10 +1877,6 @@ body {
 
 .btn-frequent:hover {
     background: rgba(255, 215, 0, 0.2);
-}
-
-.memo-card.frequent {
-    border-left: 3px solid #FFD700;
 }
 
 /* 复选框样式 */
@@ -2104,7 +2473,7 @@ body {
     transform: translateY(0);
 }
 
-/* 备忘录卡片底部时间显示区域优化 */
+/* 备忘录卡片底部时间显示区域优化（旧版本兼容） */
 .memo-card .memo-card-footer {
     display: flex;
     justify-content: space-between;
@@ -2125,15 +2494,13 @@ body {
     color: var(--text-muted);
 }
 
-/* 操作按钮水平布局 */
+/* 操作按钮水平布局（旧版本兼容） */
 .memo-card .item-actions {
     display: flex;
     gap: 8px;
     justify-content: flex-end;
     align-items: center;
 }
-
-/* 反思卡片的时间也调整为右下角显示 - 已被上方专用样式替代 */
 
 /* 周日期范围显示样式（通用） */
 .week-range-display {
