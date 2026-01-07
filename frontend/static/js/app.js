@@ -1226,8 +1226,11 @@ function changeReflectionsPage(delta) {
     if (newPage >= 1 && newPage <= state.totalPages) {
         state.currentPage = newPage;
         loadItems();
-        // 平滑滚动到顶部
-        document.getElementById('reflections-list').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // 重置滚动位置到顶部
+        const scrollable = document.querySelector('#reflections-tab .tab-content-scrollable');
+        if (scrollable) {
+            scrollable.scrollTop = 0;
+        }
     }
 }
 

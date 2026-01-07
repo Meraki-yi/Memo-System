@@ -128,14 +128,6 @@
                 <!-- 复盘反思标签 -->
                 <div class="tab-content" id="reflections-tab">
                     <div class="tab-content-scrollable">
-                        <div class="content-header">
-                            <div class="header-actions">
-                                <button class="add-btn" onclick="showAddModal('reflection')">
-                                    <span class="icon">➕</span>
-                                    添加反思
-                                </button>
-                            </div>
-                        </div>
                         <div class="items-list" id="reflections-list">
                             <!-- 动态加载内容 -->
                         </div>
@@ -147,16 +139,20 @@
                                 <span class="icon">‹</span>
                                 上一页
                             </button>
-                            <div class="pagination-info">
-                                <span class="pagination-current">第 <span id="reflections-current-page">1</span> 页</span>
-                                <span class="pagination-divider">/</span>
-                                <span class="pagination-total">共 <span id="reflections-total-pages">1</span> 页</span>
-                                <span class="pagination-items">（<span id="reflections-total-items">0</span> 条记录）</span>
-                            </div>
+                            <button class="add-btn" onclick="showAddModal('reflection')">
+                                <span class="icon">➕</span>
+                                添加反思
+                            </button>
                             <button class="pagination-btn" id="reflections-next-btn" onclick="changeReflectionsPage(1)">
                                 下一页
                                 <span class="icon">›</span>
                             </button>
+                        </div>
+                        <div class="pagination-info">
+                            <span class="pagination-current">第 <span id="reflections-current-page">1</span> 页</span>
+                            <span class="pagination-divider">/</span>
+                            <span class="pagination-total">共 <span id="reflections-total-pages">1</span> 页</span>
+                            <span class="pagination-items">（<span id="reflections-total-items">0</span> 条记录）</span>
                         </div>
                     </div>
                 </div>

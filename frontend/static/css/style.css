@@ -269,6 +269,7 @@ body {
     transition: var(--transition);
     font-size: 1.5rem;
     padding: 0;
+    color: #666666;
 }
 
 .more-btn:hover {
@@ -364,12 +365,12 @@ body {
     background: none;
     border: none;
     padding: 0;
-    font-size: 0.9rem;
-    font-weight: 600;
+    font-size: 16px;
+    font-weight: 700;
     color: var(--text-light);
     cursor: pointer;
     transition: var(--transition);
-    border-bottom: 3px solid transparent;
+    border-bottom: 2px solid transparent;
     margin-bottom: -2px;
     display: flex;
     align-items: center;
@@ -391,7 +392,7 @@ body {
 
 .tab-btn.active {
     color: var(--primary-dark);
-    border-bottom-color: var(--primary-light);
+    border-bottom-color: #FFA500;
 }
 
 .tab-content {
@@ -740,24 +741,25 @@ body {
     border-top: 1px solid var(--border-color);
     box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
     z-index: 99;
-    padding: 10px 15px;
+    padding: 12px 15px;
     display: flex;
     justify-content: center;
-    height: 72px;
+    height: auto;
+    min-height: 70px;
 }
 
 .bottom-bar-content {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
+    gap: 10px;
     width: 100%;
     max-width: 600px;
 }
 
 .bottom-bar-nav {
     display: flex;
-    gap: 8px;
+    gap: 15px;
     align-items: center;
     justify-content: center;
     width: 100%;
@@ -770,30 +772,32 @@ body {
 }
 
 .nav-btn {
-    background: var(--bg-light);
-    border: 1px solid var(--border-color);
-    padding: 8px 16px;
-    border-radius: 0;
-    font-size: 0.85rem;
-    font-weight: 600;
+    background: #F5F5F5;
+    border: 1px solid #DDDDDD;
+    color: #666666;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 400;
     cursor: pointer;
     transition: var(--transition);
     display: flex;
     align-items: center;
     gap: 4px;
-    color: var(--text-dark);
     white-space: nowrap;
 }
 
 /* 移除导航按钮hover效果 */
 .nav-btn:hover:not(:disabled) {
-    background: var(--bg-light);
-    border-color: var(--border-color);
+    background: #E8E8E8;
+    border-color: #CCCCCC;
 }
 
 .nav-btn:disabled {
-    opacity: 0.4;
+    background: #CCCCCC;
+    color: #999999;
     cursor: not-allowed;
+    opacity: 1;
 }
 
 .nav-btn .icon {
@@ -802,22 +806,22 @@ body {
 }
 
 .add-record-btn {
-    background: linear-gradient(to right, #007BFF, #28C76F);
+    background: linear-gradient(90deg, #007BFF, #28C76F);
     border: none;
-    padding: 12px 24px;
+    padding: 0;
     border-radius: 8px;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     transition: var(--transition);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 4px;
     color: #FFFFFF;
     white-space: nowrap;
-    min-height: 40px;
-    min-width: 200px;
+    width: 140px;
+    height: 36px;
 }
 
 /* 移除记一笔按钮hover效果 */
@@ -837,27 +841,27 @@ body {
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 0.8rem;
-    color: var(--text-light);
+    font-size: 12px;
+    color: #999999;
 }
 
 .bottom-bar-info .pagination-current span {
-    color: var(--primary-dark);
-    font-weight: 600;
+    color: #999999;
+    font-weight: 400;
 }
 
 .bottom-bar-info .pagination-total span {
-    color: var(--text-dark);
-    font-weight: 600;
+    color: #999999;
+    font-weight: 400;
 }
 
 .bottom-bar-info .pagination-items span {
-    color: var(--primary-dark);
-    font-weight: 600;
+    color: #999999;
+    font-weight: 400;
 }
 
 .bottom-bar-info .pagination-divider {
-    color: var(--text-muted);
+    color: #999999;
 }
 
 /* ==================== 列表样式调整 ==================== */
@@ -1155,62 +1159,233 @@ body {
     cursor: default;
 }
 
+/* ==================== 复盘反思页面样式 ==================== */
+
+/* 反思标签页特殊布局 */
+#reflections-tab .tab-content-scrollable {
+    background: #FAFAFA;
+    /* 确保顶部有固定空间，避免被导航栏覆盖 */
+    padding-top: 15px;
+}
+
+/* 反思标签页的添加按钮 - 淡蓝色设计 */
+#reflections-tab .add-btn {
+    width: 140px;
+    height: 36px;
+    background: #87CEEB;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 0;
+    gap: 4px;
+    justify-content: center;
+}
+
+#reflections-tab .add-btn:hover {
+    filter: brightness(1.1);
+    box-shadow: 0 2px 8px rgba(135, 206, 235, 0.4);
+}
+
+#reflections-tab .add-btn .icon {
+    font-size: 16px;
+}
+
+/* 反思标签页的列表容器 */
+#reflections-tab .items-list {
+    padding: 0 15px;
+}
+
 /* 反思卡片样式 */
 .item-card.reflection-card {
+    background: #FFFFFF;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
     cursor: default;
     display: flex;
     flex-direction: column;
-    gap: 15px;
 }
 
-/* 移除hover效果 - 固定显示 */
+/* 相邻反思卡片之间的分隔线 */
+#reflections-list .item-card.reflection-card:not(:first-child) {
+    margin-top: 20px;
+    position: relative;
+}
+
+#reflections-list .item-card.reflection-card:not(:first-child)::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #FFCDD2;
+}
+
+/* 移除反思卡片的hover效果 */
 .item-card.reflection-card:hover {
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
 /* 反思卡片标题样式 */
-.item-title {
-    font-size: 1.15rem;
+.item-card.reflection-card .item-title {
+    font-size: 16px;
     font-weight: 700;
-    color: var(--text-dark);
-    margin: 0;
+    color: #333333;
+    margin: 0 0 12px 0;
     line-height: 1.4;
-    padding-bottom: 12px;
-    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 0;
+    border-bottom: none;
 }
 
 /* 反思卡片内容区域 */
 .item-card.reflection-card .item-content {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 0;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #EEEEEE;
 }
 
 /* 反思卡片内容文本 */
 .item-card.reflection-card .item-text {
-    font-size: 0.95rem;
-    color: var(--text-light);
+    font-size: 14px;
+    color: #555555;
     line-height: 1.6;
     margin: 0;
     white-space: pre-wrap;
     word-wrap: break-word;
 }
 
-/* 反思卡片元信息区域 */
-.item-card.reflection-card .item-meta {
+/* 反思卡片底部区域 */
+.item-card.reflection-card .reflection-card-footer {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: 0;
     padding-top: 12px;
-    border-top: 1px solid var(--border-color);
+    border-top: 1px solid #EEEEEE;
+}
+
+/* 反思卡片时间信息 */
+.item-card.reflection-card .reflection-times {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.item-card.reflection-card .reflection-times .time {
+    font-size: 12px;
+    color: #999999;
+    line-height: 1.5;
 }
 
 /* 反思卡片操作按钮 */
 .item-card.reflection-card .item-actions {
     display: flex;
-    gap: 8px;
+    gap: 12px;
     justify-content: flex-end;
-    padding-top: 8px;
+    align-items: center;
+}
+
+/* 反思卡片编辑按钮 - 绿色 */
+.item-card.reflection-card .btn-edit {
+    color: #4CAF50;
+    background: transparent;
+    width: auto;
+    height: auto;
+    padding: 0;
+    border-radius: 0;
+    font-size: 18px;
+    transition: transform 0.2s ease;
+}
+
+.item-card.reflection-card .btn-edit:hover {
+    background: transparent;
+    transform: scale(1.1);
+    box-shadow: none;
+}
+
+/* 反思卡片删除按钮 - 红色 */
+.item-card.reflection-card .btn-delete {
+    color: #F44336;
+    background: transparent;
+    width: auto;
+    height: auto;
+    padding: 0;
+    border-radius: 0;
+    font-size: 18px;
+    transition: transform 0.2s ease;
+}
+
+.item-card.reflection-card .btn-delete:hover {
+    background: transparent;
+    transform: scale(1.1);
+    box-shadow: none;
+}
+
+/* 反思卡片底部分页控件样式 */
+#reflections-pagination {
+    background: #FFFFFF;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+#reflections-pagination .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+#reflections-pagination .pagination-info {
+    display: flex;
+    justify-content: center;
+}
+
+/* 分页按钮样式 - 浅灰背景 */
+#reflections-pagination .pagination-btn {
+    background: #F5F5F5;
+    border: 1px solid #DDDDDD;
+    color: #666666;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 400;
+}
+
+#reflections-pagination .pagination-btn:hover:not(:disabled) {
+    background: #E8E8E8;
+    border-color: #CCCCCC;
+}
+
+#reflections-pagination .pagination-btn:disabled {
+    background: #CCCCCC;
+    color: #999999;
+    cursor: not-allowed;
+}
+
+/* 分页信息文字样式 */
+#reflections-pagination .pagination-info {
+    font-size: 12px;
+    color: #999999;
+    gap: 6px;
+}
+
+#reflections-pagination .pagination-current span,
+#reflections-pagination .pagination-total span,
+#reflections-pagination .pagination-items span {
+    font-weight: 400;
+    color: #999999;
 }
 
 /* 模态框标题输入框样式 */
@@ -1699,24 +1874,27 @@ body {
 
     /* 移动端底部栏调整 */
     .bottom-bar {
-        padding: 8px 12px;
-        height: 68px;
+        padding: 10px 12px;
+        height: auto;
+        min-height: 65px;
     }
 
     .bottom-bar-nav {
-        gap: 6px;
+        gap: 12px;
     }
 
     .nav-btn {
-        padding: 6px 12px;
-        font-size: 0.8rem;
+        padding: 6px 10px;
+        font-size: 12px;
     }
 
     .add-record-btn {
-        padding: 12px 24px;
-        font-size: 16px;
+        padding: 0;
+        font-size: 13px;
         color: #FFFFFF;
-        min-width: 200px;
+        width: 120px;
+        height: 32px;
+        gap: 3px;
     }
 
     .add-record-btn .icon {
@@ -1825,28 +2003,30 @@ body {
     /* 小屏幕底部栏 - 保持垂直布局，两行居中对齐 */
     .bottom-bar {
         height: auto;
-        min-height: 70px;
+        min-height: 65px;
         padding: 8px 10px;
     }
 
     .bottom-bar-content {
-        gap: 4px;
+        gap: 8px;
     }
 
     .bottom-bar-nav {
-        gap: 6px;
+        gap: 10px;
     }
 
     .nav-btn {
-        padding: 6px 10px;
-        font-size: 0.75rem;
+        padding: 5px 8px;
+        font-size: 11px;
     }
 
     .add-record-btn {
-        padding: 12px 24px;
-        font-size: 16px;
+        padding: 0;
+        font-size: 12px;
         color: #FFFFFF;
-        min-width: 200px;
+        width: 110px;
+        height: 30px;
+        gap: 3px;
     }
 
     .add-record-btn .icon {
@@ -1953,33 +2133,7 @@ body {
     align-items: center;
 }
 
-/* 反思卡片的时间也调整为右下角显示 */
-.reflection-card .reflection-card-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid var(--border-color);
-}
-
-.reflection-card .reflection-times {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.reflection-card .reflection-times .time {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-}
-
-.reflection-card .item-actions {
-    display: flex;
-    gap: 8px;
-    justify-content: flex-end;
-    align-items: center;
-}
+/* 反思卡片的时间也调整为右下角显示 - 已被上方专用样式替代 */
 
 /* 周日期范围显示样式（通用） */
 .week-range-display {
