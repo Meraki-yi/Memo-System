@@ -159,11 +159,27 @@ function renderYearlyData() {
                            '7月', '8月', '9月', '10月', '11月', '12月'];
         const monthName = monthNames[data.month - 1];
 
+        // 判断收入和支出是否有数据
+        const hasIncome = data.income > 0;
+        const hasExpense = data.expense > 0;
+
+        // 根据是否有数据设置样式类
+        const incomeClass = hasIncome ? 'month-amount income has-data' : 'month-amount income no-data';
+        const expenseClass = hasExpense ? 'month-amount expense has-data' : 'month-amount expense no-data';
+
+        // 格式化金额，有数据显示实际金额，无数据显示0.00
+        const incomeDisplay = hasIncome ? `¥${data.income.toFixed(2)}` : '¥0.00';
+        const expenseDisplay = hasExpense ? `¥${data.expense.toFixed(2)}` : '¥0.00';
+
+        // 无数据时不添加点击事件
+        const incomeClick = hasIncome ? `onclick="goToIncomeStats('${data.startDate}', '${data.endDate}')"` : '';
+        const expenseClick = hasExpense ? `onclick="goToExpenseStats('${data.startDate}', '${data.endDate}')"` : '';
+
         return `
             <div class="month-row">
                 <span class="month-name">${monthName}</span>
-                <span class="month-amount income" onclick="goToIncomeStats('${data.startDate}', '${data.endDate}')">${data.income.toFixed(2)}</span>
-                <span class="month-amount expense" onclick="goToExpenseStats('${data.startDate}', '${data.endDate}')">${data.expense.toFixed(2)}</span>
+                <span class="${incomeClass}" ${incomeClick}>${incomeDisplay}</span>
+                <span class="${expenseClass}" ${expenseClick}>${expenseDisplay}</span>
             </div>
         `;
     }).join('');
