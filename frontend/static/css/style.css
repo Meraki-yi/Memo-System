@@ -664,13 +664,19 @@ body {
     box-shadow: none;
     margin: 0 0 15px 0;
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
     padding: 0 15px;
     /* 确保与下方卡片宽度对齐 */
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
+}
+
+.reflections-header-left {
+    position: relative;
+    display: flex;
+    align-items: center;
 }
 
 .reflections-header-right {
@@ -1216,15 +1222,26 @@ body {
     box-shadow: var(--shadow-md);
 }
 
-/* 常用按钮样式 */
-.frequent-btn {
-    background: linear-gradient(135deg, #FFD700, #FFA500);
-    color: white;
+/* 反思标签页的常用按钮 - 与备忘录常用按钮保持一致的绿白渐变设计 */
+#reflections-tab .frequent-btn.add-btn {
+    width: auto;
+    min-width: 100px;
+    height: 36px;
+    background: linear-gradient(135deg, #90EE90, #F0FFF0) !important;
+    color: #2E7D32;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 0 16px;
+    gap: 4px;
+    justify-content: center;
 }
 
-.frequent-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+#reflections-tab .frequent-btn.add-btn:hover {
+    filter: brightness(1.05);
+    box-shadow: 0 2px 8px rgba(144, 238, 144, 0.5) !important;
+    background: linear-gradient(135deg, #7FE87F, #E8FFF0) !important;
 }
 
 .export-btn {
@@ -1278,7 +1295,7 @@ body {
 
 /* 反思标签页特殊布局 */
 #reflections-tab .tab-content-scrollable {
-    background: linear-gradient(180deg, #FFF9E6 0%, #FFFCF5 100%);
+    background: linear-gradient(180deg, #FFF3D6 0%, #FFF8E7 100%);
     /* 确保顶部有固定空间，避免被导航栏覆盖 */
     padding-top: 20px;
 }
@@ -1287,16 +1304,16 @@ body {
 
 /* 备忘录标签页特殊布局 */
 #memos-tab .tab-content-scrollable {
-    background: linear-gradient(180deg, #FFF9E6 0%, #FFFCF5 100%);
+    background: linear-gradient(180deg, #FFF3D6 0%, #FFF8E7 100%);
     /* 确保顶部有固定空间，避免被导航栏覆盖 */
     padding-top: 15px;
 }
 
-/* 备忘录标签页的添加按钮 - 浅粉色纯色设计（用于底部导航栏） */
+/* 备忘录标签页的添加按钮 - 淡蓝色纯色设计（用于底部导航栏） */
 #memos-pagination .add-btn {
     width: 140px;
     height: 36px;
-    background: #FFB6C1;
+    background: #87CEEB;
     color: #FFFFFF;
     border: none;
     border-radius: 8px;
@@ -1308,21 +1325,21 @@ body {
 }
 
 #memos-pagination .add-btn:hover {
-    background: #FFA5B0;
-    box-shadow: 0 2px 8px rgba(255, 182, 193, 0.4);
+    background: #7EC8E3;
+    box-shadow: 0 2px 8px rgba(135, 206, 235, 0.4);
 }
 
 #memos-pagination .add-btn .icon {
     font-size: 16px;
 }
 
-/* 备忘录标签页的常用按钮 - 金黄渐变设计 */
+/* 备忘录标签页的常用按钮 - 绿白渐变设计 */
 #memos-tab .frequent-btn {
     width: auto;
     min-width: 100px;
     height: 36px;
-    background: linear-gradient(135deg, #FFD700, #FFA500);
-    color: #FFFFFF;
+    background: linear-gradient(135deg, #90EE90, #F0FFF0);
+    color: #2E7D32;
     border: none;
     border-radius: 8px;
     font-size: 14px;
@@ -1333,8 +1350,8 @@ body {
 }
 
 #memos-tab .frequent-btn:hover {
-    filter: brightness(1.1);
-    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
+    filter: brightness(1.05);
+    box-shadow: 0 2px 8px rgba(144, 238, 144, 0.5);
 }
 
 /* 备忘录标签页的列表容器 */
@@ -1355,20 +1372,10 @@ body {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* 相邻备忘录卡片之间的浅绿色细线分隔 */
+/* 相邻备忘录卡片之间的浅绿色细线分隔 - 已移除 */
 #memos-list .item-card.memo-card:not(:first-child) {
     margin-top: 0;
     position: relative;
-}
-
-#memos-list .item-card.memo-card:not(:first-child)::before {
-    content: '';
-    position: absolute;
-    top: -10px;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: #C8E6C9;
 }
 
 #memos-list .item-card.memo-card:not(:last-child) {
@@ -1656,11 +1663,11 @@ body {
     }
 }
 
-/* 反思标签页的添加按钮 - 淡粉色纯色 */
-#reflections-tab .add-btn {
+/* 反思标签页的添加按钮 - 淡蓝色纯色（排除常用按钮） */
+#reflections-tab .add-btn:not(.frequent-btn) {
     width: 140px;
     height: 36px;
-    background: #FFB6C1;
+    background: #87CEEB;
     color: #FFFFFF;
     border: none;
     border-radius: 8px;
@@ -1671,12 +1678,12 @@ body {
     justify-content: center;
 }
 
-#reflections-tab .add-btn:hover {
-    background: #FFA5B0;
-    box-shadow: 0 2px 8px rgba(255, 182, 193, 0.4);
+#reflections-tab .add-btn:not(.frequent-btn):hover {
+    background: #7EC8E3;
+    box-shadow: 0 2px 8px rgba(135, 206, 235, 0.4);
 }
 
-#reflections-tab .add-btn .icon {
+#reflections-tab .add-btn:not(.frequent-btn) .icon {
     font-size: 16px;
 }
 
@@ -1697,20 +1704,10 @@ body {
     flex-direction: column;
 }
 
-/* 相邻反思卡片之间的分隔线 */
+/* 相邻反思卡片之间的分隔线 - 已移除 */
 #reflections-list .item-card.reflection-card:not(:first-child) {
     margin-top: 20px;
     position: relative;
-}
-
-#reflections-list .item-card.reflection-card:not(:first-child)::before {
-    content: '';
-    position: absolute;
-    top: -10px;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: #FFCDD2;
 }
 
 /* 移除反思卡片的hover效果 */
@@ -2420,33 +2417,38 @@ body {
         height: calc(100vh - 114px - env(safe-area-inset-top, 0) - env(safe-area-inset-bottom, 0));
     }
 
-    /* 移动端底部栏调整 - 适配安全区 */
+    /* 移动端底部栏调整 - 适配安全区，增加高度以容纳记录数 */
     .bottom-bar,
     .pagination-container.fixed-bottom {
-        padding: 10px 12px;
+        padding: 8px 12px;
         padding-left: calc(12px + env(safe-area-inset-left, 0));
         padding-right: calc(12px + env(safe-area-inset-right, 0));
         height: auto;
-        min-height: 65px;
+        min-height: 75px;
+    }
+
+    /* 移动端底部栏内容垂直布局 */
+    .bottom-bar-content {
+        gap: 8px;
     }
 
     .bottom-bar-nav,
     .pagination {
-        gap: 12px;
+        gap: 8px;
     }
 
     .nav-btn,
     .pagination-btn {
-        padding: 6px 10px;
-        font-size: 12px;
+        padding: 5px 8px;
+        font-size: 11px;
     }
 
     .add-record-btn {
         padding: 0;
-        font-size: 13px;
+        font-size: 12px;
         color: #FFFFFF;
-        width: 120px;
-        height: 32px;
+        width: 100px;
+        height: 30px;
         gap: 3px;
     }
 
@@ -2458,11 +2460,15 @@ body {
     .pagination-info {
         font-size: 0.75rem;
         gap: 4px;
+        /* 移动端也显示记录数，并保持在一行 */
+        flex-wrap: nowrap;
+        white-space: nowrap;
     }
 
+    /* 移动端显示记录数，不再隐藏 */
     .bottom-bar-info .pagination-items,
     .pagination-items {
-        display: none;
+        display: inline;
     }
 
     /* 移动端统计区域 - 白色直角框风格，移除左右内边距，适配安全区 */
@@ -2545,7 +2551,15 @@ body {
         margin: 20px;
     }
 
-    .content-header {
+    /* 移动端content-header保持水平布局（备忘录页面） */
+    #memos-tab .content-header {
+        flex-direction: row;
+        gap: 15px;
+        align-items: center;
+    }
+
+    /* 其他页面的content-header可以保持垂直布局 */
+    .content-header:not(#memos-tab .content-header) {
         flex-direction: column;
         gap: 15px;
         align-items: stretch;
@@ -2642,7 +2656,7 @@ body {
     .bottom-bar,
     .pagination-container.fixed-bottom {
         height: auto;
-        min-height: 65px;
+        min-height: 75px;
         padding: 8px 10px;
         padding-left: calc(10px + env(safe-area-inset-left, 0));
         padding-right: calc(10px + env(safe-area-inset-right, 0));
@@ -2654,22 +2668,22 @@ body {
 
     .bottom-bar-nav,
     .pagination {
-        gap: 10px;
+        gap: 8px;
     }
 
     .nav-btn,
     .pagination-btn {
-        padding: 5px 8px;
-        font-size: 11px;
+        padding: 4px 6px;
+        font-size: 10px;
     }
 
     .add-record-btn {
         padding: 0;
-        font-size: 12px;
+        font-size: 11px;
         color: #FFFFFF;
-        width: 110px;
-        height: 30px;
-        gap: 3px;
+        width: 90px;
+        height: 28px;
+        gap: 2px;
     }
 
     .add-record-btn .icon {
@@ -2678,13 +2692,17 @@ body {
 
     .bottom-bar-info .pagination-info,
     .pagination-info {
-        font-size: 0.7rem;
-        gap: 4px;
+        font-size: 0.65rem;
+        gap: 3px;
+        /* 小屏幕也显示记录数，并保持在一行 */
+        flex-wrap: nowrap;
+        white-space: nowrap;
     }
 
+    /* 小屏幕也显示记录数 */
     .bottom-bar-info .pagination-items,
     .pagination-items {
-        display: none;
+        display: inline;
     }
 
     /* 小屏幕统计区域 - 白色直角框风格，贴边显示，适配安全区 */

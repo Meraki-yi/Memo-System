@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>备忘录系统</title>
-    <link rel="stylesheet" href="/static/css/style.css?v=8.8">
+    <link rel="stylesheet" href="/static/css/style.css?v=9.8">
 </head>
 <body>
     <div class="app-container">
@@ -125,22 +125,22 @@
                 <!-- 复盘反思标签 -->
                 <div class="tab-content" id="reflections-tab">
                     <div class="tab-content-scrollable">
-                        <div class="content-header">
-                            <div class="header-actions">
+                        <div class="content-header reflections-page-header">
+                            <div class="reflections-header-left">
                                 <button class="add-btn frequent-btn" onclick="goToReflectionFrequents()">
                                     <span class="icon">⭐</span>
                                     常用
                                 </button>
-                                <div class="header-more-wrapper">
-                                    <button class="more-btn reflections-more-btn" onclick="toggleReflectionsMoreMenu()">
-                                        <span class="icon">⋯</span>
+                            </div>
+                            <div class="reflections-header-right header-more-wrapper">
+                                <button class="more-btn reflections-more-btn" onclick="toggleReflectionsMoreMenu()">
+                                    <span class="icon">⋯</span>
+                                </button>
+                                <div class="more-menu" id="reflectionsMoreMenu">
+                                    <button class="more-menu-item" onclick="exportCurrentTabData()">
+                                        <span class="icon">📥</span>
+                                        导出数据
                                     </button>
-                                    <div class="more-menu" id="reflectionsMoreMenu">
-                                        <button class="more-menu-item" onclick="exportCurrentTabData()">
-                                            <span class="icon">📥</span>
-                                            导出数据
-                                        </button>
-                                    </div>
                                 </div>
                             </div>
                         </div>
