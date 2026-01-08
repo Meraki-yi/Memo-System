@@ -317,6 +317,25 @@ async def create_reflection(
         "updated_at": db_reflection.updated_at.isoformat()
     }
 
+@app.get("/api/reflections/{reflection_id}")
+async def get_reflection(
+    request: Request,
+    reflection_id: int,
+    db: Session = Depends(get_db)
+):
+    """获取单个复盘反思"""
+    check_auth(request)
+    db_reflection = db.query(Reflection).filter(Reflection.id == reflection_id).first()
+    if not db_reflection:
+        raise HTTPException(status_code=404, detail="Reflection not found")
+
+    return {
+        "id": db_reflection.id,
+        "content": db_reflection.content,
+        "created_at": db_reflection.created_at.isoformat(),
+        "updated_at": db_reflection.updated_at.isoformat()
+    }
+
 @app.put("/api/reflections/{reflection_id}")
 async def update_reflection(
     request: Request,

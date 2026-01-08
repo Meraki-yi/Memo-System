@@ -702,15 +702,17 @@ function showAddModal(type) {
 async function editItem(id) {
     const endpoint = currentTab === 'reflections' ? '/reflections' : '/memos';
     try {
-        const response = await fetch(`${API_BASE}${endpoint}`, getAuthOptions());
+        // 直接通过ID获取单个记录，而不是从列表中查找
+        const response = await fetch(`${API_BASE}${endpoint}/${id}`, getAuthOptions());
 
-        if (!response.ok) throw new Error('获取数据失败');
+        if (!response.ok) {
+            if (response.status === 404) {
+                throw new Error('项目不存在');
+            }
+            throw new Error('获取数据失败');
+        }
 
-        const data = await response.json();
-        const items = data.items || [];
-        const item = items.find(i => i.id === id);
-
-        if (!item) throw new Error('项目不存在');
+        const item = await response.json();
 
         currentEditItem = item;
         document.getElementById('modalTitle').textContent =
@@ -837,15 +839,17 @@ async function saveItem() {
 // 切换备忘录完成状态
 async function toggleMemoComplete(id) {
     try {
-        const response = await fetch(`${API_BASE}/memos`, getAuthOptions());
+        // 直接通过ID获取单个记录
+        const response = await fetch(`${API_BASE}/memos/${id}`, getAuthOptions());
 
-        if (!response.ok) throw new Error('获取数据失败');
+        if (!response.ok) {
+            if (response.status === 404) {
+                throw new Error('备忘录不存在');
+            }
+            throw new Error('获取数据失败');
+        }
 
-        const data = await response.json();
-        const memos = data.items || [];
-        const memo = memos.find(m => m.id === id);
-
-        if (!memo) throw new Error('备忘录不存在');
+        const memo = await response.json();
 
         const updateResponse = await fetch(`${API_BASE}/memos/${id}`, getAuthOptions({
             method: 'PUT',
@@ -865,15 +869,17 @@ async function toggleMemoComplete(id) {
 // 切换备忘录常用状态
 async function toggleMemoFrequent(id) {
     try {
-        const response = await fetch(`${API_BASE}/memos`, getAuthOptions());
+        // 直接通过ID获取单个记录
+        const response = await fetch(`${API_BASE}/memos/${id}`, getAuthOptions());
 
-        if (!response.ok) throw new Error('获取数据失败');
+        if (!response.ok) {
+            if (response.status === 404) {
+                throw new Error('备忘录不存在');
+            }
+            throw new Error('获取数据失败');
+        }
 
-        const data = await response.json();
-        const memos = data.items || [];
-        const memo = memos.find(m => m.id === id);
-
-        if (!memo) throw new Error('备忘录不存在');
+        const memo = await response.json();
 
         const updateResponse = await fetch(`${API_BASE}/memos/${id}`, getAuthOptions({
             method: 'PUT',
