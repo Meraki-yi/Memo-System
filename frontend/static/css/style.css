@@ -654,21 +654,65 @@ body {
     display: block;
 }
 
-/* 反思页面顶部header */
+/* 反思页面顶部header - 去掉白色背景框，让按钮悬浮 */
 .reflections-page-header {
     position: relative;
-    height: 50px;
-    background: var(--bg-white);
-    border-bottom: 1px solid #E0E0E0;
+    height: auto;
+    min-height: 40px;
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
     margin: 0 0 15px 0;
     display: flex;
     justify-content: flex-end;
     align-items: center;
     padding: 0 15px;
+    /* 确保与下方卡片宽度对齐 */
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .reflections-header-right {
     position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* 备忘录页面顶部header - 与反思页面保持一致的布局 */
+#memos-tab .content-header {
+    position: relative;
+    height: auto;
+    min-height: 40px;
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    margin: 0 0 15px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
+    /* 确保与下方卡片宽度对齐 */
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* 备忘录页面的header-actions - 调整按钮间距 */
+#memos-tab .header-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+/* 备忘录页面的三个点按钮 - 单独调整对齐 */
+#memos-tab .header-more-wrapper {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    /* 提高z-index，确保菜单不被下方卡片覆盖 */
+    z-index: 101;
 }
 
 /* 反思和备忘录页面的更多按钮样式 */
@@ -682,16 +726,42 @@ body {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: var(--transition);
+    transition: all 0.2s ease;
     font-size: 1.2rem;
     padding: 0;
     color: #666666;
     border-radius: 50%;
+    position: relative;
+    z-index: 2;
 }
 
 .reflections-more-btn:hover,
 .memos-more-btn:hover {
     background: #E8E8E8;
+    transform: scale(1.05);
+}
+
+.reflections-more-btn:active,
+.memos-more-btn:active {
+    transform: scale(0.95);
+}
+
+/* 反思和备忘录页面的更多菜单样式优化 */
+#reflectionsMoreMenu,
+#memosMoreMenu {
+    right: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 1px solid #E0E0E0;
+    border-radius: 8px;
+    overflow: hidden;
+    /* 提高z-index，确保菜单不被下方卡片覆盖 */
+    z-index: 100;
+}
+
+#reflectionsMoreMenu .more-menu-item,
+#memosMoreMenu .more-menu-item {
+    padding: 12px 16px;
+    border-radius: 0;
 }
 
 /* 周报内容区域 - 随页面滚动，内容自动向上推移 */
@@ -1241,7 +1311,7 @@ body {
 #reflections-tab .tab-content-scrollable {
     background: #FAFAFA;
     /* 确保顶部有固定空间，避免被导航栏覆盖 */
-    padding-top: 15px;
+    padding-top: 20px;
 }
 
 /* ==================== 备忘录页面样式 v6.3 ==================== */
@@ -2428,6 +2498,20 @@ body {
         width: 40px;
         height: 40px;
     }
+
+    /* 移动端反思页面header优化 */
+    .reflections-page-header {
+        margin: 0 0 12px 0;
+        padding: 0 15px;
+        min-height: 36px;
+    }
+
+    /* 移动端备忘录页面header优化 */
+    #memos-tab .content-header {
+        margin: 0 0 12px 0;
+        padding: 0 15px;
+        min-height: 36px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -2525,6 +2609,20 @@ body {
     /* 分页信息隐藏 */
     .pagination-items {
         display: none;
+    }
+
+    /* 小屏幕反思页面header优化 */
+    .reflections-page-header {
+        margin: 0 0 10px 0;
+        padding: 0 12px;
+        min-height: 36px;
+    }
+
+    /* 小屏幕备忘录页面header优化 */
+    #memos-tab .content-header {
+        margin: 0 0 10px 0;
+        padding: 0 12px;
+        min-height: 36px;
     }
 }
 
