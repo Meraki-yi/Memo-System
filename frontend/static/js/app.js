@@ -88,6 +88,19 @@ function toggleMoreMenu() {
     }
 }
 
+// 切换周报区域的更多菜单
+function toggleWeekMoreMenu() {
+    const menu = document.getElementById('weekMoreMenu');
+    menu.classList.toggle('show');
+
+    // 点击外部关闭菜单
+    if (menu.classList.contains('show')) {
+        setTimeout(() => {
+            document.addEventListener('click', closeWeekMoreMenuOutside);
+        }, 0);
+    }
+}
+
 // 点击外部关闭更多菜单
 function closeMoreMenuOutside(event) {
     const menu = document.getElementById('moreMenu');
@@ -95,6 +108,16 @@ function closeMoreMenuOutside(event) {
     if (!menu.contains(event.target) && !button.contains(event.target)) {
         menu.classList.remove('show');
         document.removeEventListener('click', closeMoreMenuOutside);
+    }
+}
+
+// 点击外部关闭周报区域更多菜单
+function closeWeekMoreMenuOutside(event) {
+    const menu = document.getElementById('weekMoreMenu');
+    const button = document.querySelector('.week-more-btn');
+    if (!menu.contains(event.target) && !button.contains(event.target)) {
+        menu.classList.remove('show');
+        document.removeEventListener('click', closeWeekMoreMenuOutside);
     }
 }
 
@@ -328,16 +351,16 @@ function renderStatsArea(summary, records, weekInfo) {
     if (monthExpenseEl) monthExpenseEl.textContent = `¥${summary.total_expense.toFixed(2)}`;
 
     // 更新年份显示：根据本周周日日期的年份
-    const yearNumberEl = document.getElementById('currentYearNumber');
-    if (yearNumberEl) {
+    const weekYearEl = document.getElementById('weekYear');
+    if (weekYearEl) {
         if (weekInfo && weekInfo.end_date) {
             // 根据周日日期的年份显示
             const sundayDate = new Date(weekInfo.end_date);
-            yearNumberEl.textContent = sundayDate.getFullYear().toString();
+            weekYearEl.textContent = sundayDate.getFullYear().toString();
         } else {
             // 如果没有周信息，显示当前年份
             const currentYear = new Date().getFullYear();
-            yearNumberEl.textContent = currentYear.toString();
+            weekYearEl.textContent = currentYear.toString();
         }
     }
 
@@ -1129,12 +1152,17 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // ESC键关闭模态框
+    // ESC键关闭模态框和菜单
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             closeModal();
             closeDeleteModal();
             closeExportModal();
+            // 关闭所有打开的更多菜单
+            const moreMenu = document.getElementById('moreMenu');
+            const weekMoreMenu = document.getElementById('weekMoreMenu');
+            if (moreMenu) moreMenu.classList.remove('show');
+            if (weekMoreMenu) weekMoreMenu.classList.remove('show');
         }
     });
 
@@ -1251,10 +1279,19 @@ function changeMemosPage(delta) {
 
 // 更新周范围显示
 function updateWeekRangeDisplay(weekInfo) {
-    // 更新头部周报区域的日期范围
+    // 更新头部周报区域的年份
+    const weekYearEl = document.getElementById('weekYear');
+    if (weekInfo && weekYearEl) {
+        const sundayDate = new Date(weekInfo.end_date);
+        weekYearEl.textContent = sundayDate.getFullYear().toString();
+    }
+
+    // 更新头部周报区域的日期范围（不包含年份）
     const headerDateRange = document.getElementById('weekDateRangeHeader');
     if (weekInfo && headerDateRange) {
-        headerDateRange.textContent = `${weekInfo.start_display} - ${weekInfo.end_display}`;
+        // 从 start_display 和 end_display 中提取月日部分
+        // 格式：从 "12月22日 - 12月28日" 变为 "01月05日－01月11日"
+        headerDateRange.textContent = `${weekInfo.start_display}－${weekInfo.end_display}`;
     }
 }
 

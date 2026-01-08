@@ -49,11 +49,27 @@
                             <div class="week-report-section">
                                 <!-- 周报header固定不动 -->
                                 <div class="section-header">
-                                    <div class="week-calendar-icon" id="weekCalendarIcon">
-                                        <span class="week-date-range" id="weekDateRangeHeader">12月22日 - 12月28日</span>
+                                    <!-- 左侧：年份按钮 -->
+                                    <div class="section-header-left">
+                                        <button class="week-year-btn" id="weekYearBtn" onclick="goToYearlyOverview()">
+                                            <span class="week-year" id="weekYear">2026</span>
+                                        </button>
                                     </div>
-                                    <div class="year-calendar-icon" id="yearCalendarIcon" onclick="goToYearlyOverview()">
-                                        <span class="year-number" id="currentYearNumber">2026</span>
+                                    <!-- 中间：时间范围显示 -->
+                                    <div class="week-calendar-icon" id="weekCalendarIcon">
+                                        <span class="week-date-range" id="weekDateRangeHeader">01月05日－01月11日</span>
+                                    </div>
+                                    <!-- 右侧：更多菜单按钮 -->
+                                    <div class="section-header-right header-more-wrapper">
+                                        <button class="more-btn week-more-btn" onclick="toggleWeekMoreMenu()">
+                                            <span class="icon">⋯</span>
+                                        </button>
+                                        <div class="more-menu" id="weekMoreMenu">
+                                            <button class="more-menu-item" onclick="exportCurrentTabData()">
+                                                <span class="icon">📥</span>
+                                                导出数据
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                                 <!-- 可滚动内容区域 -->
