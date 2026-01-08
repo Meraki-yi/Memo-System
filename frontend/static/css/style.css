@@ -342,7 +342,7 @@ body {
     flex-direction: column;
 }
 
-/* 标签页样式 */
+/* 标签页样式 - 渐变粉色背景 */
 .tabs {
     display: flex;
     gap: 0;
@@ -354,7 +354,7 @@ body {
     left: 0;
     right: 0;
     z-index: 99;
-    background: var(--bg-white);
+    background: linear-gradient(180deg, #FFE4E9 0%, #FFF0F3 100%);
     padding: 0;
     /* 禁止标签栏滚动 */
     flex-shrink: 0;
@@ -367,7 +367,7 @@ body {
     padding: 0;
     font-size: 16px;
     font-weight: 700;
-    color: var(--text-light);
+    color: #666666;
     cursor: pointer;
     transition: var(--transition);
     border-bottom: 2px solid transparent;
@@ -383,12 +383,12 @@ body {
 /* Tabs中的更多按钮容器 - 已移除，现在标签平分宽度 */
 
 .tab-btn:hover {
-    color: var(--primary-dark);
+    color: #333333;
 }
 
 .tab-btn.active {
-    color: var(--primary-dark);
-    border-bottom-color: #FFA500;
+    color: #333333;
+    border-bottom-color: #FFD6DD;
 }
 
 .tab-content {
@@ -428,9 +428,9 @@ body {
     flex-direction: column;
 }
 
-/* 统计区域 - 移除边框，使用淡色细线分隔 */
+/* 统计区域 - 渐变黄白背景 */
 #accounting-tab .stats-area {
-    background: var(--bg-white);
+    background: linear-gradient(180deg, #FFF9E6 0%, #FFFFFF 100%);
     margin: 0 0 0 0;
     border-radius: 0;
     box-shadow: none;
@@ -510,7 +510,7 @@ body {
     padding: 15px 15px 8px 15px;
     gap: 12px;
     flex-shrink: 0;
-    background: var(--bg-white);
+    background: linear-gradient(180deg, #FFF9E6 0%, #FFFFFF 100%);
     /* 固定在容器顶部 */
     position: sticky;
     top: 0;
@@ -527,7 +527,7 @@ body {
     left: 50%;
     transform: translateX(-50%);
     height: 50px;
-    background: var(--bg-white);
+    background: linear-gradient(180deg, #FFF9E6 0%, #FFFFFF 100%);
     border: none;
     border-radius: 0;
     display: flex;
@@ -1015,13 +1015,13 @@ body {
     margin-bottom: 2px;
 }
 
-/* 日期分组头部 - 浅蓝底色 */
+/* 日期分组头部 - 无背景 */
 .day-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 10px 12px;
-    background: #F0F8FF;
+    background: transparent;
     border-radius: 0;
     margin-bottom: 0;
     font-size: 0.9rem;
@@ -1032,7 +1032,7 @@ body {
 }
 
 .day-header:hover {
-    background: #F0F8FF;
+    background: transparent;
 }
 
 .day-header.disabled {
@@ -1040,7 +1040,7 @@ body {
 }
 
 .day-header.disabled:hover {
-    background: #F0F8FF;
+    background: transparent;
 }
 
 .day-header-left {
@@ -1099,7 +1099,7 @@ body {
     display: flex;
     justify-content: space-between;
     padding: 10px 12px;
-    background: #E8F0F5;
+    background: transparent;
     border-radius: 0;
     margin-bottom: 0;
     font-size: 0.9rem;
@@ -1309,7 +1309,7 @@ body {
 
 /* 反思标签页特殊布局 */
 #reflections-tab .tab-content-scrollable {
-    background: #FAFAFA;
+    background: #FFF9E6;
     /* 确保顶部有固定空间，避免被导航栏覆盖 */
     padding-top: 20px;
 }
@@ -1318,7 +1318,7 @@ body {
 
 /* 备忘录标签页特殊布局 */
 #memos-tab .tab-content-scrollable {
-    background: #FAFAFA;
+    background: #FFF9E6;
     /* 确保顶部有固定空间，避免被导航栏覆盖 */
     padding-top: 15px;
 }
