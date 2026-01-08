@@ -1309,7 +1309,7 @@ body {
 
 /* 反思标签页特殊布局 */
 #reflections-tab .tab-content-scrollable {
-    background: #FFF9E6;
+    background: linear-gradient(180deg, #FFF9E6 0%, #FFFCF5 100%);
     /* 确保顶部有固定空间，避免被导航栏覆盖 */
     padding-top: 20px;
 }
@@ -1318,7 +1318,7 @@ body {
 
 /* 备忘录标签页特殊布局 */
 #memos-tab .tab-content-scrollable {
-    background: #FFF9E6;
+    background: linear-gradient(180deg, #FFF9E6 0%, #FFFCF5 100%);
     /* 确保顶部有固定空间，避免被导航栏覆盖 */
     padding-top: 15px;
 }
