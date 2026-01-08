@@ -99,29 +99,25 @@
                         </div>
                     </div>
                     <!-- 底部固定栏：翻页 + 记一笔 + 分页信息 -->
-                    <div class="bottom-bar" id="bottomBar">
-                        <div class="bottom-bar-content">
-                            <div class="bottom-bar-nav">
-                                <button class="nav-btn prev" id="prevWeekBtn" onclick="changeAccountingPage(1)" disabled>
-                                    <span class="icon">‹</span>
-                                    上一周
-                                </button>
-                                <button class="add-record-btn" onclick="window.location.href='/accounting'">
-                                    记一笔
-                                </button>
-                                <button class="nav-btn next" id="nextWeekBtn" onclick="changeAccountingPage(-1)">
-                                    下一周
-                                    <span class="icon">›</span>
-                                </button>
-                            </div>
-                            <div class="bottom-bar-info">
-                                <div class="pagination-info">
-                                    <span class="pagination-current">第 <span id="accounting-current-page">1</span> 页</span>
-                                    <span class="pagination-divider">/</span>
-                                    <span class="pagination-total">共 <span id="accounting-total-pages">1</span> 页</span>
-                                    <span class="pagination-items">（<span id="accounting-total-items">0</span> 条）</span>
-                                </div>
-                            </div>
+                    <div class="pagination-container fixed-bottom" id="accounting-pagination">
+                        <div class="pagination">
+                            <button class="pagination-btn" id="prevWeekBtn" onclick="changeAccountingPage(1)" disabled>
+                                <span class="icon">‹</span>
+                                上一周
+                            </button>
+                            <button class="add-record-btn" onclick="window.location.href='/accounting'">
+                                记一笔
+                            </button>
+                            <button class="pagination-btn" id="nextWeekBtn" onclick="changeAccountingPage(-1)">
+                                下一周
+                                <span class="icon">›</span>
+                            </button>
+                        </div>
+                        <div class="pagination-info">
+                            <span class="pagination-current">第 <span id="accounting-current-page">1</span> 页</span>
+                            <span class="pagination-divider">/</span>
+                            <span class="pagination-total">共 <span id="accounting-total-pages">1</span> 页</span>
+                            <span class="pagination-items">（<span id="accounting-total-items">0</span> 条记录）</span>
                         </div>
                     </div>
                 </div>
@@ -205,7 +201,7 @@
                                 上一页
                             </button>
                             <button class="add-btn" onclick="showAddModal('memo')">
-                                添加备忘
+                                添加备忘录
                             </button>
                             <button class="pagination-btn" id="memos-next-btn" onclick="changeMemosPage(1)">
                                 下一页
