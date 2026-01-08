@@ -1799,6 +1799,28 @@ body {
     box-shadow: none;
 }
 
+/* 反思卡片收藏按钮 - 黄色 */
+.item-card.reflection-card .btn-frequent {
+    color: #FFC107;
+    background: transparent;
+    width: auto;
+    height: auto;
+    padding: 0;
+    border-radius: 0;
+    font-size: 18px;
+    transition: transform 0.2s ease;
+}
+
+.item-card.reflection-card .btn-frequent:hover {
+    background: transparent;
+    transform: scale(1.1);
+    box-shadow: none;
+}
+
+.item-card.reflection-card .btn-frequent.active {
+    color: #FFC107;
+}
+
 /* 反思卡片删除按钮 - 红色 */
 .item-card.reflection-card .btn-delete {
     color: #F44336;

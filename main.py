@@ -70,6 +70,7 @@ class Reflection(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     content = Column(Text, nullable=False)
+    is_frequent = Column(Boolean, default=False)  # 是否标记为常用（收藏）
     created_at = Column(DateTime, nullable=False, default=lambda: datetime.now(LOCAL_TZ))
     updated_at = Column(DateTime, nullable=False, default=lambda: datetime.now(LOCAL_TZ), onupdate=lambda: datetime.now(LOCAL_TZ))
 
@@ -166,9 +167,15 @@ class LoginRequest(BaseModel):
 
 class ReflectionCreate(BaseModel):
     content: str
+    is_frequent: Optional[bool] = False
 
 class ReflectionUpdate(BaseModel):
     content: Optional[str] = None
+    is_frequent: Optional[bool] = None
+
+    class Config:
+        # 允许所有字段都是可选的
+        extra = 'ignore'
 
 class MemoCreate(BaseModel):
     content: str
@@ -255,6 +262,16 @@ async def read_frequents(request: Request):
         )
     return templates.TemplateResponse("frequents.html", {"request": request})
 
+@app.get("/reflection-frequents", response_class=HTMLResponse)
+async def read_reflection_frequents(request: Request):
+    # 检查是否已认证
+    if not request.session.get("authenticated"):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="未认证，请先登录"
+        )
+    return templates.TemplateResponse("reflection_frequents.html", {"request": request})
+
 # 验证中间件
 def check_auth(request: Request):
     """检查是否已认证"""
@@ -278,14 +295,15 @@ async def get_reflections(
     total = db.query(Reflection).count()
     # 计算总页数
     total_pages = (total + page_size - 1) // page_size if total > 0 else 1
-    # 分页查询 - 按更新时间排序（修改过的排在前面）
+    # 分页查询 - 按创建时间排序（修改后顺序不变）
     offset = (page - 1) * page_size
-    reflections = db.query(Reflection).order_by(Reflection.updated_at.desc()).offset(offset).limit(page_size).all()
+    reflections = db.query(Reflection).order_by(Reflection.created_at.desc()).offset(offset).limit(page_size).all()
     return {
         "items": [
             {
                 "id": r.id,
                 "content": r.content,
+                "is_frequent": getattr(r, 'is_frequent', False),
                 "created_at": r.created_at.isoformat(),
                 "updated_at": r.updated_at.isoformat()
             }
@@ -306,15 +324,64 @@ async def create_reflection(
     db: Session = Depends(get_db)
 ):
     check_auth(request)
-    db_reflection = Reflection(content=reflection.content)
+    db_reflection = Reflection(
+        content=reflection.content,
+        is_frequent=reflection.is_frequent if reflection.is_frequent is not None else False
+    )
     db.add(db_reflection)
     db.commit()
     db.refresh(db_reflection)
     return {
         "id": db_reflection.id,
         "content": db_reflection.content,
+        "is_frequent": getattr(db_reflection, 'is_frequent', False),
         "created_at": db_reflection.created_at.isoformat(),
         "updated_at": db_reflection.updated_at.isoformat()
+    }
+
+@app.get("/api/reflections/frequents")
+async def get_frequent_reflections(
+    request: Request,
+    page: int = 1,
+    page_size: int = 5,
+    db: Session = Depends(get_db)
+):
+    """获取收藏的复盘反思列表"""
+    check_auth(request)
+    # 计算收藏反思总数
+    total = db.query(Reflection).filter(Reflection.is_frequent == True).count()
+    # 计算总页数
+    total_pages = (total + page_size - 1) // page_size if total > 0 else 1
+    # 分页查询 - 按创建时间排序（修改后顺序不变）
+    offset = (page - 1) * page_size
+    # 先获取排序后的收藏反思ID列表
+    frequent_reflection_ids_query = db.query(Reflection.id).filter(Reflection.is_frequent == True).order_by(Reflection.created_at.desc()).offset(offset).limit(page_size)
+    reflection_ids = [id[0] for id in frequent_reflection_ids_query.all()]
+    # 再根据ID列表获取完整数据
+    if reflection_ids:
+        reflections = db.query(Reflection).filter(Reflection.id.in_(reflection_ids)).all()
+        # 按原始ID顺序排序
+        reflections_dict = {r.id: r for r in reflections}
+        reflections = [reflections_dict[id] for id in reflection_ids]
+    else:
+        reflections = []
+    return {
+        "items": [
+            {
+                "id": r.id,
+                "content": r.content,
+                "is_frequent": getattr(r, 'is_frequent', False),
+                "created_at": r.created_at.isoformat(),
+                "updated_at": r.updated_at.isoformat()
+            }
+            for r in reflections
+        ],
+        "pagination": {
+            "page": page,
+            "page_size": page_size,
+            "total": total,
+            "total_pages": total_pages
+        }
     }
 
 @app.get("/api/reflections/{reflection_id}")
@@ -332,6 +399,7 @@ async def get_reflection(
     return {
         "id": db_reflection.id,
         "content": db_reflection.content,
+        "is_frequent": getattr(db_reflection, 'is_frequent', False),
         "created_at": db_reflection.created_at.isoformat(),
         "updated_at": db_reflection.updated_at.isoformat()
     }
@@ -350,6 +418,9 @@ async def update_reflection(
 
     if reflection.content is not None:
         db_reflection.content = reflection.content
+    if reflection.is_frequent is not None:
+        if hasattr(db_reflection, 'is_frequent'):
+            db_reflection.is_frequent = reflection.is_frequent
 
     db_reflection.updated_at = datetime.now(LOCAL_TZ)
     db.commit()
@@ -357,6 +428,7 @@ async def update_reflection(
     return {
         "id": db_reflection.id,
         "content": db_reflection.content,
+        "is_frequent": getattr(db_reflection, 'is_frequent', False),
         "created_at": db_reflection.created_at.isoformat(),
         "updated_at": db_reflection.updated_at.isoformat()
     }
@@ -391,10 +463,10 @@ async def get_memos(
         # 计算总页数
         total_pages = (total + page_size - 1) // page_size if total > 0 else 1
         # 分页查询 - 使用子查询避免对大JSON字段排序
-        # 按更新时间排序（修改过的排在前面）
+        # 按创建时间排序（修改后顺序不变）
         offset = (page - 1) * page_size
         # 先获取排序后的ID列表
-        memo_ids_query = db.query(Memo.id).order_by(Memo.updated_at.desc()).offset(offset).limit(page_size)
+        memo_ids_query = db.query(Memo.id).order_by(Memo.created_at.desc()).offset(offset).limit(page_size)
         memo_ids = [id[0] for id in memo_ids_query.all()]
         # 再根据ID列表获取完整数据
         if memo_ids:
@@ -466,10 +538,10 @@ async def get_frequent_memos(
     # 计算总页数
     total_pages = (total + page_size - 1) // page_size if total > 0 else 1
     # 分页查询 - 使用子查询避免对大JSON字段排序
-    # 按更新时间排序（修改过的排在前面）
+    # 按创建时间排序（修改后顺序不变）
     offset = (page - 1) * page_size
     # 先获取排序后的常用备忘录ID列表
-    frequent_memo_ids_query = db.query(Memo.id).filter(Memo.is_frequent == True).order_by(Memo.updated_at.desc()).offset(offset).limit(page_size)
+    frequent_memo_ids_query = db.query(Memo.id).filter(Memo.is_frequent == True).order_by(Memo.created_at.desc()).offset(offset).limit(page_size)
     memo_ids = [id[0] for id in frequent_memo_ids_query.all()]
     # 再根据ID列表获取完整数据
     if memo_ids:

@@ -441,6 +441,13 @@ function goToFrequents() {
     window.location.href = '/frequents';
 }
 
+// 跳转到收藏反思页面
+function goToReflectionFrequents() {
+    // 保存当前标签页，以便返回时恢复
+    sessionStorage.setItem('memoSystem_return_tab', 'reflections');
+    window.location.href = '/reflection-frequents';
+}
+
 // 渲染最近记录
 function renderRecentRecords(records) {
     const list = document.getElementById('recent-records');
@@ -612,7 +619,7 @@ function renderItems(items) {
             }
 
             return `
-                <div class="item-card reflection-card" data-id="${item.id}">
+                <div class="item-card reflection-card ${item.is_frequent ? 'frequent' : ''}" data-id="${item.id}">
                     <div class="item-content">
                         <h3 class="item-title">${title || '无标题'}</h3>
                         <p class="item-text">${content || '无内容'}</p>
@@ -622,7 +629,10 @@ function renderItems(items) {
                             <span class="time">创建: ${createdFull}</span>
                             <span class="time">更新: ${updatedFull}</span>
                         </div>
-                        <div class="item-actions">
+                        <div class="item-actions" onclick="event.stopPropagation()">
+                            <button class="btn-icon btn-frequent ${item.is_frequent ? 'active' : ''}" onclick="toggleReflectionFrequent(${item.id})" title="${item.is_frequent ? '取消收藏' : '设为收藏'}">
+                                <span>${item.is_frequent ? '⭐' : '☆'}</span>
+                            </button>
                             <button class="btn-icon btn-edit" onclick="editItem(${item.id})" title="编辑">
                                 <span>✏️</span>
                             </button>
@@ -738,6 +748,8 @@ async function editItem(id) {
                 }
             });
         } else {
+            // 反思模式
+            isFrequent.checked = item.is_frequent || false;
             reflectionEditFields.style.display = 'block';
             memoEditFields.style.display = 'none';
             // 将内容按第一个换行符分割为标题和内容
@@ -802,6 +814,9 @@ async function saveItem() {
             if (!isReflection) {
                 updateData.is_completed = isCompleted;
                 updateData.is_frequent = isFrequent;
+            } else {
+                // 反思也支持 is_frequent
+                updateData.is_frequent = isFrequent;
             }
 
             response = await fetch(`${API_BASE}${endpoint}/${currentEditItem.id}`, getAuthOptions({
@@ -813,6 +828,9 @@ async function saveItem() {
             const createData = { content };
             if (!isReflection) {
                 createData.is_completed = isCompleted;
+                createData.is_frequent = isFrequent;
+            } else {
+                // 反思也支持 is_frequent
                 createData.is_frequent = isFrequent;
             }
 
@@ -891,6 +909,37 @@ async function toggleMemoFrequent(id) {
         if (!updateResponse.ok) throw new Error('更新失败');
 
         showToast(memo.is_frequent ? '已取消常用标记' : '已设为常用', 'success');
+        loadItems();
+    } catch (error) {
+        showToast(error.message, 'error');
+    }
+}
+
+// 切换复盘反思收藏状态
+async function toggleReflectionFrequent(id) {
+    try {
+        // 直接通过ID获取单个记录
+        const response = await fetch(`${API_BASE}/reflections/${id}`, getAuthOptions());
+
+        if (!response.ok) {
+            if (response.status === 404) {
+                throw new Error('复盘反思不存在');
+            }
+            throw new Error('获取数据失败');
+        }
+
+        const reflection = await response.json();
+
+        const updateResponse = await fetch(`${API_BASE}/reflections/${id}`, getAuthOptions({
+            method: 'PUT',
+            body: JSON.stringify({
+                is_frequent: !reflection.is_frequent
+            })
+        }));
+
+        if (!updateResponse.ok) throw new Error('更新失败');
+
+        showToast(reflection.is_frequent ? '已取消收藏' : '已设为收藏', 'success');
         loadItems();
     } catch (error) {
         showToast(error.message, 'error');

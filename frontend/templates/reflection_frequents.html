@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>收藏反思</title>
+    <link rel="stylesheet" href="/static/css/style.css?v=8.8">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 主内容区 -->
+        <main class="app-main">
+            <!-- 顶部导航栏 -->
+            <div class="tabs">
+                <button class="tab-btn back-btn" onclick="goBack()">
+                    <span class="icon">‹</span>
+                    返回
+                </button>
+                <button class="tab-btn active">
+                    ⭐ 收藏反思
+                </button>
+                <div class="header-more-wrapper">
+                    <button class="more-btn" onclick="toggleMoreMenu()">
+                        <span class="icon">⋯</span>
+                    </button>
+                    <div class="more-menu" id="moreMenu">
+                        <button class="more-menu-item logout" onclick="logout()">
+                            <span class="icon">🚪</span>
+                            退出
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 收藏反思内容 -->
+            <div class="tab-contents">
+                <div class="tab-content active" id="reflection-frequents-tab">
+                    <div class="tab-content-scrollable">
+                        <div class="content-header">
+                            <div class="header-actions">
+                                <button class="add-btn" onclick="showAddModal('reflection')">
+                                    <span class="icon">➕</span>
+                                    添加反思
+                                </button>
+                            </div>
+                        </div>
+                        <div class="items-list" id="reflection-frequents-list">
+                            <!-- 动态加载内容 -->
+                        </div>
+                    </div>
+                    <!-- 反思分页组件 -->
+                    <div class="pagination-container fixed-bottom" id="reflection-frequents-pagination">
+                        <div class="pagination">
+                            <button class="pagination-btn" id="reflection-frequents-prev-btn" onclick="changeReflectionFrequentsPage(-1)" disabled>
+                                <span class="icon">‹</span>
+                                上一页
+                            </button>
+                            <div class="pagination-info">
+                                <span class="pagination-current">第 <span id="reflection-frequents-current-page">1</span> 页</span>
+                                <span class="pagination-divider">/</span>
+                                <span class="pagination-total">共 <span id="reflection-frequents-total-pages">1</span> 页</span>
+                                <span class="pagination-items">（<span id="reflection-frequents-total-items">0</span> 条记录）</span>
+                            </div>
+                            <button class="pagination-btn" id="reflection-frequents-next-btn" onclick="changeReflectionFrequentsPage(1)">
+                                下一页
+                                <span class="icon">›</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 添加/编辑模态框 -->
+    <div class="modal" id="itemModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">添加新内容</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- 反思编辑：标题+内容 -->
+                <div id="reflectionEditFields" style="display: none;">
+                    <input type="text" id="itemTitle" placeholder="标题" style="width: 100%; padding: 12px 15px; border: 2px solid var(--border-color); border-radius: var(--radius-sm); font-size: 1rem; margin-bottom: 15px; outline: none; transition: var(--transition);">
+                    <textarea id="itemContent" placeholder="内容" style="width: 100%; padding: 12px 15px; border: 2px solid var(--border-color); border-radius: var(--radius-sm); font-size: 1rem; min-height: 100px; resize: vertical; outline: none; transition: var(--transition);"></textarea>
+                    <div style="margin-top: 15px;">
+                        <div class="checkbox-group">
+                            <label>
+                                <input type="checkbox" id="isFrequent">
+                                <span>⭐ 标记为收藏</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary" onclick="saveItem()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 删除确认模态框 -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content small">
+            <div class="modal-header">
+                <h3>确认删除</h3>
+            </div>
+            <div class="modal-body">
+                <p>确定要删除这条记录吗？</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" onclick="closeDeleteModal()">取消</button>
+                <button class="btn btn-danger" onclick="confirmDelete()">删除</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast提示 -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Loading遮罩 -->
+    <div class="loading-overlay" id="loading">
+        <div class="spinner"></div>
+    </div>
+
+    <script src="/static/js/reflection_frequents.js?v=8.8"></script>
+</body>
+</html>
