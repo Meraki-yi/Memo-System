@@ -75,19 +75,6 @@ function showToast(message, type = 'success') {
     }, 3000);
 }
 
-// 切换更多菜单
-function toggleMoreMenu() {
-    const menu = document.getElementById('moreMenu');
-    menu.classList.toggle('show');
-
-    // 点击外部关闭菜单
-    if (menu.classList.contains('show')) {
-        setTimeout(() => {
-            document.addEventListener('click', closeMoreMenuOutside);
-        }, 0);
-    }
-}
-
 // 切换周报区域的更多菜单
 function toggleWeekMoreMenu() {
     const menu = document.getElementById('weekMoreMenu');
@@ -101,13 +88,29 @@ function toggleWeekMoreMenu() {
     }
 }
 
-// 点击外部关闭更多菜单
-function closeMoreMenuOutside(event) {
-    const menu = document.getElementById('moreMenu');
-    const button = document.querySelector('.more-btn');
-    if (!menu.contains(event.target) && !button.contains(event.target)) {
-        menu.classList.remove('show');
-        document.removeEventListener('click', closeMoreMenuOutside);
+// 切换反思页面的更多菜单
+function toggleReflectionsMoreMenu() {
+    const menu = document.getElementById('reflectionsMoreMenu');
+    menu.classList.toggle('show');
+
+    // 点击外部关闭菜单
+    if (menu.classList.contains('show')) {
+        setTimeout(() => {
+            document.addEventListener('click', closeReflectionsMoreMenuOutside);
+        }, 0);
+    }
+}
+
+// 切换备忘录页面的更多菜单
+function toggleMemosMoreMenu() {
+    const menu = document.getElementById('memosMoreMenu');
+    menu.classList.toggle('show');
+
+    // 点击外部关闭菜单
+    if (menu.classList.contains('show')) {
+        setTimeout(() => {
+            document.addEventListener('click', closeMemosMoreMenuOutside);
+        }, 0);
     }
 }
 
@@ -118,6 +121,26 @@ function closeWeekMoreMenuOutside(event) {
     if (!menu.contains(event.target) && !button.contains(event.target)) {
         menu.classList.remove('show');
         document.removeEventListener('click', closeWeekMoreMenuOutside);
+    }
+}
+
+// 点击外部关闭反思页面更多菜单
+function closeReflectionsMoreMenuOutside(event) {
+    const menu = document.getElementById('reflectionsMoreMenu');
+    const button = document.querySelector('.reflections-more-btn');
+    if (!menu.contains(event.target) && !button.contains(event.target)) {
+        menu.classList.remove('show');
+        document.removeEventListener('click', closeReflectionsMoreMenuOutside);
+    }
+}
+
+// 点击外部关闭备忘录页面更多菜单
+function closeMemosMoreMenuOutside(event) {
+    const menu = document.getElementById('memosMoreMenu');
+    const button = document.querySelector('.memos-more-btn');
+    if (!menu.contains(event.target) && !button.contains(event.target)) {
+        menu.classList.remove('show');
+        document.removeEventListener('click', closeMemosMoreMenuOutside);
     }
 }
 
@@ -1159,10 +1182,12 @@ document.addEventListener('DOMContentLoaded', function() {
             closeDeleteModal();
             closeExportModal();
             // 关闭所有打开的更多菜单
-            const moreMenu = document.getElementById('moreMenu');
             const weekMoreMenu = document.getElementById('weekMoreMenu');
-            if (moreMenu) moreMenu.classList.remove('show');
+            const reflectionsMoreMenu = document.getElementById('reflectionsMoreMenu');
+            const memosMoreMenu = document.getElementById('memosMoreMenu');
             if (weekMoreMenu) weekMoreMenu.classList.remove('show');
+            if (reflectionsMoreMenu) reflectionsMoreMenu.classList.remove('show');
+            if (memosMoreMenu) memosMoreMenu.classList.remove('show');
         }
     });
 

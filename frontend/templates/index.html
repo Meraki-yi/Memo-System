@@ -21,21 +21,6 @@
                 <button class="tab-btn" data-tab="memos">
                     备忘录
                 </button>
-                <div class="header-more-wrapper">
-                    <button class="more-btn" onclick="toggleMoreMenu()">
-                        <span class="icon">⋯</span>
-                    </button>
-                    <div class="more-menu" id="moreMenu">
-                        <button class="more-menu-item" onclick="exportCurrentTabData()">
-                            <span class="icon">📥</span>
-                            导出数据
-                        </button>
-                        <button class="more-menu-item logout" onclick="logout()">
-                            <span class="icon">🚪</span>
-                            退出
-                        </button>
-                    </div>
-                </div>
             </div>
 
             <!-- 标签页内容 -->
@@ -144,6 +129,20 @@
                 <!-- 复盘反思标签 -->
                 <div class="tab-content" id="reflections-tab">
                     <div class="tab-content-scrollable">
+                        <!-- 反思页面顶部header -->
+                        <div class="reflections-page-header">
+                            <div class="reflections-header-right header-more-wrapper">
+                                <button class="more-btn reflections-more-btn" onclick="toggleReflectionsMoreMenu()">
+                                    <span class="icon">⋯</span>
+                                </button>
+                                <div class="more-menu" id="reflectionsMoreMenu">
+                                    <button class="more-menu-item" onclick="exportCurrentTabData()">
+                                        <span class="icon">📥</span>
+                                        导出数据
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                         <div class="items-list" id="reflections-list">
                             <!-- 动态加载内容 -->
                         </div>
@@ -181,6 +180,17 @@
                                     <span class="icon">⭐</span>
                                     常用
                                 </button>
+                                <div class="header-more-wrapper">
+                                    <button class="more-btn memos-more-btn" onclick="toggleMemosMoreMenu()">
+                                        <span class="icon">⋯</span>
+                                    </button>
+                                    <div class="more-menu" id="memosMoreMenu">
+                                        <button class="more-menu-item" onclick="exportCurrentTabData()">
+                                            <span class="icon">📥</span>
+                                            导出数据
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="items-list" id="memos-list">

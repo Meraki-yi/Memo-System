@@ -380,11 +380,7 @@ body {
     white-space: nowrap;
 }
 
-/* Tabs中的更多按钮容器 */
-.tabs .header-more-wrapper {
-    flex-shrink: 0;
-    width: 44px;
-}
+/* Tabs中的更多按钮容器 - 已移除，现在标签平分宽度 */
 
 .tab-btn:hover {
     color: var(--primary-dark);
@@ -656,6 +652,46 @@ body {
     color: #666;
     transition: var(--transition);
     display: block;
+}
+
+/* 反思页面顶部header */
+.reflections-page-header {
+    position: relative;
+    height: 50px;
+    background: var(--bg-white);
+    border-bottom: 1px solid #E0E0E0;
+    margin: 0 0 15px 0;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0 15px;
+}
+
+.reflections-header-right {
+    position: relative;
+}
+
+/* 反思和备忘录页面的更多按钮样式 */
+.reflections-more-btn,
+.memos-more-btn {
+    background: #F5F5F5;
+    border: none;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 1.2rem;
+    padding: 0;
+    color: #666666;
+    border-radius: 50%;
+}
+
+.reflections-more-btn:hover,
+.memos-more-btn:hover {
+    background: #E8E8E8;
 }
 
 /* 周报内容区域 - 随页面滚动，内容自动向上推移 */
