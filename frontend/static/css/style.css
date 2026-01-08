@@ -2551,21 +2551,30 @@ body {
         margin: 20px;
     }
 
-    /* 移动端content-header保持水平布局（备忘录页面） */
-    #memos-tab .content-header {
+    /* 移动端content-header保持水平布局（备忘录页面和反思页面） */
+    #memos-tab .content-header,
+    .reflections-page-header {
         flex-direction: row;
         gap: 15px;
         align-items: center;
     }
 
     /* 其他页面的content-header可以保持垂直布局 */
-    .content-header:not(#memos-tab .content-header) {
+    .content-header:not(#memos-tab .content-header):not(.reflections-page-header) {
         flex-direction: column;
         gap: 15px;
         align-items: stretch;
     }
 
-    .item-actions {
+    /* 移动端备忘录和反思卡片的按钮组保持水平布局 */
+    .item-card.memo-card .item-actions,
+    .item-card.reflection-card .item-actions {
+        flex-direction: row;
+        gap: 8px;
+    }
+
+    /* 其他页面的item-actions可以保持垂直布局 */
+    .item-actions:not(.item-card.memo-card .item-actions):not(.item-card.reflection-card .item-actions) {
         flex-direction: column;
         gap: 8px;
     }
