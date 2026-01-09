@@ -8,7 +8,8 @@
       "Bash(echo:*)",
       "Bash(tree:*)",
       "Bash(findstr:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(mkdir:*)"
     ]
   }
 }

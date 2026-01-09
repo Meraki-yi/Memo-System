@@ -297,6 +297,15 @@ async function loadAccountingData() {
 
         const recordsData = await recordsResponse.json();
 
+        // 检查是否返回了空数据且页码超出范围（周分页时的边界情况）
+        if (recordsData.items.length === 0 && recordsData.week_info === null && state.currentPage > 1) {
+            // 页码超出范围，重置到第1页并重新加载
+            console.log('页码超出范围，重置到第1页');
+            state.currentPage = 1;
+            await loadAccountingData();
+            return;
+        }
+
         // 更新分页状态
         state.totalPages = recordsData.pagination.total_pages;
         state.totalItems = recordsData.pagination.total;
@@ -1251,6 +1260,17 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e.key === 'memoSystem_refresh') {
             // 清除标记，避免重复刷新
             localStorage.removeItem('memoSystem_refresh');
+
+            // 检查是否需要重置分页
+            const shouldResetPagination = localStorage.getItem('memoSystem_reset_pagination') === 'true';
+            if (shouldResetPagination) {
+                localStorage.removeItem('memoSystem_reset_pagination');
+                // 重置所有标签页的分页到第1页
+                Object.keys(paginationState).forEach(tab => {
+                    paginationState[tab].currentPage = 1;
+                });
+            }
+
             // 刷新当前标签页的数据
             loadItems();
         }
@@ -1262,12 +1282,34 @@ document.addEventListener('DOMContentLoaded', function() {
         const refreshFlag = sessionStorage.getItem('memoSystem_refresh');
         if (refreshFlag) {
             sessionStorage.removeItem('memoSystem_refresh');
+
+            // 检查是否需要重置分页
+            const shouldResetPagination = sessionStorage.getItem('memoSystem_reset_pagination') === 'true';
+            if (shouldResetPagination) {
+                sessionStorage.removeItem('memoSystem_reset_pagination');
+                // 重置所有标签页的分页到第1页
+                Object.keys(paginationState).forEach(tab => {
+                    paginationState[tab].currentPage = 1;
+                });
+            }
+
             loadItems();
         }
         // 同时也检查 localStorage（兼容不同情况）
         const localFlag = localStorage.getItem('memoSystem_refresh');
         if (localFlag) {
             localStorage.removeItem('memoSystem_refresh');
+
+            // 检查是否需要重置分页
+            const shouldResetPagination = localStorage.getItem('memoSystem_reset_pagination') === 'true';
+            if (shouldResetPagination) {
+                localStorage.removeItem('memoSystem_reset_pagination');
+                // 重置所有标签页的分页到第1页
+                Object.keys(paginationState).forEach(tab => {
+                    paginationState[tab].currentPage = 1;
+                });
+            }
+
             loadItems();
         }
     });
@@ -1277,6 +1319,17 @@ document.addEventListener('DOMContentLoaded', function() {
         const refreshFlag = sessionStorage.getItem('memoSystem_refresh');
         if (refreshFlag) {
             sessionStorage.removeItem('memoSystem_refresh');
+
+            // 检查是否需要重置分页
+            const shouldResetPagination = sessionStorage.getItem('memoSystem_reset_pagination') === 'true';
+            if (shouldResetPagination) {
+                sessionStorage.removeItem('memoSystem_reset_pagination');
+                // 重置所有标签页的分页到第1页
+                Object.keys(paginationState).forEach(tab => {
+                    paginationState[tab].currentPage = 1;
+                });
+            }
+
             loadItems();
         }
     });

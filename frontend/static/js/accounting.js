@@ -477,9 +477,11 @@ async function saveRecord() {
 
         showToast(isEdit ? '更新成功' : '保存成功');
 
-        // 设置刷新标记，通知 app 页面刷新数据
+        // 设置刷新标记，通知 app 页面刷新数据并重置分页到第1页
         sessionStorage.setItem('memoSystem_refresh', Date.now().toString());
+        sessionStorage.setItem('memoSystem_reset_pagination', 'true');
         localStorage.setItem('memoSystem_refresh', Date.now().toString());
+        localStorage.setItem('memoSystem_reset_pagination', 'true');
 
         // 跳转到 app 页面
         setTimeout(() => {
