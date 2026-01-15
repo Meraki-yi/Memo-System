@@ -711,14 +711,84 @@ body {
     align-items: center;
 }
 
-/* 待完成页面的三个点按钮 - 单独调整对齐 */
-#memos-tab .header-more-wrapper {
+/* 待完成页面的三个点按钮 - 在操作栏中使用flex布局，不需要绝对定位 */
+#memos-tab .content-header .header-more-wrapper {
     position: absolute;
     right: 15px;
     top: 50%;
     transform: translateY(-50%);
     /* 提高z-index，确保菜单不被下方卡片覆盖 */
     z-index: 101;
+}
+
+/* 待完成合并导航栏样式 - 直角全宽设计，保持原样 */
+.memos-nav-bar {
+    background: #FFFFFF;
+    border-radius: 0;
+    padding: 16px;
+    margin: 0 0 15px 0;
+    box-shadow: none;
+    border-bottom: 1px solid #E0E0E0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* 导航栏中的日期导航控件 - 上方 */
+.memos-nav-bar .date-nav-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+}
+
+/* 导航栏中的操作区域 - 上方 */
+.memos-nav-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #E0E0E0;
+}
+
+/* 操作区域中的更多按钮wrapper */
+.memos-nav-actions .header-more-wrapper {
+    position: relative;
+}
+
+/* 导航栏中的日期导航控件 - 下方 */
+.memos-nav-bar .date-nav-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    padding-top: 4px;
+}
+
+/* 合并导航栏中的日期选择按钮样式 - 移除背景 */
+.memos-nav-bar .date-picker-btn {
+    background: transparent;
+    color: #333333;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    white-space: nowrap;
+    flex: 1;
+}
+
+.memos-nav-bar .date-picker-btn:hover {
+    background: #F5F5F5;
 }
 
 /* 记事和待完成页面的更多按钮样式 */
@@ -1302,11 +1372,88 @@ body {
 
 /* ==================== 待完成页面样式 v6.3 ==================== */
 
-/* 待完成标签页特殊布局 */
+/* 待完成标签页特殊布局 - 白色背景，与记一笔页面一致 */
 #memos-tab .tab-content-scrollable {
-    background: linear-gradient(180deg, #FFF3D6 0%, #FFF8E7 100%);
+    background: #FFFFFF;
     /* 确保顶部有固定空间，避免被导航栏覆盖 */
     padding-top: 15px;
+}
+
+/* 待完成操作栏样式（日期选择 + 导出） - 已移除，合并到导航栏 */
+
+/* 日期导航控件样式 - 已合并到 .memos-nav-bar */
+
+.date-nav-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    justify-content: center;
+}
+
+.date-nav-btn {
+    background: #F5F5F5;
+    border: 1px solid #DDDDDD;
+    color: #666666;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.date-nav-btn:hover:not(:disabled) {
+    background: #E8E8E8;
+    border-color: #CCCCCC;
+}
+
+.date-nav-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.date-nav-center {
+    flex: 1;
+    text-align: center;
+    min-width: 120px;
+}
+
+.current-date-display {
+    font-size: 18px;
+    font-weight: 700;
+    color: #333333;
+    margin-bottom: 2px;
+}
+
+.date-hint {
+    font-size: 12px;
+    color: #999999;
+}
+
+.date-picker-btn {
+    background: linear-gradient(135deg, #90EE90, #F0FFF0);
+    color: #2E7D32;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.date-picker-btn:hover {
+    filter: brightness(1.05);
+    box-shadow: 0 2px 8px rgba(144, 238, 144, 0.5);
 }
 
 /* 待完成标签页的添加按钮 - 淡蓝色纯色设计（用于底部导航栏） */
@@ -1354,47 +1501,72 @@ body {
     box-shadow: 0 2px 8px rgba(144, 238, 144, 0.5);
 }
 
-/* 待完成标签页的列表容器 */
+/* 待完成标签页的列表容器 - 添加内边距，让卡片有呼吸空间 */
 #memos-tab .items-list {
     padding: 0 15px;
 }
 
-/* 待完成卡片样式 - 现代简约设计 */
+/* 待完成卡片样式 - 可爱圆角设计 */
 .item-card.memo-card {
     background: #FFFFFF;
-    border-radius: 8px;
+    border-radius: 16px !important;
     padding: 16px;
-    margin-bottom: 20px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    margin-bottom: 12px;
+    min-height: 72px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
     cursor: default;
     display: flex;
     flex-direction: column;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s ease;
+    position: relative;
+    border: 2px solid #F0F0F0;
 }
 
-/* 相邻待完成卡片之间的浅绿色细线分隔 - 已移除 */
+/* 移除卡片分隔线 - 改为独立的圆角卡片 */
+#memos-list .item-card.memo-card:not(:last-child)::after {
+    display: none;
+}
+
+/* 待完成分组样式 */
+.memo-group-section {
+    margin-bottom: 24px;
+}
+
+.memo-group-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--primary-dark);
+    padding: 8px 12px;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(154, 205, 50, 0.15));
+    border-radius: 12px;
+    border-left: 3px solid var(--primary-dark);
+}
+
+/* 相邻待完成卡片之间的间距 */
 #memos-list .item-card.memo-card:not(:first-child) {
-    margin-top: 0;
+    margin-top: 8px;
     position: relative;
 }
 
 #memos-list .item-card.memo-card:not(:last-child) {
-    margin-bottom: 20px;
+    margin-bottom: 8px;
 }
 
-/* 待完成卡片hover效果 - 轻微上浮 */
+/* 待完成卡片hover效果 - 轻微上浮，更可爱 */
 .item-card.memo-card:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
     transform: translateY(-2px);
+    border-color: #FFE066;
 }
 
-/* 待完成卡片内容区域 */
+/* 待完成卡片内容区域 - 保持简洁设计，与记一笔页面一致 */
 .item-card.memo-card .item-content {
     display: flex;
     align-items: flex-start;
     gap: 12px;
     padding-bottom: 12px;
-    border-bottom: 1px solid #EEEEEE;
+    border-bottom: none;
     margin-bottom: 0;
 }
 
@@ -1420,14 +1592,14 @@ body {
     opacity: 0.7;
 }
 
-/* 待完成卡片底部区域 */
+/* 待完成卡片底部区域 - 保持简洁设计，与记一笔页面一致 */
 .item-card.memo-card .memo-card-footer {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
     margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid #EEEEEE;
+    padding-top: 0;
+    border-top: none;
 }
 
 /* 待完成卡片时间信息 */
@@ -1442,6 +1614,24 @@ body {
     color: #999999;
     line-height: 1.5;
     font-family: 'Segoe UI', 'Roboto', 'PingFang SC', sans-serif;
+}
+
+/* 待完成卡片顺延标识 */
+.item-card.memo-card .carry-over-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    background: #FFF3E0;
+    color: #F57C00;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.item-card.memo-card .carry-over-badge .icon {
+    font-size: 12px;
 }
 
 /* 待完成卡片操作按钮 */
@@ -1608,13 +1798,17 @@ body {
     font-size: 12px;
 }
 
-/* 空状态优化 */
+/* 空状态优化 - 可爱圆角设计 */
 #memos-list .empty-state {
     text-align: center;
     padding: 80px 20px;
     color: #999999;
     font-size: 14px;
     font-family: 'Segoe UI', 'Roboto', 'PingFang SC', sans-serif;
+    background: #FFFFFF;
+    margin: 0;
+    border-radius: 16px;
+    border: 2px dashed #E0E0E0;
 }
 
 #memos-list .empty-state::before {
@@ -2618,18 +2812,52 @@ body {
         max-width: 100%;
     }
 
-    /* 移动端待完成列表 - 贴边显示 */
-    #memos-tab .items-list {
-        padding: 0;
-    }
-
-    /* 移动端待完成卡片 - 调整内边距，适配安全区 */
-    .item-card.memo-card {
-        padding: 14px 12px;
+    /* 移动端待完成合并导航栏 - 直角贴边设计，保持原样 */
+    .memos-nav-bar {
+        margin: 0 0 12px 0;
+        padding: 12px;
         padding-left: calc(12px + env(safe-area-inset-left, 0));
         padding-right: calc(12px + env(safe-area-inset-right, 0));
-        margin-bottom: 0;
+        gap: 12px;
         border-radius: 0;
+        box-shadow: none;
+    }
+
+    .memos-nav-bar .date-nav-controls {
+        gap: 8px;
+    }
+
+    .memos-nav-actions {
+        padding-top: 10px;
+    }
+
+    /* 移动端待完成列表 - 保持内边距 */
+    #memos-tab .items-list {
+        padding: 0 12px;
+    }
+
+    /* 移动端待完成卡片 - 可爱圆角设计，适配安全区 */
+    .item-card.memo-card {
+        padding: 14px;
+        padding-left: calc(14px + env(safe-area-inset-left, 0) - 12px);
+        padding-right: calc(14px + env(safe-area-inset-right, 0) - 12px);
+        margin-bottom: 10px;
+        border-radius: 14px !important;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06) !important;
+    }
+
+    /* 移动端待完成卡片分隔线 - 移除 */
+    #memos-list .item-card.memo-card:not(:last-child)::after {
+        display: none;
+    }
+
+    /* 移动端卡片间距调整 */
+    #memos-list .item-card.memo-card:not(:first-child) {
+        margin-top: 6px;
+    }
+
+    #memos-list .item-card.memo-card:not(:last-child) {
+        margin-bottom: 6px;
     }
 
     /* 移动端分页组件 - 适配安全区 */
@@ -2814,18 +3042,67 @@ body {
         max-width: 100%;
     }
 
-    /* 小屏幕待完成列表 - 贴边显示 */
-    #memos-tab .items-list {
-        padding: 0;
-    }
-
-    /* 小屏幕待完成卡片 - 调整内边距，适配安全区 */
-    .item-card.memo-card {
-        padding: 12px 10px;
+    /* 小屏幕待完成合并导航栏 - 直角贴边设计，保持原样 */
+    .memos-nav-bar {
+        margin: 0 0 10px 0;
+        padding: 10px;
         padding-left: calc(10px + env(safe-area-inset-left, 0));
         padding-right: calc(10px + env(safe-area-inset-right, 0));
-        margin-bottom: 0;
+        gap: 10px;
         border-radius: 0;
+        box-shadow: none;
+    }
+
+    .memos-nav-bar .date-nav-controls {
+        gap: 6px;
+    }
+
+    .memos-nav-bar .date-nav-btn {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+
+    .memos-nav-bar .date-picker-btn {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+
+    .memos-nav-actions {
+        padding-top: 8px;
+    }
+
+    .memos-export-btn {
+        font-size: 12px;
+        padding: 6px 12px;
+    }
+
+    /* 小屏幕待完成列表 - 保持内边距 */
+    #memos-tab .items-list {
+        padding: 0 10px;
+    }
+
+    /* 小屏幕待完成卡片 - 可爱圆角设计，适配安全区 */
+    .item-card.memo-card {
+        padding: 12px;
+        padding-left: calc(12px + env(safe-area-inset-left, 0) - 10px);
+        padding-right: calc(12px + env(safe-area-inset-right, 0) - 10px);
+        margin-bottom: 8px;
+        border-radius: 12px !important;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.06) !important;
+    }
+
+    /* 小屏幕待完成卡片分隔线 - 移除 */
+    #memos-list .item-card.memo-card:not(:last-child)::after {
+        display: none;
+    }
+
+    /* 小屏幕卡片间距调整 */
+    #memos-list .item-card.memo-card:not(:first-child) {
+        margin-top: 5px;
+    }
+
+    #memos-list .item-card.memo-card:not(:last-child) {
+        margin-bottom: 5px;
     }
 
     /* 小屏幕分页组件 - 适配安全区 */

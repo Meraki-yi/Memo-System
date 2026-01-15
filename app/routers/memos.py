@@ -2,12 +2,13 @@
 待完成路由模块
 
 处理待完成的增删改查、导出等操作
+支持基于日期的待完成事项管理
 """
 
-from fastapi import APIRouter, HTTPException, Depends, Request
+from fastapi import APIRouter, HTTPException, Depends, Request, Query
 from fastapi.responses import Response
 from sqlalchemy.orm import Session
-from datetime import datetime
+from datetime import datetime, date, timedelta
 from zoneinfo import ZoneInfo
 import csv
 from io import StringIO
@@ -25,44 +26,61 @@ router = APIRouter(tags=["待完成"])
 LOCAL_TZ = ZoneInfo("Asia/Shanghai")
 
 
+def get_latest_date_with_memos(db: Session) -> date | None:
+    """获取最近一次有记录的日期"""
+    latest = db.query(Memo.created_date).order_by(Memo.created_date.desc()).first()
+    return latest[0] if latest else None
+
+
 @router.get("/api/memos")
 async def get_memos(
     request: Request,
+    created_date: str | None = Query(None, description="创建日期 (YYYY-MM-DD)"),
     page: int = 1,
-    page_size: int = 5,
+    page_size: int = 10,
     db: Session = Depends(get_db)
 ):
     """
-    获取待完成列表（分页）
+    获取待完成列表（严格按创建日期隔离）
 
-    按创建时间倒序排列
+    仅返回指定创建日期的待办事项：
+    - 每个事项严格归属于其创建日期
+    - 不跨日期聚合，不显示其他日期的事项
+    - 无论事项是否完成，都保留在原始创建日期下
+
+    - created_date: 查询指定创建日期的待完成事项，格式为 YYYY-MM-DD
+    - 如果未指定 created_date，自动使用今天日期
     """
     check_auth(request)
     try:
-        # 计算总数
-        total = db.query(Memo).count()
-        # 计算总页数
-        total_pages = (total + page_size - 1) // page_size if total > 0 else 1
-        # 分页查询 - 按创建时间排序
-        offset = (page - 1) * page_size
-        # 先获取排序后的ID列表
-        memo_ids_query = db.query(Memo.id).order_by(Memo.created_at.desc()).offset(offset).limit(page_size)
-        memo_ids = [id[0] for id in memo_ids_query.all()]
-        # 再根据ID列表获取完整数据
-        if memo_ids:
-            memos = db.query(Memo).filter(Memo.id.in_(memo_ids)).all()
-            # 按原始ID顺序排序
-            memos_dict = {m.id: m for m in memos}
-            memos = [memos_dict[id] for id in memo_ids]
+        # 解析创建日期
+        if created_date:
+            try:
+                query_date = date.fromisoformat(created_date)
+            except ValueError:
+                raise HTTPException(status_code=400, detail="日期格式无效，请使用 YYYY-MM-DD 格式")
         else:
-            memos = []
+            query_date = date.today()
+
+        # 严格按创建日期查询事项
+        query = db.query(Memo).filter(Memo.created_date == query_date)
+
+        # 计算总数
+        total = query.count()
+        total_pages = (total + page_size - 1) // page_size if total > 0 else 1
+
+        # 分页查询 - 按创建时间降序排序
+        offset = (page - 1) * page_size
+        memos = query.order_by(Memo.created_at.desc()).offset(offset).limit(page_size).all()
+
         return {
             "items": [
                 {
                     "id": m.id,
                     "content": m.content,
-                    "is_completed": getattr(m, 'is_completed', False),
-                    "is_frequent": getattr(m, 'is_frequent', False),
+                    "is_completed": m.is_completed,
+                    "is_frequent": m.is_frequent,
+                    "created_date": m.created_date.isoformat(),
                     "created_at": m.created_at.isoformat(),
                     "updated_at": m.updated_at.isoformat()
                 }
@@ -73,12 +91,36 @@ async def get_memos(
                 "page_size": page_size,
                 "total": total,
                 "total_pages": total_pages
-            }
+            },
+            "created_date": query_date.isoformat(),
+            "latest_date": get_latest_date_with_memos(db).isoformat() if get_latest_date_with_memos(db) else None
         }
+    except HTTPException:
+        raise
     except Exception as e:
         import traceback
         error_detail = traceback.format_exc()
         raise HTTPException(status_code=500, detail=f"获取待完成失败: {str(e)}\n{error_detail}")
+
+
+@router.get("/api/memos/dates")
+async def get_memo_dates(
+    request: Request,
+    db: Session = Depends(get_db)
+):
+    """获取所有有待完成记录的创建日期列表（按日期倒序）"""
+    check_auth(request)
+    try:
+        # 查询所有唯一的 created_date，按日期倒序
+        dates = db.query(Memo.created_date).distinct().order_by(
+            Memo.created_date.desc()
+        ).all()
+
+        return {
+            "dates": [d[0].isoformat() for d in dates]
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"获取日期列表失败: {str(e)}")
 
 
 @router.post("/api/memos")
@@ -89,10 +131,15 @@ async def create_memo(
 ):
     """创建待完成"""
     check_auth(request)
+
+    # 如果没有指定 created_date，默认使用今天
+    created_date = memo.created_date or date.today()
+
     db_memo = Memo(
         content=memo.content,
         is_completed=memo.is_completed if memo.is_completed is not None else False,
-        is_frequent=memo.is_frequent if memo.is_frequent is not None else False
+        is_frequent=memo.is_frequent if memo.is_frequent is not None else False,
+        created_date=created_date  # 事项归属于创建日期，不可更改
     )
     db.add(db_memo)
     db.commit()
@@ -100,8 +147,9 @@ async def create_memo(
     return {
         "id": db_memo.id,
         "content": db_memo.content,
-        "is_completed": getattr(db_memo, 'is_completed', False),
-        "is_frequent": getattr(db_memo, 'is_frequent', False),
+        "is_completed": db_memo.is_completed,
+        "is_frequent": db_memo.is_frequent,
+        "created_date": db_memo.created_date.isoformat(),
         "created_at": db_memo.created_at.isoformat(),
         "updated_at": db_memo.updated_at.isoformat()
     }
@@ -138,8 +186,9 @@ async def get_frequent_memos(
             {
                 "id": m.id,
                 "content": m.content,
-                "is_completed": getattr(m, 'is_completed', False),
-                "is_frequent": getattr(m, 'is_frequent', False),
+                "is_completed": m.is_completed,
+                "is_frequent": m.is_frequent,
+                "created_date": m.created_date.isoformat(),
                 "created_at": m.created_at.isoformat(),
                 "updated_at": m.updated_at.isoformat()
             }
@@ -169,8 +218,9 @@ async def get_memo(
     return {
         "id": db_memo.id,
         "content": db_memo.content,
-        "is_completed": getattr(db_memo, 'is_completed', False),
-        "is_frequent": getattr(db_memo, 'is_frequent', False),
+        "is_completed": db_memo.is_completed,
+        "is_frequent": db_memo.is_frequent,
+        "created_date": db_memo.created_date.isoformat(),
         "created_at": db_memo.created_at.isoformat(),
         "updated_at": db_memo.updated_at.isoformat()
     }
@@ -183,7 +233,7 @@ async def update_memo(
     memo: MemoUpdate,
     db: Session = Depends(get_db)
 ):
-    """更新待完成"""
+    """更新待完成（不允许修改创建日期）"""
     check_auth(request)
     db_memo = db.query(Memo).filter(Memo.id == memo_id).first()
     if not db_memo:
@@ -192,11 +242,10 @@ async def update_memo(
     if memo.content is not None:
         db_memo.content = memo.content
     if memo.is_completed is not None:
-        if hasattr(db_memo, 'is_completed'):
-            db_memo.is_completed = memo.is_completed
+        db_memo.is_completed = memo.is_completed
     if memo.is_frequent is not None:
-        if hasattr(db_memo, 'is_frequent'):
-            db_memo.is_frequent = memo.is_frequent
+        db_memo.is_frequent = memo.is_frequent
+    # 注意：不允许修改 created_date，事项归属日期在创建时确定后不可变更
 
     db_memo.updated_at = datetime.now(LOCAL_TZ)
     db.commit()
@@ -204,8 +253,9 @@ async def update_memo(
     return {
         "id": db_memo.id,
         "content": db_memo.content,
-        "is_completed": getattr(db_memo, 'is_completed', False),
-        "is_frequent": getattr(db_memo, 'is_frequent', False),
+        "is_completed": db_memo.is_completed,
+        "is_frequent": db_memo.is_frequent,
+        "created_date": db_memo.created_date.isoformat(),
         "created_at": db_memo.created_at.isoformat(),
         "updated_at": db_memo.updated_at.isoformat()
     }
@@ -232,24 +282,19 @@ async def delete_memo(
 async def export_memos_csv(request: Request, db: Session = Depends(get_db)):
     """导出待完成为CSV文件"""
     check_auth(request)
-    # 按更新时间排序
-    memo_ids_query = db.query(Memo.id).order_by(Memo.updated_at.desc())
-    memo_ids = [id[0] for id in memo_ids_query.all()]
-    if memo_ids:
-        memos_dict = {m.id: m for m in db.query(Memo).filter(Memo.id.in_(memo_ids)).all()}
-        memos = [memos_dict[id] for id in memo_ids]
-    else:
-        memos = []
+    # 按创建日期和更新时间排序
+    memos = db.query(Memo).order_by(Memo.created_date.desc(), Memo.updated_at.desc()).all()
 
     output = StringIO()
     writer = csv.writer(output)
-    writer.writerow(['内容', '状态', '创建时间', '更新时间'])
+    writer.writerow(['内容', '状态', '创建日期', '创建时间', '更新时间'])
 
     for memo in memos:
         status = '已完成' if memo.is_completed else '待办'
         writer.writerow([
             memo.content,
             status,
+            memo.created_date.isoformat(),
             memo.created_at.strftime('%Y-%m-%d %H:%M:%S'),
             memo.updated_at.strftime('%Y-%m-%d %H:%M:%S')
         ])
@@ -271,23 +316,18 @@ async def export_memos_sql(request: Request, db: Session = Depends(get_db)):
     """导出待完成为SQL文件"""
     check_auth(request)
 
-    # 按更新时间排序
-    memo_ids_query = db.query(Memo.id).order_by(Memo.updated_at.desc())
-    memo_ids = [id[0] for id in memo_ids_query.all()]
-    if memo_ids:
-        memos_dict = {m.id: m for m in db.query(Memo).filter(Memo.id.in_(memo_ids)).all()}
-        memos = [memos_dict[id] for id in memo_ids]
-    else:
-        memos = []
+    # 按创建日期和更新时间排序
+    memos = db.query(Memo).order_by(Memo.created_date.desc(), Memo.updated_at.desc()).all()
 
     # 生成INSERT语句
     insert_statements = []
 
     for memo in memos:
         insert_statements.append(
-            f"INSERT INTO memos (id, content, is_completed, is_frequent, created_at, updated_at) VALUES "
-            f"({memo.id}, {escape_sql_string(memo.content)}, {1 if getattr(memo, 'is_completed', False) else 0}, "
-            f"{1 if getattr(memo, 'is_frequent', False) else 0}, "
+            f"INSERT INTO memos (id, content, is_completed, is_frequent, created_date, created_at, updated_at) VALUES "
+            f"({memo.id}, {escape_sql_string(memo.content)}, {1 if memo.is_completed else 0}, "
+            f"{1 if memo.is_frequent else 0}, "
+            f"'{memo.created_date.isoformat()}', "
             f"'{memo.created_at.strftime('%Y-%m-%d %H:%M:%S')}', '{memo.updated_at.strftime('%Y-%m-%d %H:%M:%S')}');"
         )
 

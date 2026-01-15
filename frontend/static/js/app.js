@@ -23,7 +23,11 @@ const paginationState = {
         currentPage: 1,
         totalPages: 1,
         totalItems: 0,
-        pageSize: 5
+        pageSize: 10,
+        // 新增：待完成的日期状态
+        createdDate: null,  // 当前查看的创建日期 (YYYY-MM-DD)
+        latestDate: null,  // 最近一次有记录的日期
+        availableDates: []  // 所有有记录的日期列表
     }
 };
 
@@ -188,6 +192,36 @@ function formatFullDateTime(dateString) {
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
+// 格式化日期为 YYYY-MM-DD
+function formatDateString(dateObj) {
+    const year = dateObj.getFullYear();
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+// 格式化日期显示（用于日期导航）
+function formatDateDisplay(dateStr) {
+    const date = new Date(dateStr + 'T00:00:00');
+    const today = new Date();
+    const todayStr = formatDateString(today);
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = formatDateString(yesterday);
+
+    if (dateStr === todayStr) {
+        return '今天';
+    } else if (dateStr === yesterdayStr) {
+        return '昨天';
+    } else {
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+        const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+        const weekDay = weekDays[date.getDay()];
+        return `${month}月${day}日 ${weekDay}`;
+    }
+}
+
 // 标签页切换
 function setupTabs() {
     const tabBtns = document.querySelectorAll('.tab-btn');
@@ -219,8 +253,14 @@ async function loadItems() {
             return;
         }
 
+        if (currentTab === 'memos') {
+            await loadMemosData();
+            return;
+        }
+
+        // 记事标签页
         const state = paginationState[currentTab];
-        const endpoint = currentTab === 'reflections' ? '/reflections' : '/memos';
+        const endpoint = '/reflections';
         const response = await fetch(
             `${API_BASE}${endpoint}?page=${state.currentPage}&page_size=${state.pageSize}`,
             getAuthOptions()
@@ -252,6 +292,185 @@ async function loadItems() {
     } finally {
         toggleLoading(false);
     }
+}
+
+// 加载待完成数据（基于创建日期）
+async function loadMemosData() {
+    try {
+        const state = paginationState.memos;
+
+        // 如果没有设置创建日期，使用今天
+        if (!state.createdDate) {
+            state.createdDate = formatDateString(new Date());
+        }
+
+        // 构建请求 URL
+        let url = `${API_BASE}/memos?created_date=${state.createdDate}&page=${state.currentPage}&page_size=${state.pageSize}`;
+
+        const response = await fetch(url, getAuthOptions());
+
+        if (!response.ok) {
+            if (response.status === 401) {
+                window.location.href = '/';
+                return;
+            }
+            throw new Error('加载待完成失败');
+        }
+
+        const data = await response.json();
+
+        // 更新状态
+        state.totalPages = data.pagination.total_pages;
+        state.totalItems = data.pagination.total;
+        state.currentPage = data.pagination.page;
+        state.latestDate = data.latest_date;
+
+        // 渲染数据
+        renderMemosList(data.items);
+        updateMemosDateNav();
+        updatePaginationUI('memos');
+    } catch (error) {
+        showToast(error.message, 'error');
+        if (error.message.includes('401') || error.message.includes('fetch')) {
+            window.location.href = '/';
+        }
+    }
+}
+
+// 渲染待完成列表
+function renderMemosList(items) {
+    const list = document.getElementById('memos-list');
+
+    if (items.length === 0) {
+        const state = paginationState.memos;
+        const todayStr = formatDateString(new Date());
+        const dateDisplay = formatDateDisplay(state.createdDate);
+        const dateHint = state.createdDate === todayStr ? '今天还没有待完成事项' : `${dateDisplay}没有记录`;
+
+        list.innerHTML = `
+            <div class="empty-state">
+                <span class="icon">📝</span>
+                <p>${dateHint}</p>
+            </div>
+        `;
+        return;
+    }
+
+    // 直接渲染所有事项，不再分组
+    list.innerHTML = items.map(item => renderMemoItem(item)).join('');
+}
+
+// 渲染单个待完成事项
+function renderMemoItem(item) {
+    const createdFull = formatFullDateTime(item.created_at);
+    const updatedFull = formatFullDateTime(item.updated_at);
+
+    return `
+        <div class="item-card memo-card ${item.is_completed ? 'completed' : ''} ${item.is_frequent ? 'frequent' : ''}" data-id="${item.id}">
+            <div class="item-content">
+                <label class="checkbox-wrapper">
+                    <input type="checkbox" ${item.is_completed ? 'checked' : ''}
+                           onchange="toggleMemoComplete(${item.id})">
+                    <span class="checkmark"></span>
+                </label>
+                <div style="flex: 1;">
+                    <p class="item-text">${item.content.replace(/\n/g, '<br>')}</p>
+                </div>
+            </div>
+            <div class="memo-card-footer">
+                <div class="memo-times">
+                    <span class="time">创建: ${createdFull}</span>
+                    <span class="time">更新: ${updatedFull}</span>
+                </div>
+                <div class="item-actions" onclick="event.stopPropagation()">
+                    <button class="btn-icon btn-frequent ${item.is_frequent ? 'active' : ''}" onclick="toggleMemoFrequent(${item.id})" title="${item.is_frequent ? '取消常用' : '设为常用'}">
+                        <span>${item.is_frequent ? '⭐' : '☆'}</span>
+                    </button>
+                    <button class="btn-icon btn-edit" onclick="editItem(${item.id})" title="编辑">
+                        <span>✏️</span>
+                    </button>
+                    <button class="btn-icon btn-delete" onclick="showDeleteModal(${item.id})" title="删除">
+                        <span>🗑️</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// 更新待完成日期导航
+function updateMemosDateNav() {
+    const state = paginationState.memos;
+    const todayStr = formatDateString(new Date());
+
+    // 更新日期显示
+    const dateDisplay = document.getElementById('memos-current-date');
+    const dateHint = document.getElementById('memos-date-hint');
+
+    if (dateDisplay) {
+        dateDisplay.textContent = formatDateDisplay(state.createdDate);
+    }
+
+    if (dateHint) {
+        if (state.createdDate === todayStr) {
+            dateHint.textContent = `${new Date().getFullYear()}年${new Date().getMonth() + 1}月${new Date().getDate()}日`;
+        } else {
+            const date = new Date(state.createdDate + 'T00:00:00');
+            dateHint.textContent = `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
+        }
+    }
+
+    // 更新按钮状态
+    const prevBtn = document.getElementById('memos-prev-day-btn');
+    const nextBtn = document.getElementById('memos-next-day-btn');
+
+    // "上一天"可以一直点击（查看更早的日期）
+    if (prevBtn) {
+        prevBtn.disabled = false;
+    }
+
+    // "下一天"在今天时禁用
+    if (nextBtn) {
+        nextBtn.disabled = state.createdDate === todayStr;
+    }
+}
+
+// 更改待完成日期
+function changeMemosDate(delta) {
+    const state = paginationState.memos;
+    const currentDate = new Date(state.createdDate + 'T00:00:00');
+    currentDate.setDate(currentDate.getDate() + delta);
+    state.createdDate = formatDateString(currentDate);
+    state.currentPage = 1;  // 重置到第一页
+
+    loadMemosData();
+}
+
+// 显示日期选择器
+function showDatePicker() {
+    const state = paginationState.memos;
+    const datePicker = document.getElementById('memoDatePicker');
+    if (datePicker) {
+        datePicker.value = state.createdDate;
+    }
+    document.getElementById('datePickerModal').classList.add('show');
+}
+
+// 关闭日期选择器
+function closeDatePicker() {
+    document.getElementById('datePickerModal').classList.remove('show');
+}
+
+// 确认日期选择
+function confirmDatePick() {
+    const datePicker = document.getElementById('memoDatePicker');
+    if (datePicker && datePicker.value) {
+        const state = paginationState.memos;
+        state.createdDate = datePicker.value;
+        state.currentPage = 1;  // 重置到第一页
+        loadMemosData();
+    }
+    closeDatePicker();
 }
 
 // 格式化日期为本地时区的 YYYY-MM-DD 字符串
@@ -443,11 +662,9 @@ function goToYearlyOverview() {
     window.location.href = `/yearly-overview?year=${currentYear}`;
 }
 
-// 跳转到常用待完成页面
+// 跳转到常用待完成页面（已移除，保留函数避免报错）
 function goToFrequents() {
-    // 保存当前标签页，以便返回时恢复
-    sessionStorage.setItem('memoSystem_return_tab', 'memos');
-    window.location.href = '/frequents';
+    showToast('常用功能已移除', 'error');
 }
 
 // 跳转到收藏记事页面
@@ -653,36 +870,8 @@ function renderItems(items) {
                 </div>
             `;
         } else {
-            // 待完成卡片
-            return `
-                <div class="item-card memo-card ${item.is_completed ? 'completed' : ''} ${item.is_frequent ? 'frequent' : ''}" data-id="${item.id}">
-                    <div class="item-content">
-                        <label class="checkbox-wrapper">
-                            <input type="checkbox" ${item.is_completed ? 'checked' : ''}
-                                   onchange="toggleMemoComplete(${item.id})">
-                            <span class="checkmark"></span>
-                        </label>
-                        <p class="item-text">${item.content.replace(/\n/g, '<br>')}</p>
-                    </div>
-                    <div class="memo-card-footer">
-                        <div class="memo-times">
-                            <span class="time">创建: ${createdFull}</span>
-                            <span class="time">更新: ${updatedFull}</span>
-                        </div>
-                        <div class="item-actions" onclick="event.stopPropagation()">
-                            <button class="btn-icon btn-frequent ${item.is_frequent ? 'active' : ''}" onclick="toggleMemoFrequent(${item.id})" title="${item.is_frequent ? '取消常用' : '设为常用'}">
-                                <span>${item.is_frequent ? '⭐' : '☆'}</span>
-                            </button>
-                            <button class="btn-icon btn-edit" onclick="editItem(${item.id})" title="编辑">
-                                <span>✏️</span>
-                            </button>
-                            <button class="btn-icon btn-delete" onclick="showDeleteModal(${item.id})" title="删除">
-                                <span>🗑️</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
+            // 待完成卡片（这个分支现在不会执行，因为待完成使用专门的渲染函数）
+            return '';
         }
     }).join('');
 }
@@ -816,6 +1005,7 @@ async function saveItem() {
 
     try {
         let response;
+        let requestData;
 
         if (isEditing) {
             // 更新
@@ -823,6 +1013,7 @@ async function saveItem() {
             if (!isReflection) {
                 updateData.is_completed = isCompleted;
                 updateData.is_frequent = isFrequent;
+                // 注意：不允许修改 created_date
             } else {
                 // 记事也支持 is_frequent
                 updateData.is_frequent = isFrequent;
@@ -838,6 +1029,8 @@ async function saveItem() {
             if (!isReflection) {
                 createData.is_completed = isCompleted;
                 createData.is_frequent = isFrequent;
+                // 待完成新建时，使用当前查看的日期作为 created_date
+                createData.created_date = paginationState.memos.createdDate;
             } else {
                 // 记事也支持 is_frequent
                 createData.is_frequent = isFrequent;
@@ -1234,6 +1427,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     closeDeleteModal();
                 } else if (this.id === 'exportModal') {
                     closeExportModal();
+                } else if (this.id === 'datePickerModal') {
+                    closeDatePicker();
                 }
             }
         });
@@ -1245,6 +1440,7 @@ document.addEventListener('DOMContentLoaded', function() {
             closeModal();
             closeDeleteModal();
             closeExportModal();
+            closeDatePicker();
             // 关闭所有打开的更多菜单
             const weekMoreMenu = document.getElementById('weekMoreMenu');
             const reflectionsMoreMenu = document.getElementById('reflectionsMoreMenu');
@@ -1402,7 +1598,7 @@ function changeMemosPage(delta) {
 
     if (newPage >= 1 && newPage <= state.totalPages) {
         state.currentPage = newPage;
-        loadItems();
+        loadMemosData();
         // 平滑滚动到顶部
         document.getElementById('memos-list').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }

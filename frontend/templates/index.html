@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>待完成系统</title>
-    <link rel="stylesheet" href="/static/css/style.css?v=10.0">
+    <link rel="stylesheet" href="/static/css/style.css?v=10.5">
 </head>
 <body>
     <div class="app-container">
@@ -175,12 +175,10 @@
                 <!-- 待完成标签 -->
                 <div class="tab-content" id="memos-tab">
                     <div class="tab-content-scrollable">
-                        <div class="content-header">
-                            <div class="header-actions">
-                                <button class="add-btn frequent-btn" onclick="goToFrequents()">
-                                    <span class="icon">⭐</span>
-                                    常用
-                                </button>
+                        <!-- 合并的导航栏：一个大板块，上下排版 -->
+                        <div class="memos-nav-bar">
+                            <!-- 上方：操作按钮 -->
+                            <div class="memos-nav-actions">
                                 <div class="header-more-wrapper">
                                     <button class="more-btn memos-more-btn" onclick="toggleMemosMoreMenu()">
                                         <span class="icon">⋯</span>
@@ -193,7 +191,25 @@
                                     </div>
                                 </div>
                             </div>
+                            <!-- 下方：日期导航（上一天/日期/下一天） -->
+                            <div class="date-nav-controls">
+                                <button class="date-nav-btn" id="memos-prev-day-btn" onclick="changeMemosDate(-1)" title="上一天">
+                                    <span class="icon">‹</span>
+                                    上一天
+                                </button>
+                                <button class="date-picker-btn" onclick="showDatePicker()" title="选择日期">
+                                    <div class="date-nav-center">
+                                        <div class="current-date-display" id="memos-current-date">今天</div>
+                                        <div class="date-hint" id="memos-date-hint"></div>
+                                    </div>
+                                </button>
+                                <button class="date-nav-btn" id="memos-next-day-btn" onclick="changeMemosDate(1)" title="下一天">
+                                    下一天
+                                    <span class="icon">›</span>
+                                </button>
+                            </div>
                         </div>
+
                         <div class="items-list" id="memos-list">
                             <!-- 动态加载内容 -->
                         </div>
@@ -324,6 +340,24 @@
         </div>
     </div>
 
+    <!-- 日期选择器模态框 -->
+    <div class="modal" id="datePickerModal">
+        <div class="modal-content small">
+            <div class="modal-header">
+                <h3>选择日期</h3>
+                <button class="close-btn" onclick="closeDatePicker()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 15px;">请选择要查看的日期：</p>
+                <input type="date" id="memoDatePicker" style="width: 100%; padding: 12px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 1rem;">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" onclick="closeDatePicker()">取消</button>
+                <button class="btn btn-primary" onclick="confirmDatePick()">确定</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast提示 -->
     <div class="toast" id="toast"></div>
 
@@ -332,6 +366,6 @@
         <div class="spinner"></div>
     </div>
 
-    <script src="/static/js/app.js?v=8.8"></script>
+    <script src="/static/js/app.js?v=8.9"></script>
 </body>
 </html>
