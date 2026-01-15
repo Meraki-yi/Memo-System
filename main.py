@@ -1,7 +1,7 @@
 """
 Memo System - 主应用入口
 
-这是一个集成了备忘录、复盘反思和记账功能的应用系统。
+这是一个集成了待完成、记事和记账功能的应用系统。
 主文件仅包含应用初始化和主流程控制逻辑。
 """
 
@@ -75,10 +75,10 @@ app.mount("/static", StaticFiles(directory=settings.STATIC_DIR), name="static")
 # 认证路由（包含登录页面和API）
 app.include_router(auth_router)
 
-# 复盘反思路由
+# 记事路由
 app.include_router(reflections_router)
 
-# 备忘录路由
+# 待完成路由
 app.include_router(memos_router)
 
 # 记账功能路由

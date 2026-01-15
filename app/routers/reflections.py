@@ -1,7 +1,7 @@
 """
-复盘反思路由模块
+记事路由模块
 
-处理复盘反思的增删改查、导出等操作
+处理记事的增删改查、导出等操作
 """
 
 from fastapi import APIRouter, HTTPException, Depends, Request
@@ -19,7 +19,7 @@ from app.core.security import check_auth
 from app.utils import escape_sql_string
 
 
-router = APIRouter(tags=["复盘反思"])
+router = APIRouter(tags=["记事"])
 
 # 时区配置
 LOCAL_TZ = ZoneInfo("Asia/Shanghai")
@@ -33,7 +33,7 @@ async def get_reflections(
     db: Session = Depends(get_db)
 ):
     """
-    获取复盘反思列表（分页）
+    获取记事列表（分页）
 
     按创建时间倒序排列
     """
@@ -71,7 +71,7 @@ async def create_reflection(
     reflection: ReflectionCreate,
     db: Session = Depends(get_db)
 ):
-    """创建复盘反思"""
+    """创建记事"""
     check_auth(request)
     db_reflection = Reflection(
         content=reflection.content,
@@ -96,7 +96,7 @@ async def get_frequent_reflections(
     page_size: int = 5,
     db: Session = Depends(get_db)
 ):
-    """获取收藏的复盘反思列表（分页）"""
+    """获取收藏的记事列表（分页）"""
     check_auth(request)
     # 计算收藏反思总数
     total = db.query(Reflection).filter(Reflection.is_frequent == True).count()
@@ -141,7 +141,7 @@ async def get_reflection(
     reflection_id: int,
     db: Session = Depends(get_db)
 ):
-    """获取单个复盘反思"""
+    """获取单个记事"""
     check_auth(request)
     db_reflection = db.query(Reflection).filter(Reflection.id == reflection_id).first()
     if not db_reflection:
@@ -163,7 +163,7 @@ async def update_reflection(
     reflection: ReflectionUpdate,
     db: Session = Depends(get_db)
 ):
-    """更新复盘反思"""
+    """更新记事"""
     check_auth(request)
     db_reflection = db.query(Reflection).filter(Reflection.id == reflection_id).first()
     if not db_reflection:
@@ -193,7 +193,7 @@ async def delete_reflection(
     reflection_id: int,
     db: Session = Depends(get_db)
 ):
-    """删除复盘反思"""
+    """删除记事"""
     check_auth(request)
     db_reflection = db.query(Reflection).filter(Reflection.id == reflection_id).first()
     if not db_reflection:
@@ -206,7 +206,7 @@ async def delete_reflection(
 
 @router.get("/api/reflections/export/csv")
 async def export_reflections_csv(request: Request, db: Session = Depends(get_db)):
-    """导出复盘反思为CSV文件"""
+    """导出记事为CSV文件"""
     check_auth(request)
     # 按更新时间排序
     reflections = db.query(Reflection).order_by(Reflection.updated_at.desc()).all()
@@ -237,7 +237,7 @@ async def export_reflections_csv(request: Request, db: Session = Depends(get_db)
 
 @router.get("/api/reflections/export/sql")
 async def export_reflections_sql(request: Request, db: Session = Depends(get_db)):
-    """导出复盘反思为SQL文件"""
+    """导出记事为SQL文件"""
     check_auth(request)
 
     # 获取所有反思记录，按更新时间排序

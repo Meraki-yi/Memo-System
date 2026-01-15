@@ -54,7 +54,7 @@ function getAuthOptions(options = {}) {
     };
 }
 
-// ==================== 加载收藏反思 ====================
+// ==================== 加载收藏记事 ====================
 async function loadReflectionFrequents() {
     try {
         const response = await fetch(`${API_BASE}/reflections/frequents?page=${currentPage}&page_size=${pageSize}`, getAuthOptions());
@@ -65,7 +65,7 @@ async function loadReflectionFrequents() {
         }
 
         if (!response.ok) {
-            throw new Error('获取收藏反思失败');
+            throw new Error('获取收藏记事失败');
         }
         const data = await response.json();
 
@@ -73,15 +73,15 @@ async function loadReflectionFrequents() {
         totalPages = data.pagination.total_pages;
         totalItems = data.pagination.total;
 
-        // 渲染反思列表
+        // 渲染记事列表
         const list = document.getElementById('reflection-frequents-list');
         if (data.items.length === 0) {
             list.innerHTML = `
                 <div class="empty-state">
                     <span class="icon">⭐</span>
-                    <p>暂无收藏反思</p>
+                    <p>暂无收藏记事</p>
                     <p style="font-size: 0.9rem; color: var(--text-light); margin-top: 8px;">
-                        在复盘反思中点击星号标记为收藏
+                        在复盘记事中点击星号标记为收藏
                     </p>
                 </div>
             `;
@@ -92,12 +92,12 @@ async function loadReflectionFrequents() {
         // 更新分页控件
         updatePagination();
     } catch (error) {
-        console.error('加载收藏反思失败:', error);
+        console.error('加载收藏记事失败:', error);
         showToast('加载失败，请刷新页面重试', 'error');
     }
 }
 
-// ==================== 渲染反思卡片 ====================
+// ==================== 渲染记事卡片 ====================
 function renderReflectionCard(item) {
     const createdDate = new Date(item.created_at);
     const updatedDate = new Date(item.updated_at);
@@ -193,7 +193,7 @@ function updatePagination() {
 function showAddModal(type) {
     currentEditId = null;
 
-    document.getElementById('modalTitle').textContent = '添加复盘反思';
+    document.getElementById('modalTitle').textContent = '添加复盘记事';
     document.getElementById('reflectionEditFields').style.display = 'block';
     document.getElementById('itemTitle').value = '';
     document.getElementById('itemContent').value = '';
@@ -212,7 +212,7 @@ async function editItem(id) {
 
         const data = await response.json();
 
-        document.getElementById('modalTitle').textContent = '编辑复盘反思';
+        document.getElementById('modalTitle').textContent = '编辑复盘记事';
         document.getElementById('reflectionEditFields').style.display = 'block';
 
         // 将内容按第一个换行符分割为标题和内容
@@ -281,7 +281,7 @@ async function saveItem() {
 // ==================== 切换收藏状态 ====================
 async function toggleReflectionFrequent(id) {
     try {
-        // 直接获取该反思的详情
+        // 直接获取该记事的详情
         const response = await fetch(`${API_BASE}/reflections/${id}`, getAuthOptions());
 
         if (!response.ok) throw new Error('获取数据失败');

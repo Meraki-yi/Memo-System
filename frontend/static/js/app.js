@@ -88,7 +88,7 @@ function toggleWeekMoreMenu() {
     }
 }
 
-// 切换反思页面的更多菜单
+// 切换记事页面的更多菜单
 function toggleReflectionsMoreMenu() {
     const menu = document.getElementById('reflectionsMoreMenu');
     menu.classList.toggle('show');
@@ -101,7 +101,7 @@ function toggleReflectionsMoreMenu() {
     }
 }
 
-// 切换备忘录页面的更多菜单
+// 切换待完成页面的更多菜单
 function toggleMemosMoreMenu() {
     const menu = document.getElementById('memosMoreMenu');
     menu.classList.toggle('show');
@@ -124,7 +124,7 @@ function closeWeekMoreMenuOutside(event) {
     }
 }
 
-// 点击外部关闭反思页面更多菜单
+// 点击外部关闭记事页面更多菜单
 function closeReflectionsMoreMenuOutside(event) {
     const menu = document.getElementById('reflectionsMoreMenu');
     const button = document.querySelector('.reflections-more-btn');
@@ -134,7 +134,7 @@ function closeReflectionsMoreMenuOutside(event) {
     }
 }
 
-// 点击外部关闭备忘录页面更多菜单
+// 点击外部关闭待完成页面更多菜单
 function closeMemosMoreMenuOutside(event) {
     const menu = document.getElementById('memosMoreMenu');
     const button = document.querySelector('.memos-more-btn');
@@ -443,14 +443,14 @@ function goToYearlyOverview() {
     window.location.href = `/yearly-overview?year=${currentYear}`;
 }
 
-// 跳转到常用备忘录页面
+// 跳转到常用待完成页面
 function goToFrequents() {
     // 保存当前标签页，以便返回时恢复
     sessionStorage.setItem('memoSystem_return_tab', 'memos');
     window.location.href = '/frequents';
 }
 
-// 跳转到收藏反思页面
+// 跳转到收藏记事页面
 function goToReflectionFrequents() {
     // 保存当前标签页，以便返回时恢复
     sessionStorage.setItem('memoSystem_return_tab', 'reflections');
@@ -605,7 +605,7 @@ function renderItems(items) {
         list.innerHTML = `
             <div class="empty-state">
                 <span class="icon">📭</span>
-                <p>暂无${currentTab === 'reflections' ? '反思' : '备忘录'}</p>
+                <p>暂无${currentTab === 'reflections' ? '记事' : '待完成'}</p>
             </div>
         `;
         return;
@@ -653,7 +653,7 @@ function renderItems(items) {
                 </div>
             `;
         } else {
-            // 备忘录卡片
+            // 待完成卡片
             return `
                 <div class="item-card memo-card ${item.is_completed ? 'completed' : ''} ${item.is_frequent ? 'frequent' : ''}" data-id="${item.id}">
                     <div class="item-content">
@@ -691,7 +691,7 @@ function renderItems(items) {
 function showAddModal(type) {
     currentEditItem = null;
     document.getElementById('modalTitle').textContent =
-        type === 'reflection' ? '添加复盘反思' : '添加备忘录';
+        type === 'reflection' ? '添加记事' : '添加待完成';
 
     const isCompleted = document.getElementById('isCompleted');
     const isFrequent = document.getElementById('isFrequent');
@@ -735,7 +735,7 @@ async function editItem(id) {
 
         currentEditItem = item;
         document.getElementById('modalTitle').textContent =
-            currentTab === 'reflections' ? '编辑复盘反思' : '编辑备忘录';
+            currentTab === 'reflections' ? '编辑记事' : '编辑待完成';
 
         const isCompleted = document.getElementById('isCompleted');
         const isFrequent = document.getElementById('isFrequent');
@@ -757,7 +757,7 @@ async function editItem(id) {
                 }
             });
         } else {
-            // 反思模式
+            // 记事模式
             isFrequent.checked = item.is_frequent || false;
             reflectionEditFields.style.display = 'block';
             memoEditFields.style.display = 'none';
@@ -791,7 +791,7 @@ async function saveItem() {
 
     let content;
     if (isReflection) {
-        // 反思：合并标题和内容
+        // 记事：合并标题和内容
         const title = document.getElementById('itemTitle').value.trim();
         const contentText = document.getElementById('itemContent').value.trim();
         if (!title && !contentText) {
@@ -801,7 +801,7 @@ async function saveItem() {
         // 标题和内容用换行符连接
         content = title + (contentText ? '\n' + contentText : '');
     } else {
-        // 备忘录：只有内容
+        // 待完成：只有内容
         const memoTextarea = document.getElementById('itemMemoContent');
         content = memoTextarea.value.trim();
         if (!content) {
@@ -810,7 +810,7 @@ async function saveItem() {
         }
     }
 
-    // 获取完成状态（仅备忘录）
+    // 获取完成状态（仅待完成）
     const isCompleted = document.getElementById('isCompleted').checked;
     const isFrequent = document.getElementById('isFrequent').checked;
 
@@ -824,7 +824,7 @@ async function saveItem() {
                 updateData.is_completed = isCompleted;
                 updateData.is_frequent = isFrequent;
             } else {
-                // 反思也支持 is_frequent
+                // 记事也支持 is_frequent
                 updateData.is_frequent = isFrequent;
             }
 
@@ -839,7 +839,7 @@ async function saveItem() {
                 createData.is_completed = isCompleted;
                 createData.is_frequent = isFrequent;
             } else {
-                // 反思也支持 is_frequent
+                // 记事也支持 is_frequent
                 createData.is_frequent = isFrequent;
             }
 
@@ -863,7 +863,7 @@ async function saveItem() {
     }
 }
 
-// 切换备忘录完成状态
+// 切换待完成完成状态
 async function toggleMemoComplete(id) {
     try {
         // 直接通过ID获取单个记录
@@ -871,7 +871,7 @@ async function toggleMemoComplete(id) {
 
         if (!response.ok) {
             if (response.status === 404) {
-                throw new Error('备忘录不存在');
+                throw new Error('待完成不存在');
             }
             throw new Error('获取数据失败');
         }
@@ -893,7 +893,7 @@ async function toggleMemoComplete(id) {
     }
 }
 
-// 切换备忘录常用状态
+// 切换待完成常用状态
 async function toggleMemoFrequent(id) {
     try {
         // 直接通过ID获取单个记录
@@ -901,7 +901,7 @@ async function toggleMemoFrequent(id) {
 
         if (!response.ok) {
             if (response.status === 404) {
-                throw new Error('备忘录不存在');
+                throw new Error('待完成不存在');
             }
             throw new Error('获取数据失败');
         }
@@ -924,7 +924,7 @@ async function toggleMemoFrequent(id) {
     }
 }
 
-// 切换复盘反思收藏状态
+// 切换记事收藏状态
 async function toggleReflectionFrequent(id) {
     try {
         // 直接通过ID获取单个记录
@@ -932,7 +932,7 @@ async function toggleReflectionFrequent(id) {
 
         if (!response.ok) {
             if (response.status === 404) {
-                throw new Error('复盘反思不存在');
+                throw new Error('记事不存在');
             }
             throw new Error('获取数据失败');
         }
@@ -1084,7 +1084,7 @@ async function exportAccountingData(format = 'csv') {
     }
 }
 
-// 导出反思数据
+// 导出记事数据
 async function exportReflectionsData(format = 'csv') {
     toggleLoading(true);
     try {
@@ -1119,7 +1119,7 @@ async function exportReflectionsData(format = 'csv') {
         window.URL.revokeObjectURL(url);
 
         const formatName = format === 'csv' ? 'CSV' : 'SQL';
-        showToast(`反思数据导出成功 (${formatName})`, 'success');
+        showToast(`记事数据导出成功 (${formatName})`, 'success');
     } catch (error) {
         showToast(error.message || '导出失败', 'error');
     } finally {
@@ -1127,7 +1127,7 @@ async function exportReflectionsData(format = 'csv') {
     }
 }
 
-// 导出备忘录数据
+// 导出待完成数据
 async function exportMemosData(format = 'csv') {
     toggleLoading(true);
     try {
@@ -1162,7 +1162,7 @@ async function exportMemosData(format = 'csv') {
         window.URL.revokeObjectURL(url);
 
         const formatName = format === 'csv' ? 'CSV' : 'SQL';
-        showToast(`备忘录数据导出成功 (${formatName})`, 'success');
+        showToast(`待完成数据导出成功 (${formatName})`, 'success');
     } catch (error) {
         showToast(error.message || '导出失败', 'error');
     } finally {
@@ -1379,7 +1379,7 @@ function changeAccountingPage(delta) {
     }
 }
 
-// 反思分页切换
+// 记事分页切换
 function changeReflectionsPage(delta) {
     const state = paginationState.reflections;
     const newPage = state.currentPage + delta;
@@ -1395,7 +1395,7 @@ function changeReflectionsPage(delta) {
     }
 }
 
-// 备忘录分页切换
+// 待完成分页切换
 function changeMemosPage(delta) {
     const state = paginationState.memos;
     const newPage = state.currentPage + delta;

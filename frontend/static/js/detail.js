@@ -76,20 +76,20 @@ function formatHistoryTime(dateString) {
 
 // 返回上一页
 function goBack() {
-    // 保存当前标签页信息到 sessionStorage，确保返回到复盘反思标签页
+    // 保存当前标签页信息到 sessionStorage，确保返回到复盘记事标签页
     sessionStorage.setItem('memoSystem_return_tab', 'reflections');
     // 直接导航到主页
     window.location.href = '/app';
 }
 
-// 加载反思详情
+// 加载记事详情
 async function loadReflectionDetail() {
     // 从URL获取reflection_id
     const urlParams = new URLSearchParams(window.location.search);
     reflectionId = urlParams.get('id');
 
     if (!reflectionId) {
-        showToast('缺少反思ID', 'error');
+        showToast('缺少记事ID', 'error');
         goBack();
         return;
     }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>备忘录系统</title>
+    <title>待完成系统</title>
     <link rel="stylesheet" href="/static/css/style.css?v=10.0">
 </head>
 <body>
@@ -16,10 +16,10 @@
                     记一笔
                 </button>
                 <button class="tab-btn" data-tab="reflections">
-                    复盘反思
+                    记事
                 </button>
                 <button class="tab-btn" data-tab="memos">
-                    备忘录
+                    待完成
                 </button>
             </div>
 
@@ -122,7 +122,7 @@
                     </div>
                 </div>
 
-                <!-- 复盘反思标签 -->
+                <!-- 记事标签 -->
                 <div class="tab-content" id="reflections-tab">
                     <div class="tab-content-scrollable">
                         <div class="content-header reflections-page-header">
@@ -172,7 +172,7 @@
                     </div>
                 </div>
 
-                <!-- 备忘录标签 -->
+                <!-- 待完成标签 -->
                 <div class="tab-content" id="memos-tab">
                     <div class="tab-content-scrollable">
                         <div class="content-header">
@@ -198,7 +198,7 @@
                             <!-- 动态加载内容 -->
                         </div>
                     </div>
-                    <!-- 备忘录分页组件 -->
+                    <!-- 待完成分页组件 -->
                     <div class="pagination-container fixed-bottom" id="memos-pagination">
                         <div class="pagination">
                             <button class="pagination-btn" id="memos-prev-btn" onclick="changeMemosPage(-1)" disabled>
@@ -206,7 +206,7 @@
                                 上一页
                             </button>
                             <button class="add-btn" onclick="showAddModal('memo')">
-                                添加备忘录
+                                添加待完成
                             </button>
                             <button class="pagination-btn" id="memos-next-btn" onclick="changeMemosPage(1)">
                                 下一页
@@ -246,7 +246,7 @@
                         </div>
                     </div>
                 </div>
-                <!-- 备忘录编辑：只有内容 -->
+                <!-- 待完成编辑：只有内容 -->
                 <div id="memoEditFields" style="display: none;">
                     <textarea id="itemMemoContent" placeholder="请输入内容..." style="width: 100%; padding: 12px 15px; border: 2px solid var(--border-color); border-radius: var(--radius-sm); font-size: 1rem; min-height: 120px; resize: vertical; outline: none; transition: var(--transition);"></textarea>
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">

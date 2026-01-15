@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>常用备忘录</title>
+    <title>常用待完成</title>
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
@@ -32,7 +32,7 @@
                 </div>
             </div>
 
-            <!-- 常用备忘录内容 -->
+            <!-- 常用待完成内容 -->
             <div class="tab-contents">
                 <div class="tab-content active" id="frequents-tab">
                     <div class="tab-content-scrollable">
@@ -48,7 +48,7 @@
                             <!-- 动态加载内容 -->
                         </div>
                     </div>
-                    <!-- 备忘录分页组件 -->
+                    <!-- 待完成分页组件 -->
                     <div class="pagination-container fixed-bottom" id="frequents-pagination">
                         <div class="pagination">
                             <button class="pagination-btn" id="frequents-prev-btn" onclick="changeFrequentsPage(-1)" disabled>
@@ -80,7 +80,7 @@
                 <button class="close-btn" onclick="closeModal()">&times;</button>
             </div>
             <div class="modal-body">
-                <!-- 备忘录编辑：只有内容 -->
+                <!-- 待完成编辑：只有内容 -->
                 <div id="memoEditFields" style="display: none;">
                     <textarea id="itemMemoContent" placeholder="请输入内容..." style="width: 100%; padding: 12px 15px; border: 2px solid var(--border-color); border-radius: var(--radius-sm); font-size: 1rem; min-height: 120px; resize: vertical; outline: none; transition: var(--transition);"></textarea>
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">

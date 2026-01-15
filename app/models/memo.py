@@ -1,5 +1,5 @@
 """
-备忘录数据模型
+待完成数据模型
 """
 
 from sqlalchemy import Column, Integer, Text, Boolean, DateTime
@@ -13,7 +13,7 @@ LOCAL_TZ = ZoneInfo("Asia/Shanghai")
 
 
 class Memo(Base):
-    """备忘录表"""
+    """待完成表"""
     __tablename__ = "memos"
 
     id = Column(Integer, primary_key=True, index=True)

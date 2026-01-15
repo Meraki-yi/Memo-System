@@ -54,7 +54,7 @@ function getAuthOptions(options = {}) {
     };
 }
 
-// ==================== 加载常用备忘录 ====================
+// ==================== 加载常用待完成 ====================
 async function loadFrequents() {
     try {
         const response = await fetch(`${API_BASE}/memos/frequents?page=${currentPage}&page_size=${pageSize}`, getAuthOptions());
@@ -65,7 +65,7 @@ async function loadFrequents() {
         }
 
         if (!response.ok) {
-            throw new Error('获取常用备忘录失败');
+            throw new Error('获取常用待完成失败');
         }
         const data = await response.json();
 
@@ -73,15 +73,15 @@ async function loadFrequents() {
         totalPages = data.pagination.total_pages;
         totalItems = data.pagination.total;
 
-        // 渲染备忘录列表
+        // 渲染待完成列表
         const list = document.getElementById('frequents-list');
         if (data.items.length === 0) {
             list.innerHTML = `
                 <div class="empty-state">
                     <span class="icon">⭐</span>
-                    <p>暂无常用备忘录</p>
+                    <p>暂无常用待完成</p>
                     <p style="font-size: 0.9rem; color: var(--text-light); margin-top: 8px;">
-                        在备忘录中点击星号标记为常用
+                        在待完成中点击星号标记为常用
                     </p>
                 </div>
             `;
@@ -92,12 +92,12 @@ async function loadFrequents() {
         // 更新分页控件
         updatePagination();
     } catch (error) {
-        console.error('加载常用备忘录失败:', error);
+        console.error('加载常用待完成失败:', error);
         showToast('加载失败，请刷新页面重试', 'error');
     }
 }
 
-// ==================== 渲染备忘录卡片 ====================
+// ==================== 渲染待完成卡片 ====================
 function renderMemoCard(item) {
     const createdDate = new Date(item.created_at);
     const updatedDate = new Date(item.updated_at);
@@ -186,7 +186,7 @@ function updatePagination() {
 function showAddModal(type) {
     currentEditId = null;
 
-    document.getElementById('modalTitle').textContent = '添加备忘录';
+    document.getElementById('modalTitle').textContent = '添加待完成';
     document.getElementById('memoEditFields').style.display = 'block';
     document.getElementById('itemMemoContent').value = '';
     document.getElementById('isCompleted').checked = false;
@@ -205,7 +205,7 @@ async function editItem(id) {
 
         const data = await response.json();
 
-        document.getElementById('modalTitle').textContent = '编辑备忘录';
+        document.getElementById('modalTitle').textContent = '编辑待完成';
         document.getElementById('memoEditFields').style.display = 'block';
 
         document.getElementById('itemMemoContent').value = data.content;
@@ -264,7 +264,7 @@ async function saveItem() {
 // ==================== 切换完成状态 ====================
 async function toggleMemoComplete(id) {
     try {
-        // 先获取所有常用备忘录
+        // 先获取所有常用待完成
         const response = await fetch(`${API_BASE}/memos/frequents`, getAuthOptions());
 
         if (!response.ok) throw new Error('获取数据失败');
@@ -273,7 +273,7 @@ async function toggleMemoComplete(id) {
         const memos = data.items || [];
         const memo = memos.find(m => m.id === id);
 
-        if (!memo) throw new Error('备忘录不存在');
+        if (!memo) throw new Error('待完成不存在');
 
         const updateResponse = await fetch(`${API_BASE}/memos/${id}`, getAuthOptions({
             method: 'PUT',
@@ -294,7 +294,7 @@ async function toggleMemoComplete(id) {
 // ==================== 切换常用状态 ====================
 async function toggleMemoFrequent(id) {
     try {
-        // 先获取所有常用备忘录
+        // 先获取所有常用待完成
         const response = await fetch(`${API_BASE}/memos/frequents`, getAuthOptions());
 
         if (!response.ok) throw new Error('获取数据失败');
@@ -303,7 +303,7 @@ async function toggleMemoFrequent(id) {
         const memos = data.items || [];
         const memo = memos.find(m => m.id === id);
 
-        if (!memo) throw new Error('备忘录不存在');
+        if (!memo) throw new Error('待完成不存在');
 
         const updateResponse = await fetch(`${API_BASE}/memos/${id}`, getAuthOptions({
             method: 'PUT',

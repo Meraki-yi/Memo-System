@@ -27,14 +27,14 @@ async def read_app(request: Request):
 
 @router.get("/frequents", response_class=HTMLResponse)
 async def read_frequents(request: Request):
-    """常用备忘录页面"""
+    """常用待完成页面"""
     check_auth(request)
     return templates.TemplateResponse("frequents.html", {"request": request})
 
 
 @router.get("/reflection-frequents", response_class=HTMLResponse)
 async def read_reflection_frequents(request: Request):
-    """常用复盘反思页面"""
+    """常用记事页面"""
     check_auth(request)
     return templates.TemplateResponse("reflection_frequents.html", {"request": request})
 

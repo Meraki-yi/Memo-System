@@ -654,7 +654,7 @@ body {
     display: block;
 }
 
-/* 反思页面顶部header - 去掉白色背景框，让按钮悬浮 */
+/* 记事页面顶部header - 去掉白色背景框，让按钮悬浮 */
 .reflections-page-header {
     position: relative;
     height: auto;
@@ -685,7 +685,7 @@ body {
     align-items: center;
 }
 
-/* 备忘录页面顶部header - 与反思页面保持一致的布局 */
+/* 待完成页面顶部header - 与记事页面保持一致的布局 */
 #memos-tab .content-header {
     position: relative;
     height: auto;
@@ -704,14 +704,14 @@ body {
     margin-right: auto;
 }
 
-/* 备忘录页面的header-actions - 调整按钮间距 */
+/* 待完成页面的header-actions - 调整按钮间距 */
 #memos-tab .header-actions {
     display: flex;
     gap: 10px;
     align-items: center;
 }
 
-/* 备忘录页面的三个点按钮 - 单独调整对齐 */
+/* 待完成页面的三个点按钮 - 单独调整对齐 */
 #memos-tab .header-more-wrapper {
     position: absolute;
     right: 15px;
@@ -721,7 +721,7 @@ body {
     z-index: 101;
 }
 
-/* 反思和备忘录页面的更多按钮样式 */
+/* 记事和待完成页面的更多按钮样式 */
 .reflections-more-btn,
 .memos-more-btn {
     background: #F5F5F5;
@@ -752,7 +752,7 @@ body {
     transform: scale(0.95);
 }
 
-/* 反思和备忘录页面的更多菜单样式优化 */
+/* 记事和待完成页面的更多菜单样式优化 */
 #reflectionsMoreMenu,
 #memosMoreMenu {
     right: 0;
@@ -1222,7 +1222,7 @@ body {
     box-shadow: var(--shadow-md);
 }
 
-/* 反思标签页的常用按钮 - 与备忘录常用按钮保持一致的绿白渐变设计 */
+/* 记事标签页的常用按钮 - 与待完成常用按钮保持一致的绿白渐变设计 */
 #reflections-tab .frequent-btn.add-btn {
     width: auto;
     min-width: 100px;
@@ -1291,25 +1291,25 @@ body {
     cursor: default;
 }
 
-/* ==================== 复盘反思页面样式 ==================== */
+/* ==================== 复盘记事页面样式 ==================== */
 
-/* 反思标签页特殊布局 */
+/* 记事标签页特殊布局 */
 #reflections-tab .tab-content-scrollable {
     background: linear-gradient(180deg, #FFF3D6 0%, #FFF8E7 100%);
     /* 确保顶部有固定空间，避免被导航栏覆盖 */
     padding-top: 20px;
 }
 
-/* ==================== 备忘录页面样式 v6.3 ==================== */
+/* ==================== 待完成页面样式 v6.3 ==================== */
 
-/* 备忘录标签页特殊布局 */
+/* 待完成标签页特殊布局 */
 #memos-tab .tab-content-scrollable {
     background: linear-gradient(180deg, #FFF3D6 0%, #FFF8E7 100%);
     /* 确保顶部有固定空间，避免被导航栏覆盖 */
     padding-top: 15px;
 }
 
-/* 备忘录标签页的添加按钮 - 淡蓝色纯色设计（用于底部导航栏） */
+/* 待完成标签页的添加按钮 - 淡蓝色纯色设计（用于底部导航栏） */
 #memos-pagination .add-btn {
     width: 140px;
     height: 36px;
@@ -1333,7 +1333,7 @@ body {
     font-size: 16px;
 }
 
-/* 备忘录标签页的常用按钮 - 绿白渐变设计 */
+/* 待完成标签页的常用按钮 - 绿白渐变设计 */
 #memos-tab .frequent-btn {
     width: auto;
     min-width: 100px;
@@ -1354,12 +1354,12 @@ body {
     box-shadow: 0 2px 8px rgba(144, 238, 144, 0.5);
 }
 
-/* 备忘录标签页的列表容器 */
+/* 待完成标签页的列表容器 */
 #memos-tab .items-list {
     padding: 0 15px;
 }
 
-/* 备忘录卡片样式 - 现代简约设计 */
+/* 待完成卡片样式 - 现代简约设计 */
 .item-card.memo-card {
     background: #FFFFFF;
     border-radius: 8px;
@@ -1372,7 +1372,7 @@ body {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* 相邻备忘录卡片之间的浅绿色细线分隔 - 已移除 */
+/* 相邻待完成卡片之间的浅绿色细线分隔 - 已移除 */
 #memos-list .item-card.memo-card:not(:first-child) {
     margin-top: 0;
     position: relative;
@@ -1382,13 +1382,13 @@ body {
     margin-bottom: 20px;
 }
 
-/* 备忘录卡片hover效果 - 轻微上浮 */
+/* 待完成卡片hover效果 - 轻微上浮 */
 .item-card.memo-card:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
 }
 
-/* 备忘录卡片内容区域 */
+/* 待完成卡片内容区域 */
 .item-card.memo-card .item-content {
     display: flex;
     align-items: flex-start;
@@ -1398,7 +1398,7 @@ body {
     margin-bottom: 0;
 }
 
-/* 备忘录卡片内容文本 */
+/* 待完成卡片内容文本 */
 .item-card.memo-card .item-text {
     flex: 1;
     font-size: 14px;
@@ -1410,7 +1410,7 @@ body {
     font-family: 'Segoe UI', 'Roboto', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
 }
 
-/* 备忘录卡片已完成状态 */
+/* 待完成卡片已完成状态 */
 .item-card.memo-card.completed .item-text {
     color: #999999;
     text-decoration: line-through;
@@ -1420,7 +1420,7 @@ body {
     opacity: 0.7;
 }
 
-/* 备忘录卡片底部区域 */
+/* 待完成卡片底部区域 */
 .item-card.memo-card .memo-card-footer {
     display: flex;
     justify-content: space-between;
@@ -1430,7 +1430,7 @@ body {
     border-top: 1px solid #EEEEEE;
 }
 
-/* 备忘录卡片时间信息 */
+/* 待完成卡片时间信息 */
 .item-card.memo-card .memo-times {
     display: flex;
     flex-direction: column;
@@ -1444,7 +1444,7 @@ body {
     font-family: 'Segoe UI', 'Roboto', 'PingFang SC', sans-serif;
 }
 
-/* 备忘录卡片操作按钮 */
+/* 待完成卡片操作按钮 */
 .item-card.memo-card .item-actions {
     display: flex;
     gap: 8px;
@@ -1452,7 +1452,7 @@ body {
     align-items: center;
 }
 
-/* 备忘录卡片收藏按钮 - 金黄色 */
+/* 待完成卡片收藏按钮 - 金黄色 */
 .item-card.memo-card .btn-frequent {
     color: #BDBDBD;
     background: transparent;
@@ -1477,7 +1477,7 @@ body {
     background: rgba(255, 215, 0, 0.2);
 }
 
-/* 备忘录卡片编辑按钮 - 绿色 */
+/* 待完成卡片编辑按钮 - 绿色 */
 .item-card.memo-card .btn-edit {
     color: #4CAF50;
     background: transparent;
@@ -1494,7 +1494,7 @@ body {
     transform: scale(1.1);
 }
 
-/* 备忘录卡片删除按钮 - 红色 */
+/* 待完成卡片删除按钮 - 红色 */
 .item-card.memo-card .btn-delete {
     color: #F44336;
     background: transparent;
@@ -1511,12 +1511,12 @@ body {
     transform: scale(1.1);
 }
 
-/* 备忘录卡片常用标记 - 左侧金边 */
+/* 待完成卡片常用标记 - 左侧金边 */
 .item-card.memo-card.frequent {
     border-left: 3px solid #FFD700;
 }
 
-/* 备忘录卡片底部分页控件样式 */
+/* 待完成卡片底部分页控件样式 */
 #memos-pagination {
     background: #FFFFFF;
     border-radius: 8px;
@@ -1627,7 +1627,7 @@ body {
 
 /* 响应式优化 - 移动端 */
 @media (max-width: 768px) {
-    /* 备忘录卡片在移动端的优化 */
+    /* 待完成卡片在移动端的优化 */
     .item-card.memo-card {
         padding: 14px;
         margin-bottom: 16px;
@@ -1663,7 +1663,7 @@ body {
     }
 }
 
-/* 反思标签页的添加按钮 - 淡蓝色纯色（排除常用按钮） */
+/* 记事标签页的添加按钮 - 淡蓝色纯色（排除常用按钮） */
 #reflections-tab .add-btn:not(.frequent-btn) {
     width: 140px;
     height: 36px;
@@ -1687,12 +1687,12 @@ body {
     font-size: 16px;
 }
 
-/* 反思标签页的列表容器 */
+/* 记事标签页的列表容器 */
 #reflections-tab .items-list {
     padding: 0 15px;
 }
 
-/* 反思卡片样式 */
+/* 记事卡片样式 */
 .item-card.reflection-card {
     background: #FFFFFF;
     border-radius: 8px;
@@ -1704,18 +1704,18 @@ body {
     flex-direction: column;
 }
 
-/* 相邻反思卡片之间的分隔线 - 已移除 */
+/* 相邻记事卡片之间的分隔线 - 已移除 */
 #reflections-list .item-card.reflection-card:not(:first-child) {
     margin-top: 20px;
     position: relative;
 }
 
-/* 移除反思卡片的hover效果 */
+/* 移除记事卡片的hover效果 */
 .item-card.reflection-card:hover {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
-/* 反思卡片标题样式 */
+/* 记事卡片标题样式 */
 .item-card.reflection-card .item-title {
     font-size: 16px;
     font-weight: 700;
@@ -1726,7 +1726,7 @@ body {
     border-bottom: 1px solid #EEEEEE;
 }
 
-/* 反思卡片内容区域 */
+/* 记事卡片内容区域 */
 .item-card.reflection-card .item-content {
     display: flex;
     flex-direction: column;
@@ -1735,7 +1735,7 @@ body {
     border-bottom: 1px solid #EEEEEE;
 }
 
-/* 反思卡片内容文本 */
+/* 记事卡片内容文本 */
 .item-card.reflection-card .item-text {
     font-size: 14px;
     color: #555555;
@@ -1745,7 +1745,7 @@ body {
     word-wrap: break-word;
 }
 
-/* 反思卡片底部区域 */
+/* 记事卡片底部区域 */
 .item-card.reflection-card .reflection-card-footer {
     display: flex;
     justify-content: space-between;
@@ -1756,7 +1756,7 @@ body {
     gap: 16px;
 }
 
-/* 反思卡片时间信息 */
+/* 记事卡片时间信息 */
 .item-card.reflection-card .reflection-times {
     display: flex;
     flex-direction: column;
@@ -1769,7 +1769,7 @@ body {
     line-height: 1.5;
 }
 
-/* 反思卡片操作按钮 */
+/* 记事卡片操作按钮 */
 .item-card.reflection-card .item-actions {
     display: flex;
     gap: 8px;
@@ -1778,7 +1778,7 @@ body {
     flex-shrink: 0;
 }
 
-/* 反思卡片编辑按钮 - 绿色 */
+/* 记事卡片编辑按钮 - 绿色 */
 .item-card.reflection-card .btn-edit {
     color: #4CAF50;
     background: transparent;
@@ -1796,7 +1796,7 @@ body {
     box-shadow: none;
 }
 
-/* 反思卡片收藏按钮 - 黄色 */
+/* 记事卡片收藏按钮 - 黄色 */
 .item-card.reflection-card .btn-frequent {
     color: #FFC107;
     background: transparent;
@@ -1818,7 +1818,7 @@ body {
     color: #FFC107;
 }
 
-/* 反思卡片删除按钮 - 红色 */
+/* 记事卡片删除按钮 - 红色 */
 .item-card.reflection-card .btn-delete {
     color: #F44336;
     background: transparent;
@@ -1836,7 +1836,7 @@ body {
     box-shadow: none;
 }
 
-/* 反思卡片底部分页控件样式 */
+/* 记事卡片底部分页控件样式 */
 #accounting-pagination {
     background: #FFFFFF;
     border-radius: 8px;
@@ -1997,7 +1997,7 @@ body {
     align-items: center;
 }
 
-/* 反思卡片中的元数据独占一行 */
+/* 记事卡片中的元数据独占一行 */
 .reflection-card .item-meta {
     width: 100%;
     flex-direction: row;
@@ -2551,7 +2551,7 @@ body {
         margin: 20px;
     }
 
-    /* 移动端content-header保持水平布局（备忘录页面和反思页面） */
+    /* 移动端content-header保持水平布局（待完成页面和记事页面） */
     #memos-tab .content-header,
     .reflections-page-header {
         flex-direction: row;
@@ -2566,7 +2566,7 @@ body {
         align-items: stretch;
     }
 
-    /* 移动端备忘录和反思卡片的按钮组保持水平布局 */
+    /* 移动端待完成和记事卡片的按钮组保持水平布局 */
     .item-card.memo-card .item-actions,
     .item-card.reflection-card .item-actions {
         flex-direction: row;
@@ -2584,7 +2584,7 @@ body {
         height: 40px;
     }
 
-    /* 移动端反思页面header优化 - 贴边显示，适配安全区 */
+    /* 移动端记事页面header优化 - 贴边显示，适配安全区 */
     .reflections-page-header {
         margin: 0 0 12px 0;
         padding: 0 12px;
@@ -2594,12 +2594,12 @@ body {
         max-width: 100%;
     }
 
-    /* 移动端反思列表 - 贴边显示 */
+    /* 移动端记事列表 - 贴边显示 */
     #reflections-tab .items-list {
         padding: 0;
     }
 
-    /* 移动端反思卡片 - 调整内边距，适配安全区 */
+    /* 移动端记事卡片 - 调整内边距，适配安全区 */
     .item-card.reflection-card {
         padding: 14px 12px;
         padding-left: calc(12px + env(safe-area-inset-left, 0));
@@ -2608,7 +2608,7 @@ body {
         border-radius: 0;
     }
 
-    /* 移动端备忘录页面header优化 - 贴边显示，适配安全区 */
+    /* 移动端待完成页面header优化 - 贴边显示，适配安全区 */
     #memos-tab .content-header {
         margin: 0 0 12px 0;
         padding: 0 12px;
@@ -2618,12 +2618,12 @@ body {
         max-width: 100%;
     }
 
-    /* 移动端备忘录列表 - 贴边显示 */
+    /* 移动端待完成列表 - 贴边显示 */
     #memos-tab .items-list {
         padding: 0;
     }
 
-    /* 移动端备忘录卡片 - 调整内边距，适配安全区 */
+    /* 移动端待完成卡片 - 调整内边距，适配安全区 */
     .item-card.memo-card {
         padding: 14px 12px;
         padding-left: calc(12px + env(safe-area-inset-left, 0));
@@ -2780,7 +2780,7 @@ body {
         display: none;
     }
 
-    /* 小屏幕反思页面header优化 - 贴边显示，适配安全区 */
+    /* 小屏幕记事页面header优化 - 贴边显示，适配安全区 */
     .reflections-page-header {
         margin: 0 0 10px 0;
         padding: 0 10px;
@@ -2790,12 +2790,12 @@ body {
         max-width: 100%;
     }
 
-    /* 小屏幕反思列表 - 贴边显示 */
+    /* 小屏幕记事列表 - 贴边显示 */
     #reflections-tab .items-list {
         padding: 0;
     }
 
-    /* 小屏幕反思卡片 - 调整内边距，适配安全区 */
+    /* 小屏幕记事卡片 - 调整内边距，适配安全区 */
     .item-card.reflection-card {
         padding: 12px 10px;
         padding-left: calc(10px + env(safe-area-inset-left, 0));
@@ -2804,7 +2804,7 @@ body {
         border-radius: 0;
     }
 
-    /* 小屏幕备忘录页面header优化 - 贴边显示，适配安全区 */
+    /* 小屏幕待完成页面header优化 - 贴边显示，适配安全区 */
     #memos-tab .content-header {
         margin: 0 0 10px 0;
         padding: 0 10px;
@@ -2814,12 +2814,12 @@ body {
         max-width: 100%;
     }
 
-    /* 小屏幕备忘录列表 - 贴边显示 */
+    /* 小屏幕待完成列表 - 贴边显示 */
     #memos-tab .items-list {
         padding: 0;
     }
 
-    /* 小屏幕备忘录卡片 - 调整内边距，适配安全区 */
+    /* 小屏幕待完成卡片 - 调整内边距，适配安全区 */
     .item-card.memo-card {
         padding: 12px 10px;
         padding-left: calc(10px + env(safe-area-inset-left, 0));
@@ -2858,7 +2858,7 @@ body {
     transform: translateY(0);
 }
 
-/* 备忘录卡片底部时间显示区域优化（旧版本兼容） */
+/* 待完成卡片底部时间显示区域优化（旧版本兼容） */
 .memo-card .memo-card-footer {
     display: flex;
     justify-content: space-between;
@@ -2904,7 +2904,7 @@ body {
     color: var(--text-dark);
 }
 
-/* 分页组件（用于反思和备忘录标签） */
+/* 分页组件（用于记事和待完成标签） */
 .pagination-container {
     padding: 15px;
     background: var(--bg-white);
@@ -2989,7 +2989,7 @@ body {
     color: var(--primary-dark);
     font-weight: 600;
 }
-/* ==================== 常用备忘录样式 ==================== */
+/* ==================== 常用待完成样式 ==================== */
 
 .frequent-badge,
 .completed-badge {

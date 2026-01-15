@@ -41,20 +41,20 @@ memo-system/
 │   │   └── security.py            # 认证和安全
 │   ├── 📂 models/                  # 数据模型 (ORM)
 │   │   ├── __init__.py
-│   │   ├── reflection.py          # 复盘反思模型
-│   │   ├── memo.py                # 备忘录模型
+│   │   ├── reflection.py          # 记事模型
+│   │   ├── memo.py                # 待完成模型
 │   │   └── accounting.py          # 记账模型
 │   ├── 📂 schemas/                 # Pydantic 数据模式
 │   │   ├── __init__.py
 │   │   ├── auth.py                # 认证模式
-│   │   ├── reflection.py          # 复盘反思模式
-│   │   ├── memo.py                # 备忘录模式
+│   │   ├── reflection.py          # 记事模式
+│   │   ├── memo.py                # 待完成模式
 │   │   └── accounting.py          # 记账模式
 │   ├── 📂 routers/                 # 路由处理
 │   │   ├── __init__.py
 │   │   ├── auth.py                # 认证路由
-│   │   ├── reflections.py         # 复盘反思路由
-│   │   ├── memos.py               # 备忘录路由
+│   │   ├── reflections.py         # 记事路由
+│   │   ├── memos.py               # 待完成路由
 │   │   ├── accounting.py          # 记账路由
 │   │   └── pages.py               # 页面路由
 │   ├── 📂 services/                # 业务服务 ⭐ 新增
@@ -142,7 +142,7 @@ memo-system/
 ### 功能模块
 - **API 端点**: 50+ 个
 - **数据表**: 6 个
-- **功能模块**: 3 个（反思、备忘录、记账）
+- **功能模块**: 3 个（反思、待完成、记账）
 
 ### 文档质量
 - **主文档**: 445 行

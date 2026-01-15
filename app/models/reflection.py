@@ -1,5 +1,5 @@
 """
-复盘反思数据模型
+记事数据模型
 """
 
 from sqlalchemy import Column, Integer, Text, Boolean, DateTime
@@ -13,7 +13,7 @@ LOCAL_TZ = ZoneInfo("Asia/Shanghai")
 
 
 class Reflection(Base):
-    """复盘反思表"""
+    """记事表"""
     __tablename__ = "reflections"
 
     id = Column(Integer, primary_key=True, index=True)

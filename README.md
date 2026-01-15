@@ -1,13 +1,13 @@
 # Memo System
 
-一个功能完整的个人信息管理系统，集成备忘录、复盘反思和记账功能。
+一个功能完整的个人信息管理系统，集成待完成、记事和记账功能。
 
 ## ✨ 功能特性
 
 ### 核心功能
 - 🔐 **密码保护** - Session 会话认证，安全可靠
-- 💭 **复盘反思** - 记录和管理工作反思，支持收藏常用内容
-- 📌 **备忘录管理** - 支持完成状态标记和常用内容收藏
+- 💭 **记事** - 记录和管理工作记事，支持收藏常用内容
+- 📌 **待完成管理** - 支持完成状态标记和常用内容收藏
 - 💰 **记账功能** - 完整的收支记录、类目管理、统计分析
   - 支持收入/支出分类管理（一级、二级类目）
   - 记账模板功能
@@ -52,22 +52,22 @@ memo-system/
 │   │
 │   ├── models/                  # 数据模型模块（ORM）
 │   │   ├── __init__.py         # 模型导出
-│   │   ├── reflection.py       # 复盘反思数据模型
-│   │   ├── memo.py             # 备忘录数据模型
+│   │   ├── reflection.py       # 记事数据模型
+│   │   ├── memo.py             # 待完成数据模型
 │   │   └── accounting.py       # 记账功能数据模型
 │   │
 │   ├── schemas/                 # Pydantic 数据模式模块
 │   │   ├── __init__.py         # 模式导出
 │   │   ├── auth.py             # 认证相关模式
-│   │   ├── reflection.py       # 复盘反思模式
-│   │   ├── memo.py             # 备忘录模式
+│   │   ├── reflection.py       # 记事模式
+│   │   ├── memo.py             # 待完成模式
 │   │   └── accounting.py       # 记账功能模式
 │   │
 │   ├── routers/                 # 路由处理模块
 │   │   ├── __init__.py         # 路由导出
 │   │   ├── auth.py             # 认证路由
-│   │   ├── reflections.py      # 复盘反思路由
-│   │   ├── memos.py            # 备忘录路由
+│   │   ├── reflections.py      # 记事路由
+│   │   ├── memos.py            # 待完成路由
 │   │   ├── accounting.py       # 记账功能路由
 │   │   └── pages.py            # 页面路由
 │   │
@@ -101,22 +101,22 @@ memo-system/
 
 ### `app/models/` - 数据模型模块
 包含所有 SQLAlchemy ORM 模型定义：
-- **reflection.py**: 复盘反思表模型
-- **memo.py**: 备忘录表模型
+- **reflection.py**: 记事表模型
+- **memo.py**: 待完成表模型
 - **accounting.py**: 记账相关表模型（类目、记录、模板）
 
 ### `app/schemas/` - 数据模式模块
 包含所有 Pydantic 模型，用于请求验证和响应序列化：
 - **auth.py**: 登录请求模式
-- **reflection.py**: 复盘反思的创建/更新模式
-- **memo.py**: 备忘录的创建/更新模式
+- **reflection.py**: 记事的创建/更新模式
+- **memo.py**: 待完成的创建/更新模式
 - **accounting.py**: 记账功能的各类数据模式
 
 ### `app/routers/` - 路由处理模块
 按功能划分的 API 路由：
 - **auth.py**: 处理登录、登出操作
-- **reflections.py**: 复盘反思的 CRUD 和导出功能
-- **memos.py**: 备忘录的 CRUD 和导出功能
+- **reflections.py**: 记事的 CRUD 和导出功能
+- **memos.py**: 待完成的 CRUD 和导出功能
 - **accounting.py**: 记账功能的完整 API
 - **pages.py**: HTML 页面路由
 
@@ -231,23 +231,23 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8000
 - `POST /api/login` - 登录验证
 - `POST /api/logout` - 登出
 
-### 复盘反思
-- `GET /api/reflections` - 获取反思列表（分页）
-- `POST /api/reflections` - 创建新反思
-- `GET /api/reflections/frequents` - 获取收藏的反思
-- `GET /api/reflections/{id}` - 获取单个反思
-- `PUT /api/reflections/{id}` - 更新反思
-- `DELETE /api/reflections/{id}` - 删除反思
+### 记事
+- `GET /api/reflections` - 获取记事列表（分页）
+- `POST /api/reflections` - 创建新记事
+- `GET /api/reflections/frequents` - 获取收藏的记事
+- `GET /api/reflections/{id}` - 获取单个记事
+- `PUT /api/reflections/{id}` - 更新记事
+- `DELETE /api/reflections/{id}` - 删除记事
 - `GET /api/reflections/export/csv` - 导出为 CSV
 - `GET /api/reflections/export/sql` - 导出为 SQL
 
-### 备忘录
-- `GET /api/memos` - 获取备忘录列表（分页）
-- `POST /api/memos` - 创建新备忘录
-- `GET /api/memos/frequents` - 获取收藏的备忘录
-- `GET /api/memos/{id}` - 获取单个备忘录
-- `PUT /api/memos/{id}` - 更新备忘录
-- `DELETE /api/memos/{id}` - 删除备忘录
+### 待完成
+- `GET /api/memos` - 获取待完成列表（分页）
+- `POST /api/memos` - 创建新待完成
+- `GET /api/memos/frequents` - 获取收藏的待完成
+- `GET /api/memos/{id}` - 获取单个待完成
+- `PUT /api/memos/{id}` - 更新待完成
+- `DELETE /api/memos/{id}` - 删除待完成
 - `GET /api/memos/export/csv` - 导出为 CSV
 - `GET /api/memos/export/sql` - 导出为 SQL
 
@@ -276,8 +276,8 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8000
 
 ### 页面路由
 - `GET /app` - 主应用页面
-- `GET /frequents` - 常用备忘录页面
-- `GET /reflection-frequents` - 常用复盘反思页面
+- `GET /frequents` - 常用待完成页面
+- `GET /reflection-frequents` - 常用记事页面
 - `GET /accounting` - 记账页面
 - `GET /category-stats` - 分类支出统计页面
 - `GET /category-detail` - 分类支出详情页面

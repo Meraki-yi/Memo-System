@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>收藏反思</title>
+    <title>收藏记事</title>
     <link rel="stylesheet" href="/static/css/style.css?v=8.8">
 </head>
 <body>
@@ -17,7 +17,7 @@
                     返回
                 </button>
                 <button class="tab-btn active">
-                    ⭐ 收藏反思
+                    ⭐ 收藏记事
                 </button>
                 <div class="header-more-wrapper">
                     <button class="more-btn" onclick="toggleMoreMenu()">
@@ -32,7 +32,7 @@
                 </div>
             </div>
 
-            <!-- 收藏反思内容 -->
+            <!-- 收藏记事内容 -->
             <div class="tab-contents">
                 <div class="tab-content active" id="reflection-frequents-tab">
                     <div class="tab-content-scrollable">
@@ -40,7 +40,7 @@
                             <div class="header-actions">
                                 <button class="add-btn" onclick="showAddModal('reflection')">
                                     <span class="icon">➕</span>
-                                    添加反思
+                                    添加记事
                                 </button>
                             </div>
                         </div>
@@ -48,7 +48,7 @@
                             <!-- 动态加载内容 -->
                         </div>
                     </div>
-                    <!-- 反思分页组件 -->
+                    <!-- 记事分页组件 -->
                     <div class="pagination-container fixed-bottom" id="reflection-frequents-pagination">
                         <div class="pagination">
                             <button class="pagination-btn" id="reflection-frequents-prev-btn" onclick="changeReflectionFrequentsPage(-1)" disabled>
@@ -80,7 +80,7 @@
                 <button class="close-btn" onclick="closeModal()">&times;</button>
             </div>
             <div class="modal-body">
-                <!-- 反思编辑：标题+内容 -->
+                <!-- 记事编辑：标题+内容 -->
                 <div id="reflectionEditFields" style="display: none;">
                     <input type="text" id="itemTitle" placeholder="标题" style="width: 100%; padding: 12px 15px; border: 2px solid var(--border-color); border-radius: var(--radius-sm); font-size: 1rem; margin-bottom: 15px; outline: none; transition: var(--transition);">
                     <textarea id="itemContent" placeholder="内容" style="width: 100%; padding: 12px 15px; border: 2px solid var(--border-color); border-radius: var(--radius-sm); font-size: 1rem; min-height: 100px; resize: vertical; outline: none; transition: var(--transition);"></textarea>

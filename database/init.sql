@@ -5,7 +5,7 @@ COLLATE utf8mb4_unicode_ci;
 
 USE memo_system;
 
--- 复盘反思表
+-- 记事表
 CREATE TABLE IF NOT EXISTS reflections (
     id INT AUTO_INCREMENT PRIMARY KEY,
     content TEXT NOT NULL,
@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS reflections (
     INDEX idx_created_at (created_at DESC)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 备忘录表
+-- 待完成表
 CREATE TABLE IF NOT EXISTS memos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     content TEXT NOT NULL,

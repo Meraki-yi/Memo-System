@@ -1,7 +1,7 @@
 """
-备忘录路由模块
+待完成路由模块
 
-处理备忘录的增删改查、导出等操作
+处理待完成的增删改查、导出等操作
 """
 
 from fastapi import APIRouter, HTTPException, Depends, Request
@@ -19,7 +19,7 @@ from app.core.security import check_auth
 from app.utils import escape_sql_string
 
 
-router = APIRouter(tags=["备忘录"])
+router = APIRouter(tags=["待完成"])
 
 # 时区配置
 LOCAL_TZ = ZoneInfo("Asia/Shanghai")
@@ -33,7 +33,7 @@ async def get_memos(
     db: Session = Depends(get_db)
 ):
     """
-    获取备忘录列表（分页）
+    获取待完成列表（分页）
 
     按创建时间倒序排列
     """
@@ -78,7 +78,7 @@ async def get_memos(
     except Exception as e:
         import traceback
         error_detail = traceback.format_exc()
-        raise HTTPException(status_code=500, detail=f"获取备忘录失败: {str(e)}\n{error_detail}")
+        raise HTTPException(status_code=500, detail=f"获取待完成失败: {str(e)}\n{error_detail}")
 
 
 @router.post("/api/memos")
@@ -87,7 +87,7 @@ async def create_memo(
     memo: MemoCreate,
     db: Session = Depends(get_db)
 ):
-    """创建备忘录"""
+    """创建待完成"""
     check_auth(request)
     db_memo = Memo(
         content=memo.content,
@@ -114,15 +114,15 @@ async def get_frequent_memos(
     page_size: int = 5,
     db: Session = Depends(get_db)
 ):
-    """获取常用备忘录列表（分页）"""
+    """获取常用待完成列表（分页）"""
     check_auth(request)
-    # 计算常用备忘录总数
+    # 计算常用待完成总数
     total = db.query(Memo).filter(Memo.is_frequent == True).count()
     # 计算总页数
     total_pages = (total + page_size - 1) // page_size if total > 0 else 1
     # 分页查询 - 按创建时间排序
     offset = (page - 1) * page_size
-    # 先获取排序后的常用备忘录ID列表
+    # 先获取排序后的常用待完成ID列表
     frequent_memo_ids_query = db.query(Memo.id).filter(Memo.is_frequent == True).order_by(Memo.created_at.desc()).offset(offset).limit(page_size)
     memo_ids = [id[0] for id in frequent_memo_ids_query.all()]
     # 再根据ID列表获取完整数据
@@ -160,7 +160,7 @@ async def get_memo(
     memo_id: int,
     db: Session = Depends(get_db)
 ):
-    """获取单个备忘录"""
+    """获取单个待完成"""
     check_auth(request)
     db_memo = db.query(Memo).filter(Memo.id == memo_id).first()
     if not db_memo:
@@ -183,7 +183,7 @@ async def update_memo(
     memo: MemoUpdate,
     db: Session = Depends(get_db)
 ):
-    """更新备忘录"""
+    """更新待完成"""
     check_auth(request)
     db_memo = db.query(Memo).filter(Memo.id == memo_id).first()
     if not db_memo:
@@ -217,7 +217,7 @@ async def delete_memo(
     memo_id: int,
     db: Session = Depends(get_db)
 ):
-    """删除备忘录"""
+    """删除待完成"""
     check_auth(request)
     db_memo = db.query(Memo).filter(Memo.id == memo_id).first()
     if not db_memo:
@@ -230,7 +230,7 @@ async def delete_memo(
 
 @router.get("/api/memos/export/csv")
 async def export_memos_csv(request: Request, db: Session = Depends(get_db)):
-    """导出备忘录为CSV文件"""
+    """导出待完成为CSV文件"""
     check_auth(request)
     # 按更新时间排序
     memo_ids_query = db.query(Memo.id).order_by(Memo.updated_at.desc())
@@ -268,7 +268,7 @@ async def export_memos_csv(request: Request, db: Session = Depends(get_db)):
 
 @router.get("/api/memos/export/sql")
 async def export_memos_sql(request: Request, db: Session = Depends(get_db)):
-    """导出备忘录为SQL文件"""
+    """导出待完成为SQL文件"""
     check_auth(request)
 
     # 按更新时间排序
@@ -291,8 +291,8 @@ async def export_memos_sql(request: Request, db: Session = Depends(get_db)):
             f"'{memo.created_at.strftime('%Y-%m-%d %H:%M:%S')}', '{memo.updated_at.strftime('%Y-%m-%d %H:%M:%S')}');"
         )
 
-    sql_content = f"-- 备忘录导出\n-- 导出时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n-- 共 {len(memos)} 条记录\n\n"
-    sql_content += "-- 备忘录表\n"
+    sql_content = f"-- 待完成导出\n-- 导出时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n-- 共 {len(memos)} 条记录\n\n"
+    sql_content += "-- 待完成表\n"
     sql_content += '\n'.join(insert_statements)
 
     return Response(
