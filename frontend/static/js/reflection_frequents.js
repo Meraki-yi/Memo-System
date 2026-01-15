@@ -281,21 +281,18 @@ async function saveItem() {
 // ==================== 切换收藏状态 ====================
 async function toggleReflectionFrequent(id) {
     try {
-        // 先获取所有收藏反思
-        const response = await fetch(`${API_BASE}/reflections/frequents`, getAuthOptions());
+        // 直接获取该反思的详情
+        const response = await fetch(`${API_BASE}/reflections/${id}`, getAuthOptions());
 
         if (!response.ok) throw new Error('获取数据失败');
 
-        const data = await response.json();
-        const reflections = data.items || [];
-        const reflection = reflections.find(r => r.id === id);
+        const reflection = await response.json();
 
-        if (!reflection) throw new Error('复盘反思不存在');
-
+        // 取消收藏（收藏页面中只能取消收藏）
         const updateResponse = await fetch(`${API_BASE}/reflections/${id}`, getAuthOptions({
             method: 'PUT',
             body: JSON.stringify({
-                is_frequent: !reflection.is_frequent
+                is_frequent: false
             })
         }));
 
