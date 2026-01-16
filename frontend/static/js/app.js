@@ -214,6 +214,11 @@ function formatDateDisplay(dateStr) {
         return '今天';
     } else if (dateStr === yesterdayStr) {
         return '昨天';
+    } else if (dateStr > todayStr) {
+        // 未来日期显示"X天后"
+        const diffTime = date - today;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return `${diffDays}天后`;
     } else {
         const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
         const weekDay = weekDays[date.getDay()];
@@ -391,7 +396,17 @@ function renderMemosList(items) {
         const state = paginationState.memos;
         const todayStr = formatDateString(new Date());
         const dateDisplay = formatDateDisplay(state.createdDate);
-        const dateHint = state.createdDate === todayStr ? '今天还没有待完成事项' : `${dateDisplay}没有记录`;
+
+        let dateHint;
+        if (state.createdDate === todayStr) {
+            dateHint = '今天还没有待完成事项';
+        } else if (state.createdDate > todayStr) {
+            // 未来日期
+            dateHint = `${dateDisplay}还没有待完成事项，点击下方"添加待完成"可提前记录`;
+        } else {
+            // 历史日期
+            dateHint = `${dateDisplay}没有记录`;
+        }
 
         list.innerHTML = `
             <div class="empty-state">
@@ -443,10 +458,12 @@ function renderMemoItem(item) {
 function updateMemosDateNav() {
     const state = paginationState.memos;
     const todayStr = formatDateString(new Date());
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    const yesterdayStr = formatDateString(yesterday);
     const isToday = state.createdDate === todayStr;
+
+    // 计算未来7天的最大日期
+    const maxDate = new Date();
+    maxDate.setDate(maxDate.getDate() + 7);
+    const maxDateStr = formatDateString(maxDate);
 
     // 更新日期显示
     const dateDisplay = document.getElementById('memos-current-date');
@@ -484,54 +501,86 @@ function updateMemosDateNav() {
         shouldDisablePrev = !hasEarlierDates;
     } else {
         const currentIndex = state.availableDates.indexOf(state.createdDate);
-        shouldDisablePrev = currentIndex === -1 || currentIndex >= state.availableDates.length - 1;
+        // 如果当前是有数据的日期，检查是否有更早的日期
+        // 如果当前是未来日期，允许切换到今天或更早的有数据日期
+        if (currentIndex !== -1) {
+            shouldDisablePrev = currentIndex >= state.availableDates.length - 1;
+        } else {
+            // 未来日期：允许切换到今天或更早
+            shouldDisablePrev = false;
+        }
     }
 
     if (prevBtn) prevBtn.disabled = shouldDisablePrev;
 
     // "下一天"（更新的日期）：
-    // - 如果已经是今天，禁用
-    // - 如果不是今天，检查是否可以切换到今天或更新的日期
+    // - 如果已经是最大未来日期（7天后），禁用
+    // - 否则允许切换到更晚的日期
     let shouldDisableNext;
-    if (isToday) {
+    if (state.createdDate >= maxDateStr) {
+        // 已经是未来7天的最大日期
         shouldDisableNext = true;
+    } else if (isToday) {
+        // 今天：可以切换到未来日期
+        shouldDisableNext = false;
     } else {
+        // 其他日期：
         // 如果最新有数据的日期早于今天，可以切换到今天
         // 或者当前有更新的有数据日期
+        // 或者可以切换到未来日期
         const canGoToToday = state.availableDates.length > 0 && state.availableDates[0] < todayStr;
         const currentIndex = state.availableDates.indexOf(state.createdDate);
         const canGoToNextDate = currentIndex > 0;
-        shouldDisableNext = !canGoToToday && !canGoToNextDate;
+        shouldDisableNext = !canGoToToday && !canGoToNextDate && state.createdDate < todayStr;
     }
 
     if (nextBtn) nextBtn.disabled = shouldDisableNext;
 }
 
-// 更改待完成日期（可以切换到今天，其他日期只切换到有数据的）
+// 更改待完成日期（可以切换到今天，其他日期只切换到有数据的，未来日期支持连续切换）
 function changeMemosDate(delta) {
     const state = paginationState.memos;
     const todayStr = formatDateString(new Date());
     const currentIndex = state.availableDates.indexOf(state.createdDate);
 
+    // 计算未来7天的最大日期
+    const maxDate = new Date();
+    maxDate.setDate(maxDate.getDate() + 7);
+    const maxDateStr = formatDateString(maxDate);
+
     if (delta === 1) {
         // 下一天（更新的日期）
         if (state.createdDate === todayStr) {
-            // 已经是今天，不能再往前
-            return;
-        } else if (currentIndex > 0) {
-            // 切换到下一个有数据的日期（更新的日期）
-            const nextDate = state.availableDates[currentIndex - 1];
-            // 如果下一个有数据的日期是今天或更早，可以切换
-            if (nextDate >= todayStr || state.createdDate !== todayStr) {
-                state.createdDate = nextDate;
+            // 如果是今天，切换到明天（未来日期）
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const tomorrowStr = formatDateString(tomorrow);
+            if (tomorrowStr <= maxDateStr) {
+                state.createdDate = tomorrowStr;
                 state.currentPage = 1;
                 loadMemosData();
             }
-        } else if (state.createdDate !== todayStr && state.availableDates[0] < todayStr) {
-            // 如果当前不是今天，且最新有数据的日期早于今天，则切换到今天
+        } else if (currentIndex > 0) {
+            // 切换到下一个有数据的日期（更新的日期）
+            const nextDate = state.availableDates[currentIndex - 1];
+            state.createdDate = nextDate;
+            state.currentPage = 1;
+            loadMemosData();
+        } else if (state.createdDate < todayStr) {
+            // 如果当前日期早于今天，且最新有数据的日期早于今天，则切换到今天
             state.createdDate = todayStr;
             state.currentPage = 1;
             loadMemosData();
+        } else if (state.createdDate > todayStr && state.createdDate < maxDateStr) {
+            // 如果当前是未来日期，切换到下一天
+            const currentDateObj = new Date(state.createdDate + 'T00:00:00');
+            currentDateObj.setDate(currentDateObj.getDate() + 1);
+            const nextDateStr = formatDateString(currentDateObj);
+            if (nextDateStr <= maxDateStr) {
+                state.createdDate = nextDateStr;
+                state.currentPage = 1;
+                loadMemosData();
+            }
         }
     } else if (delta === -1) {
         // 上一天（更早的日期）
@@ -547,6 +596,28 @@ function changeMemosDate(delta) {
         } else if (currentIndex >= 0 && currentIndex < state.availableDates.length - 1) {
             // 切换到上一个有数据的日期（更早的日期）
             state.createdDate = state.availableDates[currentIndex + 1];
+            state.currentPage = 1;
+            loadMemosData();
+        } else if (state.createdDate > todayStr) {
+            // 如果当前是未来日期，切换到上一天
+            const currentDateObj = new Date(state.createdDate + 'T00:00:00');
+            currentDateObj.setDate(currentDateObj.getDate() - 1);
+            const prevDateStr = formatDateString(currentDateObj);
+
+            // 检查前一天是否是有数据的日期
+            if (state.availableDates.includes(prevDateStr)) {
+                // 如果是有数据的日期，直接切换
+                state.createdDate = prevDateStr;
+            } else if (prevDateStr >= todayStr) {
+                // 如果是未来日期或今天，允许切换
+                state.createdDate = prevDateStr;
+            } else {
+                // 如果是历史日期，找到最近的有数据日期
+                const targetDate = state.availableDates.find(date => date < todayStr);
+                if (targetDate) {
+                    state.createdDate = targetDate;
+                }
+            }
             state.currentPage = 1;
             loadMemosData();
         }
@@ -568,8 +639,20 @@ function showDatePicker() {
             // 最小值为最早的有数据日期
             datePicker.min = dates[dates.length - 1];
 
-            // 最大值为今天（允许选择今天，即使今天没有数据）
-            datePicker.max = todayStr;
+            // 最大值为未来7天（允许提前记录未来任务）
+            const maxDate = new Date();
+            maxDate.setDate(maxDate.getDate() + 7);
+            datePicker.max = formatDateString(maxDate);
+        } else {
+            // 如果没有任何历史数据，仍然允许选择今天和未来7天
+            const today = new Date();
+            const minDate = new Date(today);
+            minDate.setDate(minDate.getDate() - 7); // 最小可以是7天前
+            const maxDate = new Date(today);
+            maxDate.setDate(maxDate.getDate() + 7); // 最大可以是7天后
+
+            datePicker.min = formatDateString(minDate);
+            datePicker.max = formatDateString(maxDate);
         }
     }
     document.getElementById('datePickerModal').classList.add('show');
@@ -588,15 +671,22 @@ function confirmDatePick() {
         const selectedDate = datePicker.value;
         const todayStr = formatDateString(new Date());
 
-        // 允许选择今天（即使今天没有数据）
-        // 或者选择有数据的日期
-        if (selectedDate === todayStr || state.availableDates.includes(selectedDate)) {
+        // 计算未来7天的最大日期
+        const maxDate = new Date();
+        maxDate.setDate(maxDate.getDate() + 7);
+        const maxDateStr = formatDateString(maxDate);
+
+        // 允许选择：
+        // 1. 今天（即使今天没有数据）
+        // 2. 有数据的日期
+        // 3. 未来7天内的任意日期（提前记录）
+        if (selectedDate === todayStr || state.availableDates.includes(selectedDate) || (selectedDate > todayStr && selectedDate <= maxDateStr)) {
             state.createdDate = selectedDate;
             state.currentPage = 1;
             loadMemosData();
             closeDatePicker();
         } else {
-            showToast('所选日期没有记录，请选择有记录的日期或今天', 'error');
+            showToast('所选日期无效，请选择今天、有记录的日期或未来7天内的日期', 'error');
         }
     } else {
         closeDatePicker();
@@ -1156,9 +1246,10 @@ async function saveItem() {
             const createData = { content };
             if (!isReflection) {
                 createData.is_completed = isCompleted;
-                // 待完成新建时，使用实际当前日期（今天）作为 created_date
-                // 这样任务始终归属于其实际创建的日期，而非查看日期
-                createData.created_date = formatDateString(new Date());
+                // 待完成新建时，使用当前查看的日期作为 created_date
+                // 如果正在查看未来日期，则任务归属于该未来日期
+                const state = paginationState.memos;
+                createData.created_date = state.createdDate || formatDateString(new Date());
             } else {
                 // 记事支持 is_frequent
                 createData.is_frequent = isFrequent;
