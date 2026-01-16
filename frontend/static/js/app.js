@@ -363,7 +363,6 @@ function renderMemosList(items) {
 // 渲染单个待完成事项
 function renderMemoItem(item) {
     const createdFull = formatFullDateTime(item.created_at);
-    const updatedFull = formatFullDateTime(item.updated_at);
 
     return `
         <div class="item-card memo-card ${item.is_completed ? 'completed' : ''} ${item.is_frequent ? 'frequent' : ''}" data-id="${item.id}">
@@ -380,7 +379,6 @@ function renderMemoItem(item) {
             <div class="memo-card-footer">
                 <div class="memo-times">
                     <span class="time">创建: ${createdFull}</span>
-                    <span class="time">更新: ${updatedFull}</span>
                 </div>
                 <div class="item-actions" onclick="event.stopPropagation()">
                     <button class="btn-icon btn-frequent ${item.is_frequent ? 'active' : ''}" onclick="toggleMemoFrequent(${item.id})" title="${item.is_frequent ? '取消常用' : '设为常用'}">
