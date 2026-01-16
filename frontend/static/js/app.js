@@ -1029,8 +1029,9 @@ async function saveItem() {
             if (!isReflection) {
                 createData.is_completed = isCompleted;
                 createData.is_frequent = isFrequent;
-                // 待完成新建时，使用当前查看的日期作为 created_date
-                createData.created_date = paginationState.memos.createdDate;
+                // 待完成新建时，使用实际当前日期（今天）作为 created_date
+                // 这样任务始终归属于其实际创建的日期，而非查看日期
+                createData.created_date = formatDateString(new Date());
             } else {
                 // 记事也支持 is_frequent
                 createData.is_frequent = isFrequent;
@@ -1550,12 +1551,19 @@ function updatePaginationUI(tab) {
     prevBtn.disabled = state.currentPage <= 1;
     nextBtn.disabled = state.currentPage >= state.totalPages;
 
-    // 显示/隐藏分页容器（如果没有数据，隐藏分页）
+    // 待完成页面的分页容器始终显示（确保"添加待完成"按钮始终可用）
+    // 其他页面：显示/隐藏分页容器（如果没有数据，隐藏分页）
     const paginationContainer = document.getElementById(`${prefix}-pagination`);
-    if (state.totalItems === 0) {
-        paginationContainer.style.display = 'none';
-    } else {
+    if (tab === 'memos') {
+        // 待完成页面：始终显示
         paginationContainer.style.display = 'block';
+    } else {
+        // 其他页面：没有数据时隐藏
+        if (state.totalItems === 0) {
+            paginationContainer.style.display = 'none';
+        } else {
+            paginationContainer.style.display = 'block';
+        }
     }
 }
 
