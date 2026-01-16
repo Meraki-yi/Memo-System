@@ -177,8 +177,15 @@
                     <div class="tab-content-scrollable">
                         <!-- 合并的导航栏：一个大板块，上下排版 -->
                         <div class="memos-nav-bar">
-                            <!-- 上方：操作按钮和完成进度 -->
+                            <!-- 上方：日期选择器、完成进度和操作按钮 -->
                             <div class="memos-nav-actions">
+                                <!-- 日期选择器 -->
+                                <button class="date-picker-btn compact" onclick="showDatePicker()" title="选择日期">
+                                    <div class="date-nav-center">
+                                        <div class="current-date-display" id="memos-current-date">今天</div>
+                                        <div class="date-hint" id="memos-date-hint">2026年1月16日</div>
+                                    </div>
+                                </button>
                                 <div class="memos-completion-info" id="memos-completion-info">
                                     今天已完成 0/0
                                 </div>
@@ -194,23 +201,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- 下方：日期导航（上一天/日期/下一天） -->
-                            <div class="date-nav-controls">
-                                <button class="date-nav-btn" id="memos-prev-day-btn" onclick="changeMemosDate(-1)" title="上一天">
-                                    <span class="icon">‹</span>
-                                    上一天
-                                </button>
-                                <button class="date-picker-btn" onclick="showDatePicker()" title="选择日期">
-                                    <div class="date-nav-center">
-                                        <div class="current-date-display" id="memos-current-date">今天</div>
-                                        <div class="date-hint" id="memos-date-hint">2026年1月16日</div>
-                                    </div>
-                                </button>
-                                <button class="date-nav-btn" id="memos-next-day-btn" onclick="changeMemosDate(1)" title="下一天">
-                                    下一天
-                                    <span class="icon">›</span>
-                                </button>
-                            </div>
                         </div>
 
                         <div class="items-list" id="memos-list">
@@ -219,31 +209,16 @@
                     </div>
                     <!-- 待完成分页组件 -->
                     <div class="pagination-container fixed-bottom" id="memos-pagination">
-                        <!-- 日期导航按钮（今天时显示） -->
-                        <div class="pagination" id="memos-date-nav" style="display: none;">
-                            <button class="pagination-btn" id="memos-prev-day-bottom-btn" onclick="changeMemosDate(-1)" disabled>
+                        <div class="pagination" id="memos-date-nav">
+                            <button class="pagination-btn" id="memos-prev-day-btn" onclick="changeMemosDate(-1)" disabled>
                                 <span class="icon">‹</span>
                                 上一天
                             </button>
                             <button class="add-btn" onclick="showAddModal('memo')">
                                 添加待完成
                             </button>
-                            <button class="pagination-btn" id="memos-next-day-bottom-btn" onclick="changeMemosDate(1)" disabled>
+                            <button class="pagination-btn" id="memos-next-day-btn" onclick="changeMemosDate(1)" disabled>
                                 下一天
-                                <span class="icon">›</span>
-                            </button>
-                        </div>
-                        <!-- 分页按钮（非今天时显示） -->
-                        <div class="pagination" id="memos-page-nav">
-                            <button class="pagination-btn" id="memos-prev-btn" onclick="changeMemosPage(-1)" disabled>
-                                <span class="icon">‹</span>
-                                上一页
-                            </button>
-                            <button class="add-btn" onclick="showAddModal('memo')">
-                                添加待完成
-                            </button>
-                            <button class="pagination-btn" id="memos-next-btn" onclick="changeMemosPage(1)">
-                                下一页
                                 <span class="icon">›</span>
                             </button>
                         </div>

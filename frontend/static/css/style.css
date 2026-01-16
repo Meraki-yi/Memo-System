@@ -756,21 +756,16 @@ body {
     position: relative;
 }
 
+/* 日期按钮绝对定位在左侧 */
+.memos-nav-actions > .date-picker-btn {
+    position: absolute;
+    left: 0;
+}
+
 /* 更多按钮绝对定位在右侧 */
 .memos-nav-actions .header-more-wrapper {
     position: absolute;
     right: 0;
-}
-
-/* 待完成完成进度信息 */
-.memos-completion-info {
-    flex: 1;
-    text-align: center;
-    font-size: 15px;
-    font-weight: 600;
-    color: #333;
-    font-family: 'Comic Sans MS', 'YouYuan', '幼圆', 'Segoe UI', 'Roboto', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', cursive, sans-serif;
-    letter-spacing: 0.3px;
 }
 
 /* 已完成数量 - 红色高亮 */
@@ -778,6 +773,23 @@ body {
     color: #FF5252;
     font-weight: 700;
     font-size: 16px;
+}
+
+/* 待完成完成进度信息 - 艺术字体 */
+.memos-completion-info {
+    text-align: center;
+    font-size: 28px !important;
+    font-weight: 700 !important;
+    color: #333 !important;
+    font-family: 'Brush Script MT', 'Comic Sans MS', 'YouYuan', '幼圆', 'Segoe UI', 'Roboto', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', cursive, sans-serif !important;
+    letter-spacing: 2px;
+}
+
+/* 已完成数量 - 艺术高亮 */
+.memos-completion-info .completed-count {
+    font-size: 32px !important;
+    font-weight: 800 !important;
+    color: #FF5252 !important;
 }
 
 /* 导航栏中的日期导航控件 - 下方 */
@@ -808,6 +820,27 @@ body {
     flex: 1;
 }
 
+/* 紧凑模式的日期按钮 */
+.memos-nav-bar .date-picker-btn.compact {
+    flex: 0 0 auto;
+    padding: 6px 12px;
+}
+
+.memos-nav-bar .date-picker-btn.compact .date-nav-center {
+    padding: 6px 12px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+.memos-nav-bar .date-picker-btn.compact .current-date-display {
+    font-size: 15px;
+}
+
+.memos-nav-bar .date-picker-btn.compact .date-hint {
+    font-size: 11px;
+}
+
 /* 日期导航中心的框框样式 */
 .memos-nav-bar .date-nav-center {
     background: linear-gradient(135deg, #FFF9E6 0%, #FFFFFF 100%);
@@ -815,6 +848,16 @@ body {
     border-radius: 12px;
     padding: 8px 16px;
     box-shadow: 0 2px 6px rgba(255, 224, 102, 0.2);
+}
+
+/* 待完成完成进度信息 */
+.memos-completion-info {
+    text-align: center;
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+    font-family: 'Comic Sans MS', 'YouYuan', '幼圆', 'Segoe UI', 'Roboto', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', cursive, sans-serif;
+    letter-spacing: 0.3px;
 }
 
 /* 记事和待完成页面的更多按钮样式 */
