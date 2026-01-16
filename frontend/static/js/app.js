@@ -27,7 +27,8 @@ const paginationState = {
         // 新增：待完成的日期状态
         createdDate: null,  // 当前查看的创建日期 (YYYY-MM-DD)
         latestDate: null,  // 最近一次有记录的日期
-        availableDates: []  // 所有有记录的日期列表
+        availableDates: [],  // 所有有记录的日期列表
+        completedItems: 0  // 已完成数量
     }
 };
 
@@ -299,8 +300,13 @@ async function loadMemosData() {
     try {
         const state = paginationState.memos;
 
-        // 如果没有设置创建日期，使用今天
-        if (!state.createdDate) {
+        // 加载所有有数据的日期列表
+        await loadAvailableDates();
+
+        // 如果没有设置创建日期，使用最新有数据的日期
+        if (!state.createdDate && state.availableDates.length > 0) {
+            state.createdDate = state.availableDates[0]; // 使用最新日期
+        } else if (!state.createdDate) {
             state.createdDate = formatDateString(new Date());
         }
 
@@ -325,6 +331,9 @@ async function loadMemosData() {
         state.currentPage = data.pagination.page;
         state.latestDate = data.latest_date;
 
+        // 获取所有数据以计算正确的完成进度（不分页，获取当前日期的所有数据）
+        await loadMemosCompletionStats();
+
         // 渲染数据
         renderMemosList(data.items);
         updateMemosDateNav();
@@ -334,6 +343,45 @@ async function loadMemosData() {
         if (error.message.includes('401') || error.message.includes('fetch')) {
             window.location.href = '/';
         }
+    }
+}
+
+// 加载所有有数据的日期列表
+async function loadAvailableDates() {
+    try {
+        const state = paginationState.memos;
+        const response = await fetch(`${API_BASE}/memos/dates`, getAuthOptions());
+
+        if (!response.ok) {
+            return;
+        }
+
+        const data = await response.json();
+        state.availableDates = data.dates || [];
+    } catch (error) {
+        console.error('加载日期列表失败:', error);
+    }
+}
+
+// 加载待完成统计信息（计算完成进度）
+async function loadMemosCompletionStats() {
+    try {
+        const state = paginationState.memos;
+
+        // 请求所有数据（不分页）以计算完成进度
+        const url = `${API_BASE}/memos?created_date=${state.createdDate}&page=1&page_size=1000`;
+        const response = await fetch(url, getAuthOptions());
+
+        if (!response.ok) {
+            return;
+        }
+
+        const data = await response.json();
+
+        // 计算已完成数量（基于所有数据，不只是当前页）
+        state.completedItems = data.items.filter(item => item.is_completed).length;
+    } catch (error) {
+        console.error('加载完成统计失败:', error);
     }
 }
 
@@ -365,7 +413,7 @@ function renderMemoItem(item) {
     const createdFull = formatFullDateTime(item.created_at);
 
     return `
-        <div class="item-card memo-card ${item.is_completed ? 'completed' : ''} ${item.is_frequent ? 'frequent' : ''}" data-id="${item.id}">
+        <div class="item-card memo-card ${item.is_completed ? 'completed' : ''}" data-id="${item.id}">
             <div class="item-content">
                 <label class="checkbox-wrapper">
                     <input type="checkbox" ${item.is_completed ? 'checked' : ''}
@@ -381,9 +429,6 @@ function renderMemoItem(item) {
                     <span class="time">创建: ${createdFull}</span>
                 </div>
                 <div class="item-actions" onclick="event.stopPropagation()">
-                    <button class="btn-icon btn-frequent ${item.is_frequent ? 'active' : ''}" onclick="toggleMemoFrequent(${item.id})" title="${item.is_frequent ? '取消常用' : '设为常用'}">
-                        <span>${item.is_frequent ? '⭐' : '☆'}</span>
-                    </button>
                     <button class="btn-icon btn-edit" onclick="editItem(${item.id})" title="编辑">
                         <span>✏️</span>
                     </button>
@@ -931,7 +976,6 @@ async function editItem(id) {
 
         if (currentTab === 'memos') {
             isCompleted.checked = item.is_completed;
-            isFrequent.checked = item.is_frequent;
             reflectionEditFields.style.display = 'none';
             memoEditFields.style.display = 'block';
             // 使用 requestAnimationFrame 确保字段已经显示后再设置值
@@ -1010,10 +1054,9 @@ async function saveItem() {
             const updateData = { content };
             if (!isReflection) {
                 updateData.is_completed = isCompleted;
-                updateData.is_frequent = isFrequent;
                 // 注意：不允许修改 created_date
             } else {
-                // 记事也支持 is_frequent
+                // 记事支持 is_frequent
                 updateData.is_frequent = isFrequent;
             }
 
@@ -1026,12 +1069,11 @@ async function saveItem() {
             const createData = { content };
             if (!isReflection) {
                 createData.is_completed = isCompleted;
-                createData.is_frequent = isFrequent;
                 // 待完成新建时，使用实际当前日期（今天）作为 created_date
                 // 这样任务始终归属于其实际创建的日期，而非查看日期
                 createData.created_date = formatDateString(new Date());
             } else {
-                // 记事也支持 is_frequent
+                // 记事支持 is_frequent
                 createData.is_frequent = isFrequent;
             }
 
@@ -1079,37 +1121,6 @@ async function toggleMemoComplete(id) {
 
         if (!updateResponse.ok) throw new Error('更新失败');
 
-        loadItems();
-    } catch (error) {
-        showToast(error.message, 'error');
-    }
-}
-
-// 切换待完成常用状态
-async function toggleMemoFrequent(id) {
-    try {
-        // 直接通过ID获取单个记录
-        const response = await fetch(`${API_BASE}/memos/${id}`, getAuthOptions());
-
-        if (!response.ok) {
-            if (response.status === 404) {
-                throw new Error('待完成不存在');
-            }
-            throw new Error('获取数据失败');
-        }
-
-        const memo = await response.json();
-
-        const updateResponse = await fetch(`${API_BASE}/memos/${id}`, getAuthOptions({
-            method: 'PUT',
-            body: JSON.stringify({
-                is_frequent: !memo.is_frequent
-            })
-        }));
-
-        if (!updateResponse.ok) throw new Error('更新失败');
-
-        showToast(memo.is_frequent ? '已取消常用标记' : '已设为常用', 'success');
         loadItems();
     } catch (error) {
         showToast(error.message, 'error');
@@ -1535,7 +1546,13 @@ document.addEventListener('DOMContentLoaded', function() {
 // 更新分页 UI
 function updatePaginationUI(tab) {
     const state = paginationState[tab];
-    const prefix = tab === 'accounting' ? 'accounting' : (tab === 'reflections' ? 'reflections' : 'memos');
+    const prefix = tab === 'accounting' ? 'accounting' : 'reflections';
+
+    // 待完成页面使用特殊的分页信息格式
+    if (tab === 'memos') {
+        updateMemosPaginationUI();
+        return;
+    }
 
     // 更新页码信息
     document.getElementById(`${prefix}-current-page`).textContent = state.currentPage;
@@ -1549,19 +1566,45 @@ function updatePaginationUI(tab) {
     prevBtn.disabled = state.currentPage <= 1;
     nextBtn.disabled = state.currentPage >= state.totalPages;
 
-    // 待完成页面的分页容器始终显示（确保"添加待完成"按钮始终可用）
     // 其他页面：显示/隐藏分页容器（如果没有数据，隐藏分页）
     const paginationContainer = document.getElementById(`${prefix}-pagination`);
-    if (tab === 'memos') {
-        // 待完成页面：始终显示
-        paginationContainer.style.display = 'block';
+    if (state.totalItems === 0) {
+        paginationContainer.style.display = 'none';
     } else {
-        // 其他页面：没有数据时隐藏
-        if (state.totalItems === 0) {
-            paginationContainer.style.display = 'none';
-        } else {
-            paginationContainer.style.display = 'block';
-        }
+        paginationContainer.style.display = 'block';
+    }
+}
+
+// 更新待完成页面的分页 UI
+function updateMemosPaginationUI() {
+    const state = paginationState.memos;
+    const todayStr = formatDateString(new Date());
+    const dateDisplay = formatDateDisplay(state.createdDate);
+    const totalItems = state.totalItems || 0;
+    const completedItems = state.completedItems || 0;
+
+    // 更新顶部导航栏中的完成进度信息
+    const completionInfo = document.getElementById('memos-completion-info');
+    if (completionInfo) {
+        // 修改显示文本为"今天已完成 0/7"或"昨天已完成 2/3"
+        // 已完成数量用红色高亮显示
+        const dateText = state.createdDate === todayStr ? '今天' : dateDisplay;
+        completionInfo.innerHTML = `${dateText}已完成 <span class="completed-count">${completedItems}</span>/${totalItems}`;
+    }
+
+    // 更新按钮状态
+    const prevBtn = document.getElementById('memos-prev-btn');
+    const nextBtn = document.getElementById('memos-next-btn');
+
+    prevBtn.disabled = state.currentPage <= 1;
+    nextBtn.disabled = state.currentPage >= state.totalPages;
+
+    // 显示/隐藏分页容器
+    const paginationContainer = document.getElementById('memos-pagination');
+    if (state.totalItems === 0) {
+        paginationContainer.style.display = 'none';
+    } else {
+        paginationContainer.style.display = 'block';
     }
 }
 
@@ -1605,10 +1648,14 @@ function changeMemosPage(delta) {
     if (newPage >= 1 && newPage <= state.totalPages) {
         state.currentPage = newPage;
         loadMemosData();
-        // 平滑滚动到顶部
-        document.getElementById('memos-list').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // 重置滚动位置到顶部
+        const scrollable = document.querySelector('#memos-tab .tab-content-scrollable');
+        if (scrollable) {
+            scrollable.scrollTop = 0;
+        }
     }
 }
+
 
 // ==================== 周分页相关功能 ====================
 

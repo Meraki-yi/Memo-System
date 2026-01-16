@@ -342,7 +342,7 @@ body {
     flex-direction: column;
 }
 
-/* 标签页样式 - 渐变粉色背景 */
+/* 标签页样式 - 渐变淡蓝色背景 */
 .tabs {
     display: flex;
     gap: 0;
@@ -354,7 +354,7 @@ body {
     left: 0;
     right: 0;
     z-index: 99;
-    background: linear-gradient(180deg, #FFE4E9 0%, #FFF0F3 100%);
+    background: linear-gradient(180deg, #E6F3FF 0%, #FFFFFF 100%);
     padding: 0;
     /* 禁止标签栏滚动 */
     flex-shrink: 0;
@@ -402,6 +402,8 @@ body {
     flex-direction: column;
     /* 使用固定高度，内部scrollable区域滚动 */
     height: calc(100vh - 114px); /* 减去tabs(44px) + padding+b-bottom(70px) */
+    /* 添加从浅蓝色到白色的背景渐变，与标签栏衔接 */
+    background: linear-gradient(180deg, #F0F8FF 0%, #FFFFFF 15%);
 }
 
 /* 标签页内容可滚动区域 - 唯一的滚动上下文 */
@@ -721,9 +723,9 @@ body {
     z-index: 101;
 }
 
-/* 待完成合并导航栏样式 - 直角全宽设计，保持原样 */
+/* 待完成合并导航栏样式 - 渐变淡绿色背景 */
 .memos-nav-bar {
-    background: #FFFFFF;
+    background: linear-gradient(180deg, #F0FFF4 0%, #FFFFFF 100%);
     border-radius: 0;
     padding: 16px;
     margin: 0 0 15px 0;
@@ -746,16 +748,36 @@ body {
 /* 导航栏中的操作区域 - 上方 */
 .memos-nav-actions {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
     align-items: center;
     width: 100%;
     padding-bottom: 12px;
     border-bottom: 1px solid #E0E0E0;
+    position: relative;
 }
 
-/* 操作区域中的更多按钮wrapper */
+/* 更多按钮绝对定位在右侧 */
 .memos-nav-actions .header-more-wrapper {
-    position: relative;
+    position: absolute;
+    right: 0;
+}
+
+/* 待完成完成进度信息 */
+.memos-completion-info {
+    flex: 1;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+    font-family: 'Comic Sans MS', 'YouYuan', '幼圆', 'Segoe UI', 'Roboto', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', cursive, sans-serif;
+    letter-spacing: 0.3px;
+}
+
+/* 已完成数量 - 红色高亮 */
+.memos-completion-info .completed-count {
+    color: #FF5252;
+    font-weight: 700;
+    font-size: 16px;
 }
 
 /* 导航栏中的日期导航控件 - 下方 */
@@ -778,7 +800,6 @@ body {
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -787,8 +808,13 @@ body {
     flex: 1;
 }
 
-.memos-nav-bar .date-picker-btn:hover {
-    background: #F5F5F5;
+/* 日期导航中心的框框样式 */
+.memos-nav-bar .date-nav-center {
+    background: linear-gradient(135deg, #FFF9E6 0%, #FFFFFF 100%);
+    border: 2px solid #FFE066;
+    border-radius: 12px;
+    padding: 8px 16px;
+    box-shadow: 0 2px 6px rgba(255, 224, 102, 0.2);
 }
 
 /* 记事和待完成页面的更多按钮样式 */
@@ -1363,18 +1389,18 @@ body {
 
 /* ==================== 复盘记事页面样式 ==================== */
 
-/* 记事标签页特殊布局 */
+/* 记事标签页特殊布局 - 白色背景 */
 #reflections-tab .tab-content-scrollable {
-    background: linear-gradient(180deg, #FFF3D6 0%, #FFF8E7 100%);
+    background: linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 100%);
     /* 确保顶部有固定空间，避免被导航栏覆盖 */
     padding-top: 20px;
 }
 
 /* ==================== 待完成页面样式 v6.3 ==================== */
 
-/* 待完成标签页特殊布局 - 白色背景，与记一笔页面一致 */
+/* 待完成标签页特殊布局 - 顶部渐变淡绿色背景 */
 #memos-tab .tab-content-scrollable {
-    background: #FFFFFF;
+    background: linear-gradient(180deg, #F0FFF4 0%, #F0FFF4 55px, #FFFFFF 55px, #FFFFFF 100%);
     /* 确保顶部有固定空间，避免被导航栏覆盖 */
     padding-top: 15px;
 }
@@ -1427,12 +1453,14 @@ body {
     font-size: 18px;
     font-weight: 700;
     color: #333333;
-    margin-bottom: 2px;
 }
 
 .date-hint {
     font-size: 12px;
-    color: #999999;
+    color: #666666;
+    display: block;
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 .date-picker-btn {

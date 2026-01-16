@@ -177,8 +177,11 @@
                     <div class="tab-content-scrollable">
                         <!-- 合并的导航栏：一个大板块，上下排版 -->
                         <div class="memos-nav-bar">
-                            <!-- 上方：操作按钮 -->
+                            <!-- 上方：操作按钮和完成进度 -->
                             <div class="memos-nav-actions">
+                                <div class="memos-completion-info" id="memos-completion-info">
+                                    今天已完成 0/0
+                                </div>
                                 <div class="header-more-wrapper">
                                     <button class="more-btn memos-more-btn" onclick="toggleMemosMoreMenu()">
                                         <span class="icon">⋯</span>
@@ -200,7 +203,7 @@
                                 <button class="date-picker-btn" onclick="showDatePicker()" title="选择日期">
                                     <div class="date-nav-center">
                                         <div class="current-date-display" id="memos-current-date">今天</div>
-                                        <div class="date-hint" id="memos-date-hint"></div>
+                                        <div class="date-hint" id="memos-date-hint">2026年1月16日</div>
                                     </div>
                                 </button>
                                 <button class="date-nav-btn" id="memos-next-day-btn" onclick="changeMemosDate(1)" title="下一天">
@@ -228,12 +231,6 @@
                                 下一页
                                 <span class="icon">›</span>
                             </button>
-                        </div>
-                        <div class="pagination-info">
-                            <span class="pagination-current">第 <span id="memos-current-page">1</span> 页</span>
-                            <span class="pagination-divider">/</span>
-                            <span class="pagination-total">共 <span id="memos-total-pages">1</span> 页</span>
-                            <span class="pagination-items">（<span id="memos-total-items">0</span> 条记录）</span>
                         </div>
                     </div>
                 </div>
