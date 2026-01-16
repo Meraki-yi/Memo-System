@@ -219,7 +219,22 @@
                     </div>
                     <!-- 待完成分页组件 -->
                     <div class="pagination-container fixed-bottom" id="memos-pagination">
-                        <div class="pagination">
+                        <!-- 日期导航按钮（今天时显示） -->
+                        <div class="pagination" id="memos-date-nav" style="display: none;">
+                            <button class="pagination-btn" id="memos-prev-day-bottom-btn" onclick="changeMemosDate(-1)" disabled>
+                                <span class="icon">‹</span>
+                                上一天
+                            </button>
+                            <button class="add-btn" onclick="showAddModal('memo')">
+                                添加待完成
+                            </button>
+                            <button class="pagination-btn" id="memos-next-day-bottom-btn" onclick="changeMemosDate(1)" disabled>
+                                下一天
+                                <span class="icon">›</span>
+                            </button>
+                        </div>
+                        <!-- 分页按钮（非今天时显示） -->
+                        <div class="pagination" id="memos-page-nav">
                             <button class="pagination-btn" id="memos-prev-btn" onclick="changeMemosPage(-1)" disabled>
                                 <span class="icon">‹</span>
                                 上一页

@@ -299,15 +299,15 @@ async function loadItems() {
 async function loadMemosData() {
     try {
         const state = paginationState.memos;
+        const todayStr = formatDateString(new Date());
 
         // 加载所有有数据的日期列表
         await loadAvailableDates();
 
-        // 如果没有设置创建日期，使用最新有数据的日期
-        if (!state.createdDate && state.availableDates.length > 0) {
-            state.createdDate = state.availableDates[0]; // 使用最新日期
-        } else if (!state.createdDate) {
-            state.createdDate = formatDateString(new Date());
+        // 如果没有设置创建日期，优先使用今天，否则使用最新有数据的日期
+        if (!state.createdDate) {
+            // 如果有历史数据，默认使用今天
+            state.createdDate = todayStr;
         }
 
         // 构建请求 URL
@@ -358,6 +358,7 @@ async function loadAvailableDates() {
 
         const data = await response.json();
         state.availableDates = data.dates || [];
+        console.log('可用日期列表:', state.availableDates);
     } catch (error) {
         console.error('加载日期列表失败:', error);
     }
@@ -445,6 +446,7 @@ function renderMemoItem(item) {
 function updateMemosDateNav() {
     const state = paginationState.memos;
     const todayStr = formatDateString(new Date());
+    const isToday = state.createdDate === todayStr;
 
     // 更新日期显示
     const dateDisplay = document.getElementById('memos-current-date');
@@ -455,7 +457,7 @@ function updateMemosDateNav() {
     }
 
     if (dateHint) {
-        if (state.createdDate === todayStr) {
+        if (isToday) {
             dateHint.textContent = `${new Date().getFullYear()}年${new Date().getMonth() + 1}月${new Date().getDate()}日`;
         } else {
             const date = new Date(state.createdDate + 'T00:00:00');
@@ -463,30 +465,112 @@ function updateMemosDateNav() {
         }
     }
 
-    // 更新按钮状态
-    const prevBtn = document.getElementById('memos-prev-day-btn');
-    const nextBtn = document.getElementById('memos-next-day-btn');
+    // 根据是否是今天，切换底部导航栏的显示
+    const dateNav = document.getElementById('memos-date-nav');
+    const pageNav = document.getElementById('memos-page-nav');
 
-    // "上一天"可以一直点击（查看更早的日期）
-    if (prevBtn) {
-        prevBtn.disabled = false;
+    if (isToday) {
+        // 今天：显示日期导航，隐藏分页导航
+        if (dateNav) dateNav.style.display = 'flex';
+        if (pageNav) pageNav.style.display = 'none';
+    } else {
+        // 非今天：显示分页导航，隐藏日期导航
+        if (dateNav) dateNav.style.display = 'none';
+        if (pageNav) pageNav.style.display = 'flex';
     }
 
-    // "下一天"在今天时禁用
-    if (nextBtn) {
-        nextBtn.disabled = state.createdDate === todayStr;
+    // 更新顶部和底部（如果是今天）的日期导航按钮状态
+    const prevBtnTop = document.getElementById('memos-prev-day-btn');
+    const nextBtnTop = document.getElementById('memos-next-day-btn');
+    const prevBtnBottom = document.getElementById('memos-prev-day-bottom-btn');
+    const nextBtnBottom = document.getElementById('memos-next-day-bottom-btn');
+
+    // "上一天"（更早的日期）：
+    // - 如果是今天且有比今天更早的可用数据，可以切换到最新有数据的日期
+    // - 如果是今天但没有更早的数据，禁用
+    // - 如果是其他日期，根据是否有更早的日期决定
+    let shouldDisablePrev;
+    if (isToday) {
+        // 今天：检查是否有任何早于今天的日期
+        const hasEarlierDates = state.availableDates.some(date => date < todayStr);
+        console.log('今天按钮状态检查:', {
+            todayStr,
+            availableDates: state.availableDates,
+            hasEarlierDates,
+            shouldDisablePrev: !hasEarlierDates
+        });
+        shouldDisablePrev = !hasEarlierDates;
+    } else {
+        const currentIndex = state.availableDates.indexOf(state.createdDate);
+        shouldDisablePrev = currentIndex === -1 || currentIndex >= state.availableDates.length - 1;
     }
+
+    if (prevBtnTop) prevBtnTop.disabled = shouldDisablePrev;
+    if (prevBtnBottom) prevBtnBottom.disabled = shouldDisablePrev;
+
+    // "下一天"（更新的日期）：
+    // - 如果已经是今天，禁用
+    // - 如果不是今天，检查是否可以切换到今天或更新的日期
+    let shouldDisableNext;
+    if (isToday) {
+        shouldDisableNext = true;
+    } else {
+        // 如果最新有数据的日期早于今天，可以切换到今天
+        // 或者当前有更新的有数据日期
+        const canGoToToday = state.availableDates.length > 0 && state.availableDates[0] < todayStr;
+        const currentIndex = state.availableDates.indexOf(state.createdDate);
+        const canGoToNextDate = currentIndex > 0;
+        shouldDisableNext = !canGoToToday && !canGoToNextDate;
+    }
+
+    if (nextBtnTop) nextBtnTop.disabled = shouldDisableNext;
+    if (nextBtnBottom) nextBtnBottom.disabled = shouldDisableNext;
 }
 
-// 更改待完成日期
+// 更改待完成日期（可以切换到今天，其他日期只切换到有数据的）
 function changeMemosDate(delta) {
     const state = paginationState.memos;
-    const currentDate = new Date(state.createdDate + 'T00:00:00');
-    currentDate.setDate(currentDate.getDate() + delta);
-    state.createdDate = formatDateString(currentDate);
-    state.currentPage = 1;  // 重置到第一页
+    const todayStr = formatDateString(new Date());
+    const currentIndex = state.availableDates.indexOf(state.createdDate);
 
-    loadMemosData();
+    if (delta === 1) {
+        // 下一天（更新的日期）
+        if (state.createdDate === todayStr) {
+            // 已经是今天，不能再往前
+            return;
+        } else if (currentIndex > 0) {
+            // 切换到下一个有数据的日期（更新的日期）
+            const nextDate = state.availableDates[currentIndex - 1];
+            // 如果下一个有数据的日期是今天或更早，可以切换
+            if (nextDate >= todayStr || state.createdDate !== todayStr) {
+                state.createdDate = nextDate;
+                state.currentPage = 1;
+                loadMemosData();
+            }
+        } else if (state.createdDate !== todayStr && state.availableDates[0] < todayStr) {
+            // 如果当前不是今天，且最新有数据的日期早于今天，则切换到今天
+            state.createdDate = todayStr;
+            state.currentPage = 1;
+            loadMemosData();
+        }
+    } else if (delta === -1) {
+        // 上一天（更早的日期）
+        if (state.createdDate === todayStr) {
+            // 如果今天是当前日期，切换到最新有数据的日期（但不是今天）
+            // 找到第一个早于今天的日期
+            const targetDate = state.availableDates.find(date => date < todayStr);
+            if (targetDate) {
+                state.createdDate = targetDate;
+                state.currentPage = 1;
+                loadMemosData();
+            }
+        } else if (currentIndex >= 0 && currentIndex < state.availableDates.length - 1) {
+            // 切换到上一个有数据的日期（更早的日期）
+            state.createdDate = state.availableDates[currentIndex + 1];
+            state.currentPage = 1;
+            loadMemosData();
+        }
+    }
 }
 
 // 显示日期选择器
@@ -495,6 +579,18 @@ function showDatePicker() {
     const datePicker = document.getElementById('memoDatePicker');
     if (datePicker) {
         datePicker.value = state.createdDate;
+
+        // 设置日期选择器的最小和最大值
+        if (state.availableDates.length > 0) {
+            const dates = state.availableDates;
+            const todayStr = formatDateString(new Date());
+
+            // 最小值为最早的有数据日期
+            datePicker.min = dates[dates.length - 1];
+
+            // 最大值为今天（允许选择今天，即使今天没有数据）
+            datePicker.max = todayStr;
+        }
     }
     document.getElementById('datePickerModal').classList.add('show');
 }
@@ -509,11 +605,22 @@ function confirmDatePick() {
     const datePicker = document.getElementById('memoDatePicker');
     if (datePicker && datePicker.value) {
         const state = paginationState.memos;
-        state.createdDate = datePicker.value;
-        state.currentPage = 1;  // 重置到第一页
-        loadMemosData();
+        const selectedDate = datePicker.value;
+        const todayStr = formatDateString(new Date());
+
+        // 允许选择今天（即使今天没有数据）
+        // 或者选择有数据的日期
+        if (selectedDate === todayStr || state.availableDates.includes(selectedDate)) {
+            state.createdDate = selectedDate;
+            state.currentPage = 1;
+            loadMemosData();
+            closeDatePicker();
+        } else {
+            showToast('所选日期没有记录，请选择有记录的日期或今天', 'error');
+        }
+    } else {
+        closeDatePicker();
     }
-    closeDatePicker();
 }
 
 // 格式化日期为本地时区的 YYYY-MM-DD 字符串
@@ -1582,29 +1689,51 @@ function updateMemosPaginationUI() {
     const dateDisplay = formatDateDisplay(state.createdDate);
     const totalItems = state.totalItems || 0;
     const completedItems = state.completedItems || 0;
+    const isToday = state.createdDate === todayStr;
 
     // 更新顶部导航栏中的完成进度信息
     const completionInfo = document.getElementById('memos-completion-info');
     if (completionInfo) {
         // 修改显示文本为"今天已完成 0/7"或"昨天已完成 2/3"
         // 已完成数量用红色高亮显示
-        const dateText = state.createdDate === todayStr ? '今天' : dateDisplay;
+        const dateText = isToday ? '今天' : dateDisplay;
         completionInfo.innerHTML = `${dateText}已完成 <span class="completed-count">${completedItems}</span>/${totalItems}`;
     }
 
-    // 更新按钮状态
-    const prevBtn = document.getElementById('memos-prev-btn');
-    const nextBtn = document.getElementById('memos-next-btn');
-
-    prevBtn.disabled = state.currentPage <= 1;
-    nextBtn.disabled = state.currentPage >= state.totalPages;
-
-    // 显示/隐藏分页容器
+    // 根据是否是今天，切换底部导航栏的显示
+    const dateNav = document.getElementById('memos-date-nav');
+    const pageNav = document.getElementById('memos-page-nav');
     const paginationContainer = document.getElementById('memos-pagination');
-    if (state.totalItems === 0) {
-        paginationContainer.style.display = 'none';
+
+    if (isToday) {
+        // 今天：显示日期导航，隐藏分页导航
+        if (dateNav) dateNav.style.display = 'flex';
+        if (pageNav) pageNav.style.display = 'none';
+        // 今天始终显示底部导航栏（即使没有数据）
+        if (paginationContainer) paginationContainer.style.display = 'block';
+
+        // 更新底部日期导航按钮状态
+        const prevBtnBottom = document.getElementById('memos-prev-day-bottom-btn');
+        const nextBtnBottom = document.getElementById('memos-next-day-bottom-btn');
+        // 今天：检查是否有任何早于今天的日期
+        const hasEarlierDates = state.availableDates.some(date => date < todayStr);
+        if (prevBtnBottom) prevBtnBottom.disabled = !hasEarlierDates;
+        if (nextBtnBottom) nextBtnBottom.disabled = true;
     } else {
-        paginationContainer.style.display = 'block';
+        // 非今天：显示分页导航，隐藏日期导航
+        if (dateNav) dateNav.style.display = 'none';
+        if (pageNav) pageNav.style.display = 'flex';
+        // 非今天时，没有数据则隐藏整个分页容器
+        if (state.totalItems === 0) {
+            if (paginationContainer) paginationContainer.style.display = 'none';
+        } else {
+            if (paginationContainer) paginationContainer.style.display = 'block';
+            // 更新分页按钮状态
+            const prevBtn = document.getElementById('memos-prev-btn');
+            const nextBtn = document.getElementById('memos-next-btn');
+            if (prevBtn) prevBtn.disabled = state.currentPage <= 1;
+            if (nextBtn) nextBtn.disabled = state.currentPage >= state.totalPages;
+        }
     }
 }
 
