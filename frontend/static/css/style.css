@@ -1130,24 +1130,26 @@ body {
     margin-bottom: 2px;
 }
 
-/* 日期分组头部 - 无背景 */
+/* 日期分组头部 - 浅灰色背景分隔带 */
 .day-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 12px;
-    background: transparent;
+    padding: 12px 15px;
+    background: #F0F0F0;
     border-radius: 0;
-    margin-bottom: 0;
+    margin: 0 -15px 12px -15px;
     font-size: 0.9rem;
     cursor: pointer;
     user-select: none;
     transition: none;
     border: none;
+    border-left: 3px solid #FFD700;
+    border-right: 3px solid #FFD700;
 }
 
 .day-header:hover {
-    background: transparent;
+    background: #E8E8E8;
 }
 
 .day-header.disabled {
@@ -1155,7 +1157,7 @@ body {
 }
 
 .day-header.disabled:hover {
-    background: transparent;
+    background: #E8E8E8;
 }
 
 .day-header-left {
@@ -1220,30 +1222,26 @@ body {
     font-size: 0.9rem;
 }
 
-/* 记账记录卡片 - 纯白底色，无边框 */
+/* 记账记录卡片 - 金丝细边框设计 */
 .accounting-record-card {
     padding: 14px 16px;
-    margin-bottom: 0;
+    margin-bottom: 12px;
     min-height: 72px;
     display: flex;
     align-items: center;
-    border: none;
-    background: #FFFFFF;
-    border-radius: 0 !important;
-    box-shadow: none !important;
-    transition: none;
+    /* 非常淡的粉色渐变背景（从上到下） */
+    background: linear-gradient(180deg, #FFFAFB 0%, #FFF8F9 100%);
+    /* 金丝细边框 */
+    border: 1.5px solid #FFD700;
+    border-radius: 16px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+    cursor: pointer;
     position: relative;
 }
 
-/* 淡色细线分隔 */
+/* 移除淡色细线分隔 */
 .accounting-record-card:not(:last-child)::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 16px;
-    right: 16px;
-    height: 1px;
-    background: #E0E0E0;
+    display: none;
 }
 
 .accounting-record-main {
@@ -1416,9 +1414,15 @@ body {
     overflow: visible;
 }
 
-/* 记账标签下的列表紧密排列 */
+/* 记账标签下的列表卡片排列 */
 #accounting-tab .items-list {
     gap: 0;
+    padding: 0 15px;
+}
+
+/* 为记账记录卡片添加间距 */
+#accounting-tab .accounting-record-card:not(:first-child) {
+    margin-top: 8px;
 }
 
 .item-card {
@@ -1580,8 +1584,8 @@ body {
 
 /* 待完成卡片样式 - 金丝细边框设计 */
 .item-card.memo-card {
-    /* 浅粉色渐变背景（从上到下） */
-    background: linear-gradient(180deg, #FFF5F7 0%, #FAFAFA 100%);
+    /* 非常淡的粉色渐变背景（从上到下） */
+    background: linear-gradient(180deg, #FFFAFB 0%, #FFF8F9 100%);
     border-radius: 16px !important;
     padding: 16px;
     margin-bottom: 12px;
@@ -2211,17 +2215,6 @@ body {
     cursor: pointer;
 }
 
-/* 移除卡片hover效果 - 保持完全直角 */
-.accounting-record-card:hover {
-    background: var(--bg-white);
-    box-shadow: none !important;
-    border-radius: 0 !important;
-}
-
-.accounting-record-card:hover .item-content {
-    color: inherit;
-}
-
 /* 移除通用卡片hover效果 */
 .item-card:hover {
     box-shadow: var(--shadow-sm);
@@ -2778,7 +2771,7 @@ body {
     /* 记账记录列表 - 移除左右内边距，贴边显示，适配安全区 */
     #accounting-tab .items-list {
         gap: 0;
-        padding: 0;
+        padding: 0 12px;
     }
 
     /* 记账记录卡片 - 贴边显示，适配安全区 */
@@ -2786,13 +2779,16 @@ body {
         padding: 14px 12px;
         padding-left: calc(12px + env(safe-area-inset-left, 0));
         padding-right: calc(12px + env(safe-area-inset-right, 0));
+        margin-bottom: 10px;
+        border-radius: 14px !important;
     }
 
-    /* 记账记录卡片分隔线 - 调整左右间距，适配安全区 */
-    .accounting-record-card:not(:last-child)::after {
-        left: calc(12px + env(safe-area-inset-left, 0));
-        right: calc(12px + env(safe-area-inset-right, 0));
+    /* 移动端记账记录卡片间距 */
+    #accounting-tab .accounting-record-card:not(:first-child) {
+        margin-top: 6px;
     }
+
+    /* 记账记录卡片分隔线 - 已移除 */
 
     /* 移动端隐藏可滚动区域的滚动条 */
     .week-report-scrollable::-webkit-scrollbar {
@@ -3034,7 +3030,7 @@ body {
     /* 小屏幕记账记录列表 - 贴边显示 */
     #accounting-tab .items-list {
         gap: 0;
-        padding: 0;
+        padding: 0 10px;
     }
 
     /* 小屏幕记账记录卡片 - 贴边显示，适配安全区 */
@@ -3042,13 +3038,16 @@ body {
         padding: 12px 10px;
         padding-left: calc(10px + env(safe-area-inset-left, 0));
         padding-right: calc(10px + env(safe-area-inset-right, 0));
+        margin-bottom: 8px;
+        border-radius: 12px !important;
     }
 
-    /* 小屏幕记账记录卡片分隔线 - 调整左右间距，适配安全区 */
-    .accounting-record-card:not(:last-child)::after {
-        left: calc(10px + env(safe-area-inset-left, 0));
-        right: calc(10px + env(safe-area-inset-right, 0));
+    /* 小屏幕记账记录卡片间距 */
+    #accounting-tab .accounting-record-card:not(:first-child) {
+        margin-top: 5px;
     }
+
+    /* 小屏幕记账记录卡片分隔线 - 已移除 */
 
     .week-calendar-icon {
         min-width: 100px;
