@@ -702,7 +702,7 @@ body {
 /* 常用收藏按钮 - 居中显示，略微向右调整视觉居中 */
 .reflections-header-left .frequent-btn:last-child {
     position: absolute;
-    left: calc(50% + 3px);
+    left: calc(50% + 22px);
     top: 50%;
     transform: translate(-50%, -50%);
 }
@@ -710,7 +710,7 @@ body {
 /* 常用收藏按钮hover时保持居中定位 */
 .reflections-header-left .frequent-btn:last-child:hover {
     background: #E8E8E8 !important;
-    transform: translate(calc(-50% - 3px), -50%) scale(1.05);
+    transform: translate(calc(-50% - 22px), -50%) scale(1.05);
 }
 
 /* 待完成页面顶部header - 与记事页面保持一致的布局 */
@@ -1197,13 +1197,13 @@ body {
     margin-bottom: 2px;
 }
 
-/* 日期分组头部 - 浅灰色背景分隔带 */
+/* 日期分组头部 - 浅灰色背景分隔带（记一笔页面专用） */
 .day-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 12px 15px;
-    background: #F0F0F0;
+    background: #EEEEEE !important;
     border-radius: 0;
     margin: 0 -15px 12px -15px;
     font-size: 0.9rem;
@@ -1216,7 +1216,7 @@ body {
 }
 
 .day-header:hover {
-    background: #E8E8E8;
+    background: #E0E0E0 !important;
 }
 
 .day-header.disabled {
@@ -1441,8 +1441,10 @@ body {
     width: 36px;
     height: 36px;
     background: #F5F5F5 !important;
-    border: none;
-    border-radius: 50%;
+    /* 细红线边框 */
+    border: 1.5px solid #FF4444;
+    /* 矩形圆角 */
+    border-radius: 8px;
     font-size: 1.2rem;
     padding: 0;
     gap: 0;
