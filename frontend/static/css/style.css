@@ -753,13 +753,13 @@ body {
 .memos-nav-bar {
     background: linear-gradient(180deg, #F0FFF4 0%, #FFFFFF 100%);
     border-radius: 0;
-    padding: 16px;
-    margin: 0 0 15px 0;
+    padding: 12px 16px 8px 16px;
+    margin: 0 0 8px 0;
     box-shadow: none;
     border-bottom: 1px solid #E0E0E0;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 8px;
 }
 
 /* 导航栏中的日期导航控件 - 上方 */
@@ -777,10 +777,12 @@ body {
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    padding-bottom: 12px;
+    padding-bottom: 8px;
     border-bottom: 1px solid #E0E0E0;
     position: relative;
     gap: 12px;
+    /* 确保所有元素在同一水平线上对齐 */
+    align-items: center;
 }
 
 /* 日期按钮在左侧 */
@@ -788,15 +790,31 @@ body {
     flex-shrink: 0;
 }
 
-/* 中间区域：日期提示 + 完成进度 */
+/* 中间区域：日期提示 + 完成进度 - 垂直布局，日期往上移 */
 .memos-nav-center {
     flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 4px;
+    gap: -4px;
     min-width: 0;
+    height: 36px;
+    position: relative;
+}
+
+/* 日期提示在上 - 往上移动，减小字体和间距 */
+.memos-nav-center .date-hint {
+    font-size: 10px;
+    color: #AAAAAA;
+    text-align: center;
+    opacity: 1 !important;
+    visibility: visible !important;
+    font-weight: 400;
+    margin-bottom: -6px;
+    line-height: 1;
+    position: absolute;
+    top: -10px;
 }
 
 /* 更多按钮在右侧 */
@@ -819,6 +837,11 @@ body {
     color: #333 !important;
     font-family: 'Brush Script MT', 'Comic Sans MS', 'YouYuan', '幼圆', 'Segoe UI', 'Roboto', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', cursive, sans-serif !important;
     letter-spacing: 2px;
+    /* 确保与左右按钮对齐 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
 }
 
 /* 已完成数量 - 与整体大小一致 */
@@ -1568,9 +1591,9 @@ body {
     color: #333333;
 }
 
-/* 中间区域的日期提示样式 */
+/* 中间区域的日期提示样式 - 水平布局时与进度信息同行 */
 .memos-nav-center .date-hint {
-    font-size: 12px;
+    font-size: 14px;
     color: #666666;
     text-align: center;
     opacity: 1 !important;
@@ -3038,11 +3061,7 @@ body {
 
     /* 移动端中间区域样式优化 */
     .memos-nav-center {
-        gap: 2px;
-    }
-
-    .memos-nav-center .date-hint {
-        font-size: 11px;
+        gap: 8px;
     }
 
     /* 移动端待完成列表 - 保持内边距 */
@@ -3319,11 +3338,7 @@ body {
 
     /* 小屏幕中间区域样式优化 */
     .memos-nav-center {
-        gap: 2px;
-    }
-
-    .memos-nav-center .date-hint {
-        font-size: 10px;
+        gap: 6px;
     }
 
     .memos-export-btn {
