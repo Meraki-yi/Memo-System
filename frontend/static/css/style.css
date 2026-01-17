@@ -434,7 +434,7 @@ body {
 /* 统计区域 - 渐变黄白背景 */
 #accounting-tab .stats-area {
     background: linear-gradient(180deg, #FFFCF0 0%, #FFFFFF 100%);
-    margin: 0 0 0 0;
+    margin: 0 0 0 8px;
     border-radius: 0;
     box-shadow: none;
     border: none;
@@ -527,7 +527,7 @@ body {
 /* 周日期范围日历图标 - 居中显示 */
 .week-calendar-icon {
     position: absolute;
-    left: 50%;
+    left: 54%;
     transform: translateX(-50%);
     height: 50px;
     background: linear-gradient(180deg, #FFF9E6 0%, #FFFFFF 100%);
@@ -698,7 +698,7 @@ body {
     transform: translateY(-50%) scale(1.05);
 }
 
-/* 常用收藏按钮 - 居中显示，略微向右调整视觉居中 */
+/* 常用收藏按钮 - 居中显示 */
 .reflections-header-left .frequent-btn:last-child {
     position: absolute;
     left: calc(50% + 22px);
@@ -706,10 +706,11 @@ body {
     transform: translate(-50%, -50%);
 }
 
-/* 常用收藏按钮hover时保持居中定位 */
-.reflections-header-left .frequent-btn:last-child:hover {
+/* 常用收藏按钮 - 悬停和点击时都保持不动 */
+.reflections-header-left .frequent-btn:last-child:hover,
+.reflections-header-left .frequent-btn:last-child:active {
     background: #E8E8E8 !important;
-    transform: translate(calc(-50% - 22px), -50%) scale(1.05);
+    transform: translate(-50%, -50%) !important;
 }
 
 /* 待完成页面顶部header - 与记事页面保持一致的布局 */
@@ -2214,25 +2215,6 @@ body {
     padding: 0;
     border-radius: 0;
     font-size: 18px;
-    /* 完全禁用transition，防止悬停时的任何动画效果 */
-    transition: none !important;
-}
-
-/* 记事页面桃心图标保持固定，完全禁用悬停动画 */
-.item-card.reflection-card .btn-frequent:hover {
-    background: transparent !important;
-    transform: none !important;
-    box-shadow: none !important;
-}
-
-/* 桃心图标本身也完全禁用动画 */
-.item-card.reflection-card .btn-frequent .icon-heart {
-    transition: none !important;
-}
-
-.item-card.reflection-card .btn-frequent:hover .icon-heart {
-    transform: none !important;
-    transition: none !important;
 }
 
 .item-card.reflection-card .btn-frequent.active {

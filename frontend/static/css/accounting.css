@@ -208,6 +208,7 @@ body {
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
     margin-bottom: 12px;
+    margin-left: 20px;
     cursor: pointer;
 }
 
