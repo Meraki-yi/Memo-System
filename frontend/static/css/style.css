@@ -2027,21 +2027,27 @@ body {
     display: flex;
     flex-direction: column;
     gap: 0;
+    flex: 1;
+    min-width: 0;
 }
 
 .item-card.reflection-card .reflection-times .time {
     font-size: 12px;
     color: #999999;
     line-height: 1.5;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* 记事卡片操作按钮 */
 .item-card.reflection-card .item-actions {
     display: flex;
-    gap: 8px;
+    gap: 6px;
     justify-content: flex-end;
     align-items: center;
     flex-shrink: 0;
+    flex-wrap: nowrap;
 }
 
 /* 记事卡片编辑按钮 - 绿色 */
@@ -2064,14 +2070,14 @@ body {
 
 /* 记事卡片收藏按钮 - 黄色 */
 .item-card.reflection-card .btn-frequent {
-    color: #FFC107;
+    color: #CCCCCC;
     background: transparent;
     width: auto;
     height: auto;
     padding: 0;
     border-radius: 0;
     font-size: 18px;
-    transition: transform 0.2s ease;
+    transition: all 0.2s ease;
 }
 
 .item-card.reflection-card .btn-frequent:hover {
@@ -2081,7 +2087,28 @@ body {
 }
 
 .item-card.reflection-card .btn-frequent.active {
-    color: #FFC107;
+    color: #FFD700;
+    background: transparent;
+}
+
+/* 星星图标样式 */
+.item-card.reflection-card .btn-frequent .icon-star {
+    filter: grayscale(100%) brightness(0.5);
+}
+
+.item-card.reflection-card .btn-frequent.active .icon-star {
+    filter: grayscale(0%) brightness(1);
+}
+
+/* 爱心图标样式 - 使用filter实现空心/实心效果 */
+.item-card.reflection-card .btn-frequent .icon-heart {
+    filter: grayscale(100%) brightness(0.4);
+    opacity: 0.5;
+}
+
+.item-card.reflection-card .btn-frequent.active .icon-heart {
+    filter: grayscale(0%) brightness(1);
+    opacity: 1;
 }
 
 /* 记事卡片删除按钮 - 红色 */
@@ -2829,7 +2856,7 @@ body {
     .item-card.memo-card .item-actions,
     .item-card.reflection-card .item-actions {
         flex-direction: row;
-        gap: 8px;
+        gap: 4px;
     }
 
     /* 其他页面的item-actions可以保持垂直布局 */
@@ -2841,6 +2868,15 @@ body {
     .btn-icon {
         width: 40px;
         height: 40px;
+    }
+
+    /* 记事卡片底部移动端优化 */
+    .item-card.reflection-card .reflection-card-footer {
+        gap: 8px;
+    }
+
+    .item-card.reflection-card .reflection-times .time {
+        font-size: 11px;
     }
 
     /* 移动端记事页面header优化 - 贴边显示，适配安全区 */

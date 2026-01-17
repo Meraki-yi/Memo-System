@@ -894,6 +894,13 @@ function goToReflectionFrequents() {
     window.location.href = '/reflection-frequents';
 }
 
+// 跳转到常用收藏页面
+function goToCommonFrequents() {
+    // 保存当前标签页，以便返回时恢复
+    sessionStorage.setItem('memoSystem_return_tab', 'reflections');
+    window.location.href = '/common-frequents';
+}
+
 // 渲染最近记录
 function renderRecentRecords(records) {
     const list = document.getElementById('recent-records');
@@ -1065,7 +1072,7 @@ function renderItems(items) {
             }
 
             return `
-                <div class="item-card reflection-card ${item.is_frequent ? 'frequent' : ''}" data-id="${item.id}">
+                <div class="item-card reflection-card ${item.is_frequent || item.is_common_frequent ? 'frequent' : ''}" data-id="${item.id}">
                     <div class="item-content">
                         <h3 class="item-title">${title || '无标题'}</h3>
                         <p class="item-text">${content || '无内容'}</p>
@@ -1076,8 +1083,11 @@ function renderItems(items) {
                             <span class="time">更新: ${updatedFull}</span>
                         </div>
                         <div class="item-actions" onclick="event.stopPropagation()">
-                            <button class="btn-icon btn-frequent ${item.is_frequent ? 'active' : ''}" onclick="toggleReflectionFrequent(${item.id})" title="${item.is_frequent ? '取消收藏' : '设为收藏'}">
-                                <span>${item.is_frequent ? '⭐' : '☆'}</span>
+                            <button class="btn-icon btn-frequent ${item.is_frequent ? 'active' : ''}" onclick="toggleReflectionFrequent(${item.id}, 'reflection')" title="${item.is_frequent ? '取消反思收藏' : '添加到反思收藏'}">
+                                <span class="icon-star">${item.is_frequent ? '⭐' : '☆'}</span>
+                            </button>
+                            <button class="btn-icon btn-frequent ${item.is_common_frequent ? 'active' : ''}" onclick="toggleReflectionFrequent(${item.id}, 'common')" title="${item.is_common_frequent ? '取消常用收藏' : '添加到常用收藏'}">
+                                <span class="icon-heart">${item.is_common_frequent ? '💝' : '♡'}</span>
                             </button>
                             <button class="btn-icon btn-edit" onclick="editItem(${item.id})" title="编辑">
                                 <span>✏️</span>
@@ -1231,8 +1241,10 @@ async function saveItem() {
                 updateData.is_completed = isCompleted;
                 // 注意：不允许修改 created_date
             } else {
-                // 记事支持 is_frequent
-                updateData.is_frequent = isFrequent;
+                // 记事支持 is_frequent 和 is_common_frequent
+                // 保持原有的收藏状态不变
+                updateData.is_frequent = currentEditItem.is_frequent || false;
+                updateData.is_common_frequent = currentEditItem.is_common_frequent || false;
             }
 
             response = await fetch(`${API_BASE}${endpoint}/${currentEditItem.id}`, getAuthOptions({
@@ -1249,8 +1261,9 @@ async function saveItem() {
                 const state = paginationState.memos;
                 createData.created_date = state.createdDate || formatDateString(new Date());
             } else {
-                // 记事支持 is_frequent
-                createData.is_frequent = isFrequent;
+                // 记事默认不收藏，用户可以通过收藏按钮添加
+                createData.is_frequent = false;
+                createData.is_common_frequent = false;
             }
 
             response = await fetch(`${API_BASE}${endpoint}`, getAuthOptions({
@@ -1304,8 +1317,14 @@ async function toggleMemoComplete(id) {
 }
 
 // 切换记事收藏状态
-async function toggleReflectionFrequent(id) {
+async function toggleReflectionFrequent(id, favoriteType = null) {
     try {
+        // 如果没有指定收藏类型，显示选择模态框
+        if (!favoriteType) {
+            showFavoriteTypeModal(id);
+            return;
+        }
+
         // 直接通过ID获取单个记录
         const response = await fetch(`${API_BASE}/reflections/${id}`, getAuthOptions());
 
@@ -1318,19 +1337,51 @@ async function toggleReflectionFrequent(id) {
 
         const reflection = await response.json();
 
+        // 根据收藏类型设置要更新的字段
+        // 同一条数据只能在一个收藏夹中
+        const updateData = { is_frequent: false, is_common_frequent: false };
+        if (favoriteType === 'reflection') {
+            // 如果当前没有收藏到反思收藏，则收藏；否则取消收藏
+            updateData.is_frequent = !reflection.is_frequent;
+        } else if (favoriteType === 'common') {
+            // 如果当前没有收藏到常用收藏，则收藏；否则取消收藏
+            updateData.is_common_frequent = !reflection.is_common_frequent;
+        }
+
         const updateResponse = await fetch(`${API_BASE}/reflections/${id}`, getAuthOptions({
             method: 'PUT',
-            body: JSON.stringify({
-                is_frequent: !reflection.is_frequent
-            })
+            body: JSON.stringify(updateData)
         }));
 
         if (!updateResponse.ok) throw new Error('更新失败');
 
-        showToast(reflection.is_frequent ? '已取消收藏' : '已设为收藏', 'success');
+        const isNowFrequent = favoriteType === 'reflection' ? updateData.is_frequent : updateData.is_common_frequent;
+        const favoriteTypeName = favoriteType === 'reflection' ? '反思收藏' : '常用收藏';
+        showToast(isNowFrequent ? `已添加到${favoriteTypeName}` : `已取消${favoriteTypeName}`, 'success');
         loadItems();
     } catch (error) {
         showToast(error.message, 'error');
+    }
+}
+
+// 显示收藏类型选择模态框
+function showFavoriteTypeModal(id) {
+    window.pendingFavoriteId = id;
+    document.getElementById('favoriteTypeModal').classList.add('show');
+}
+
+// 关闭收藏类型选择模态框
+function closeFavoriteTypeModal() {
+    document.getElementById('favoriteTypeModal').classList.remove('show');
+    window.pendingFavoriteId = null;
+}
+
+// 选择收藏类型
+function selectFavoriteType(type) {
+    const id = window.pendingFavoriteId;
+    if (id) {
+        closeFavoriteTypeModal();
+        toggleReflectionFrequent(id, type);
     }
 }
 
@@ -1615,6 +1666,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     closeExportModal();
                 } else if (this.id === 'datePickerModal') {
                     closeDatePicker();
+                } else if (this.id === 'favoriteTypeModal') {
+                    closeFavoriteTypeModal();
                 }
             }
         });
@@ -1627,6 +1680,7 @@ document.addEventListener('DOMContentLoaded', function() {
             closeDeleteModal();
             closeExportModal();
             closeDatePicker();
+            closeFavoriteTypeModal();
             // 关闭所有打开的更多菜单
             const weekMoreMenu = document.getElementById('weekMoreMenu');
             const reflectionsMoreMenu = document.getElementById('reflectionsMoreMenu');

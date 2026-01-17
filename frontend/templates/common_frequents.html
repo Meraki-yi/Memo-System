@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>收藏记事</title>
+    <title>常用收藏</title>
     <link rel="stylesheet" href="/static/css/style.css?v=8.8">
 </head>
 <body>
@@ -17,7 +17,7 @@
                     返回
                 </button>
                 <button class="tab-btn active">
-                    ⭐ 收藏记事
+                    💝 常用收藏
                 </button>
                 <div class="header-more-wrapper">
                     <button class="more-btn" onclick="toggleMoreMenu()">
@@ -32,28 +32,28 @@
                 </div>
             </div>
 
-            <!-- 收藏记事内容 -->
+            <!-- 常用收藏内容 -->
             <div class="tab-contents">
-                <div class="tab-content active" id="reflection-frequents-tab">
+                <div class="tab-content active" id="common-frequents-tab">
                     <div class="tab-content-scrollable">
-                        <div class="items-list" id="reflection-frequents-list">
+                        <div class="items-list" id="common-frequents-list">
                             <!-- 动态加载内容 -->
                         </div>
                     </div>
                     <!-- 记事分页组件 -->
-                    <div class="pagination-container fixed-bottom" id="reflection-frequents-pagination">
+                    <div class="pagination-container fixed-bottom" id="common-frequents-pagination">
                         <div class="pagination">
-                            <button class="pagination-btn" id="reflection-frequents-prev-btn" onclick="changeReflectionFrequentsPage(-1)" disabled>
+                            <button class="pagination-btn" id="common-frequents-prev-btn" onclick="changeCommonFrequentsPage(-1)" disabled>
                                 <span class="icon">‹</span>
                                 上一页
                             </button>
                             <div class="pagination-info">
-                                <span class="pagination-current">第 <span id="reflection-frequents-current-page">1</span> 页</span>
+                                <span class="pagination-current">第 <span id="common-frequents-current-page">1</span> 页</span>
                                 <span class="pagination-divider">/</span>
-                                <span class="pagination-total">共 <span id="reflection-frequents-total-pages">1</span> 页</span>
-                                <span class="pagination-items">（<span id="reflection-frequents-total-items">0</span> 条记录）</span>
+                                <span class="pagination-total">共 <span id="common-frequents-total-pages">1</span> 页</span>
+                                <span class="pagination-items">（<span id="common-frequents-total-items">0</span> 条记录）</span>
                             </div>
-                            <button class="pagination-btn" id="reflection-frequents-next-btn" onclick="changeReflectionFrequentsPage(1)">
+                            <button class="pagination-btn" id="common-frequents-next-btn" onclick="changeCommonFrequentsPage(1)">
                                 下一页
                                 <span class="icon">›</span>
                             </button>
@@ -79,8 +79,8 @@
                     <div style="margin-top: 15px;">
                         <div class="checkbox-group">
                             <label>
-                                <input type="checkbox" id="isFrequent">
-                                <span>⭐ 标记为收藏</span>
+                                <input type="checkbox" id="isCommonFrequent">
+                                <span>💝 标记为常用收藏</span>
                             </label>
                         </div>
                     </div>
@@ -117,6 +117,6 @@
         <div class="spinner"></div>
     </div>
 
-    <script src="/static/js/reflection_frequents.js?v=8.9"></script>
+    <script src="/static/js/common_frequents.js?v=8.9"></script>
 </body>
 </html>

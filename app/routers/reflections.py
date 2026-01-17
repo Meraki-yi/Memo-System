@@ -51,6 +51,7 @@ async def get_reflections(
                 "id": r.id,
                 "content": r.content,
                 "is_frequent": getattr(r, 'is_frequent', False),
+                "is_common_frequent": getattr(r, 'is_common_frequent', False),
                 "created_at": r.created_at.isoformat(),
                 "updated_at": r.updated_at.isoformat()
             }
@@ -75,7 +76,8 @@ async def create_reflection(
     check_auth(request)
     db_reflection = Reflection(
         content=reflection.content,
-        is_frequent=reflection.is_frequent if reflection.is_frequent is not None else False
+        is_frequent=reflection.is_frequent if reflection.is_frequent is not None else False,
+        is_common_frequent=reflection.is_common_frequent if reflection.is_common_frequent is not None else False
     )
     db.add(db_reflection)
     db.commit()
@@ -84,6 +86,7 @@ async def create_reflection(
         "id": db_reflection.id,
         "content": db_reflection.content,
         "is_frequent": getattr(db_reflection, 'is_frequent', False),
+        "is_common_frequent": getattr(db_reflection, 'is_common_frequent', False),
         "created_at": db_reflection.created_at.isoformat(),
         "updated_at": db_reflection.updated_at.isoformat()
     }
@@ -121,6 +124,54 @@ async def get_frequent_reflections(
                 "id": r.id,
                 "content": r.content,
                 "is_frequent": getattr(r, 'is_frequent', False),
+                "is_common_frequent": getattr(r, 'is_common_frequent', False),
+                "created_at": r.created_at.isoformat(),
+                "updated_at": r.updated_at.isoformat()
+            }
+            for r in reflections
+        ],
+        "pagination": {
+            "page": page,
+            "page_size": page_size,
+            "total": total,
+            "total_pages": total_pages
+        }
+    }
+
+
+@router.get("/api/reflections/common-frequents")
+async def get_common_frequent_reflections(
+    request: Request,
+    page: int = 1,
+    page_size: int = 5,
+    db: Session = Depends(get_db)
+):
+    """获取常用收藏的记事列表（分页）"""
+    check_auth(request)
+    # 计算常用收藏反思总数
+    total = db.query(Reflection).filter(Reflection.is_common_frequent == True).count()
+    # 计算总页数
+    total_pages = (total + page_size - 1) // page_size if total > 0 else 1
+    # 分页查询 - 按创建时间排序
+    offset = (page - 1) * page_size
+    # 先获取排序后的常用收藏反思ID列表
+    common_frequent_reflection_ids_query = db.query(Reflection.id).filter(Reflection.is_common_frequent == True).order_by(Reflection.created_at.desc()).offset(offset).limit(page_size)
+    reflection_ids = [id[0] for id in common_frequent_reflection_ids_query.all()]
+    # 再根据ID列表获取完整数据
+    if reflection_ids:
+        reflections = db.query(Reflection).filter(Reflection.id.in_(reflection_ids)).all()
+        # 按原始ID顺序排序
+        reflections_dict = {r.id: r for r in reflections}
+        reflections = [reflections_dict[id] for id in reflection_ids]
+    else:
+        reflections = []
+    return {
+        "items": [
+            {
+                "id": r.id,
+                "content": r.content,
+                "is_frequent": getattr(r, 'is_frequent', False),
+                "is_common_frequent": getattr(r, 'is_common_frequent', False),
                 "created_at": r.created_at.isoformat(),
                 "updated_at": r.updated_at.isoformat()
             }
@@ -151,6 +202,7 @@ async def get_reflection(
         "id": db_reflection.id,
         "content": db_reflection.content,
         "is_frequent": getattr(db_reflection, 'is_frequent', False),
+        "is_common_frequent": getattr(db_reflection, 'is_common_frequent', False),
         "created_at": db_reflection.created_at.isoformat(),
         "updated_at": db_reflection.updated_at.isoformat()
     }
@@ -174,6 +226,9 @@ async def update_reflection(
     if reflection.is_frequent is not None:
         if hasattr(db_reflection, 'is_frequent'):
             db_reflection.is_frequent = reflection.is_frequent
+    if reflection.is_common_frequent is not None:
+        if hasattr(db_reflection, 'is_common_frequent'):
+            db_reflection.is_common_frequent = reflection.is_common_frequent
 
     db_reflection.updated_at = datetime.now(LOCAL_TZ)
     db.commit()
@@ -182,6 +237,7 @@ async def update_reflection(
         "id": db_reflection.id,
         "content": db_reflection.content,
         "is_frequent": getattr(db_reflection, 'is_frequent', False),
+        "is_common_frequent": getattr(db_reflection, 'is_common_frequent', False),
         "created_at": db_reflection.created_at.isoformat(),
         "updated_at": db_reflection.updated_at.isoformat()
     }

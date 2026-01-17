@@ -39,6 +39,13 @@ async def read_reflection_frequents(request: Request):
     return templates.TemplateResponse("reflection_frequents.html", {"request": request})
 
 
+@router.get("/common-frequents", response_class=HTMLResponse)
+async def read_common_frequents(request: Request):
+    """常用收藏页面"""
+    check_auth(request)
+    return templates.TemplateResponse("common_frequents.html", {"request": request})
+
+
 @router.get("/accounting", response_class=HTMLResponse)
 async def read_accounting(request: Request):
     """记账页面"""

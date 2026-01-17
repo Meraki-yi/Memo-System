@@ -18,6 +18,7 @@ class Reflection(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     content = Column(Text, nullable=False)
-    is_frequent = Column(Boolean, default=False)  # 是否标记为常用（收藏）
+    is_frequent = Column(Boolean, default=False)  # 是否标记为反思收藏
+    is_common_frequent = Column(Boolean, default=False)  # 是否标记为常用收藏
     created_at = Column(DateTime, nullable=False, default=lambda: datetime.now(LOCAL_TZ))
     updated_at = Column(DateTime, nullable=False, default=lambda: datetime.now(LOCAL_TZ), onupdate=lambda: datetime.now(LOCAL_TZ))

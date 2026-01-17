@@ -129,7 +129,11 @@
                             <div class="reflections-header-left">
                                 <button class="add-btn frequent-btn" onclick="goToReflectionFrequents()">
                                     <span class="icon">⭐</span>
-                                    常用
+                                    反思收藏
+                                </button>
+                                <button class="add-btn frequent-btn" onclick="goToCommonFrequents()">
+                                    <span class="icon">💝</span>
+                                    常用收藏
                                 </button>
                             </div>
                             <div class="reflections-header-right header-more-wrapper">
@@ -240,14 +244,7 @@
                 <div id="reflectionEditFields" style="display: none;">
                     <input type="text" id="itemTitle" placeholder="标题" style="width: 100%; padding: 12px 15px; border: 2px solid var(--border-color); border-radius: var(--radius-sm); font-size: 1rem; margin-bottom: 15px; outline: none; transition: var(--transition);">
                     <textarea id="itemContent" placeholder="内容" style="width: 100%; padding: 12px 15px; border: 2px solid var(--border-color); border-radius: var(--radius-sm); font-size: 1rem; min-height: 100px; resize: vertical; outline: none; transition: var(--transition);"></textarea>
-                    <div style="margin-top: 15px;">
-                        <div class="checkbox-group">
-                            <label>
-                                <input type="checkbox" id="isFrequent">
-                                <span>⭐ 标记为收藏</span>
-                            </label>
-                        </div>
-                    </div>
+                    <p style="margin-top: 10px; font-size: 0.85rem; opacity: 0.7;">创建后可以通过收藏按钮添加到收藏夹</p>
                 </div>
                 <!-- 待完成编辑：只有内容 -->
                 <div id="memoEditFields" style="display: none;">
@@ -335,6 +332,42 @@
             <div class="modal-footer">
                 <button class="btn btn-cancel" onclick="closeDatePicker()">取消</button>
                 <button class="btn btn-primary" onclick="confirmDatePick()">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 收藏类型选择模态框 -->
+    <div class="modal" id="favoriteTypeModal">
+        <div class="modal-content small">
+            <div class="modal-header">
+                <h3>选择收藏类型</h3>
+                <button class="close-btn" onclick="closeFavoriteTypeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 15px;">请选择要添加到哪个收藏夹：</p>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <button class="favorite-type-btn" onclick="selectFavoriteType('reflection')">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span style="font-size: 1.5rem;">⭐</span>
+                            <div style="text-align: left;">
+                                <div style="font-weight: 600; font-size: 1rem;">反思收藏</div>
+                                <div style="font-size: 0.85rem; opacity: 0.7;">用于收藏反思类内容</div>
+                            </div>
+                        </div>
+                    </button>
+                    <button class="favorite-type-btn" onclick="selectFavoriteType('common')">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span style="font-size: 1.5rem;">💝</span>
+                            <div style="text-align: left;">
+                                <div style="font-weight: 600; font-size: 1rem;">常用收藏</div>
+                                <div style="font-size: 0.85rem; opacity: 0.7;">用于收藏常用类内容</div>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" onclick="closeFavoriteTypeModal()">取消</button>
             </div>
         </div>
     </div>
