@@ -1590,7 +1590,6 @@ body {
     cursor: default;
     display: flex;
     flex-direction: column;
-    transition: all 0.3s ease;
     position: relative;
     /* 金丝细边框 */
     border: 1.5px solid #FFD700;
@@ -1625,13 +1624,6 @@ body {
 
 #memos-list .item-card.memo-card:not(:last-child) {
     margin-bottom: 8px;
-}
-
-/* 待完成卡片hover效果 - 轻微上浮，金丝边框更亮 */
-.item-card.memo-card:hover {
-    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.25) !important;
-    transform: translateY(-2px);
-    border-color: #FFC700;
 }
 
 /* 待完成卡片内容区域 - 保持简洁设计，与记一笔页面一致 */
