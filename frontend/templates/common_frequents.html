@@ -69,6 +69,14 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3 id="modalTitle">添加新内容</h3>
+                <div class="alignment-buttons" id="alignmentButtons" style="display: none; gap: 8px; margin-right: auto; margin-left: 15px;">
+                    <button class="alignment-btn" data-align="left" title="左对齐" onclick="setContentAlignment('left')">
+                        <span>⬅️</span>
+                    </button>
+                    <button class="alignment-btn active" data-align="center" title="居中对齐" onclick="setContentAlignment('center')">
+                        <span>⬆️</span>
+                    </button>
+                </div>
                 <button class="close-btn" onclick="closeModal()">&times;</button>
             </div>
             <div class="modal-body">

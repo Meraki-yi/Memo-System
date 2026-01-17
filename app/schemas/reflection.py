@@ -11,6 +11,7 @@ class ReflectionCreate(BaseModel):
     content: str
     is_frequent: Optional[bool] = False
     is_common_frequent: Optional[bool] = False
+    content_align: Optional[str] = 'center'
 
 
 class ReflectionUpdate(BaseModel):
@@ -18,6 +19,7 @@ class ReflectionUpdate(BaseModel):
     content: Optional[str] = None
     is_frequent: Optional[bool] = None
     is_common_frequent: Optional[bool] = None
+    content_align: Optional[str] = None
 
     class Config:
         # 允许所有字段都是可选的

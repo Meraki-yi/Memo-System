@@ -52,6 +52,7 @@ async def get_reflections(
                 "content": r.content,
                 "is_frequent": getattr(r, 'is_frequent', False),
                 "is_common_frequent": getattr(r, 'is_common_frequent', False),
+                "content_align": getattr(r, 'content_align', 'center'),
                 "created_at": r.created_at.isoformat(),
                 "updated_at": r.updated_at.isoformat()
             }
@@ -77,7 +78,8 @@ async def create_reflection(
     db_reflection = Reflection(
         content=reflection.content,
         is_frequent=reflection.is_frequent if reflection.is_frequent is not None else False,
-        is_common_frequent=reflection.is_common_frequent if reflection.is_common_frequent is not None else False
+        is_common_frequent=reflection.is_common_frequent if reflection.is_common_frequent is not None else False,
+        content_align=reflection.content_align if reflection.content_align is not None else 'center'
     )
     db.add(db_reflection)
     db.commit()
@@ -87,6 +89,7 @@ async def create_reflection(
         "content": db_reflection.content,
         "is_frequent": getattr(db_reflection, 'is_frequent', False),
         "is_common_frequent": getattr(db_reflection, 'is_common_frequent', False),
+        "content_align": getattr(db_reflection, 'content_align', 'center'),
         "created_at": db_reflection.created_at.isoformat(),
         "updated_at": db_reflection.updated_at.isoformat()
     }
@@ -125,6 +128,7 @@ async def get_frequent_reflections(
                 "content": r.content,
                 "is_frequent": getattr(r, 'is_frequent', False),
                 "is_common_frequent": getattr(r, 'is_common_frequent', False),
+                "content_align": getattr(r, 'content_align', 'center'),
                 "created_at": r.created_at.isoformat(),
                 "updated_at": r.updated_at.isoformat()
             }
@@ -172,6 +176,7 @@ async def get_common_frequent_reflections(
                 "content": r.content,
                 "is_frequent": getattr(r, 'is_frequent', False),
                 "is_common_frequent": getattr(r, 'is_common_frequent', False),
+                "content_align": getattr(r, 'content_align', 'center'),
                 "created_at": r.created_at.isoformat(),
                 "updated_at": r.updated_at.isoformat()
             }
@@ -203,6 +208,7 @@ async def get_reflection(
         "content": db_reflection.content,
         "is_frequent": getattr(db_reflection, 'is_frequent', False),
         "is_common_frequent": getattr(db_reflection, 'is_common_frequent', False),
+        "content_align": getattr(db_reflection, 'content_align', 'center'),
         "created_at": db_reflection.created_at.isoformat(),
         "updated_at": db_reflection.updated_at.isoformat()
     }
@@ -229,6 +235,9 @@ async def update_reflection(
     if reflection.is_common_frequent is not None:
         if hasattr(db_reflection, 'is_common_frequent'):
             db_reflection.is_common_frequent = reflection.is_common_frequent
+    if reflection.content_align is not None:
+        if hasattr(db_reflection, 'content_align'):
+            db_reflection.content_align = reflection.content_align
 
     db_reflection.updated_at = datetime.now(LOCAL_TZ)
     db.commit()
@@ -238,6 +247,7 @@ async def update_reflection(
         "content": db_reflection.content,
         "is_frequent": getattr(db_reflection, 'is_frequent', False),
         "is_common_frequent": getattr(db_reflection, 'is_common_frequent', False),
+        "content_align": getattr(db_reflection, 'content_align', 'center'),
         "created_at": db_reflection.created_at.isoformat(),
         "updated_at": db_reflection.updated_at.isoformat()
     }

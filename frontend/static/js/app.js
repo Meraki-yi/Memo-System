@@ -3,6 +3,7 @@ let currentTab = 'accounting';  // 默认显示记账标签
 let currentEditItem = null;
 let deleteItemId = null;
 let deleteItemType = null;
+let currentAlignment = 'center';  // 当前选择的对齐方式
 
 // 分页状态管理 - 每个标签页独立的分页状态
 const paginationState = {
@@ -1078,7 +1079,7 @@ function renderItems(items) {
             }
 
             return `
-                <div class="item-card reflection-card ${item.is_frequent || item.is_common_frequent ? 'frequent' : ''}" data-id="${item.id}">
+                <div class="item-card reflection-card ${item.is_frequent || item.is_common_frequent ? 'frequent' : ''}" data-id="${item.id}" data-align="${item.content_align || 'center'}">
                     <div class="item-content">
                         <h3 class="item-title">${title || '无标题'}</h3>
                         <p class="item-text">${content || '无内容'}</p>
@@ -1112,9 +1113,23 @@ function renderItems(items) {
     }).join('');
 }
 
+// 设置内容对齐方式
+function setContentAlignment(align) {
+    currentAlignment = align;
+
+    // 更新按钮状态
+    document.querySelectorAll('.alignment-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.align === align) {
+            btn.classList.add('active');
+        }
+    });
+}
+
 // 显示添加模态框
 function showAddModal(type) {
     currentEditItem = null;
+    currentAlignment = 'center';  // 重置为居中对齐
     document.getElementById('modalTitle').textContent =
         type === 'reflection' ? '添加记事' : '添加待完成';
 
@@ -1122,17 +1137,24 @@ function showAddModal(type) {
     const isFrequent = document.getElementById('isFrequent');
     const reflectionEditFields = document.getElementById('reflectionEditFields');
     const memoEditFields = document.getElementById('memoEditFields');
+    const alignmentButtons = document.getElementById('alignmentButtons');
 
     if (type === 'memo') {
-        isCompleted.checked = false;
+        if (isCompleted) isCompleted.checked = false;
         reflectionEditFields.style.display = 'none';
         memoEditFields.style.display = 'block';
         document.getElementById('itemMemoContent').value = '';
+        // 待完成不显示对齐按钮
+        if (alignmentButtons) alignmentButtons.style.display = 'none';
     } else {
         reflectionEditFields.style.display = 'block';
         memoEditFields.style.display = 'none';
         document.getElementById('itemTitle').value = '';
         document.getElementById('itemContent').value = '';
+        // 记事显示对齐按钮
+        if (alignmentButtons) alignmentButtons.style.display = 'flex';
+        // 重置对齐按钮状态
+        setContentAlignment('center');
     }
 
     // 保存当前操作类型，用于saveItem判断
@@ -1165,11 +1187,16 @@ async function editItem(id) {
         const isFrequent = document.getElementById('isFrequent');
         const reflectionEditFields = document.getElementById('reflectionEditFields');
         const memoEditFields = document.getElementById('memoEditFields');
+        const alignmentButtons = document.getElementById('alignmentButtons');
 
         if (currentTab === 'memos') {
-            isCompleted.checked = item.is_completed;
+            if (isCompleted) {
+                isCompleted.checked = item.is_completed;
+            }
             reflectionEditFields.style.display = 'none';
             memoEditFields.style.display = 'block';
+            // 待完成不显示对齐按钮
+            if (alignmentButtons) alignmentButtons.style.display = 'none';
             // 使用 requestAnimationFrame 确保字段已经显示后再设置值
             requestAnimationFrame(() => {
                 const textarea = document.getElementById('itemMemoContent');
@@ -1181,9 +1208,17 @@ async function editItem(id) {
             });
         } else {
             // 记事模式
-            isFrequent.checked = item.is_frequent || false;
+            if (isFrequent) {
+                isFrequent.checked = item.is_frequent || false;
+            }
             reflectionEditFields.style.display = 'block';
             memoEditFields.style.display = 'none';
+            // 记事显示对齐按钮
+            if (alignmentButtons) alignmentButtons.style.display = 'flex';
+            // 设置对齐方式（从数据库读取，默认居中）
+            const itemAlignment = item.content_align || 'center';
+            currentAlignment = itemAlignment;
+            setContentAlignment(itemAlignment);
             // 将内容按第一个换行符分割为标题和内容
             const firstNewlineIndex = item.content.indexOf('\n');
             if (firstNewlineIndex === -1) {
@@ -1251,6 +1286,8 @@ async function saveItem() {
                 // 保持原有的收藏状态不变
                 updateData.is_frequent = currentEditItem.is_frequent || false;
                 updateData.is_common_frequent = currentEditItem.is_common_frequent || false;
+                // 添加内容对齐方式
+                updateData.content_align = currentAlignment;
             }
 
             response = await fetch(`${API_BASE}${endpoint}/${currentEditItem.id}`, getAuthOptions({
@@ -1270,6 +1307,8 @@ async function saveItem() {
                 // 记事默认不收藏，用户可以通过收藏按钮添加
                 createData.is_frequent = false;
                 createData.is_common_frequent = false;
+                // 添加内容对齐方式
+                createData.content_align = currentAlignment;
             }
 
             response = await fetch(`${API_BASE}${endpoint}`, getAuthOptions({

@@ -2122,6 +2122,7 @@ body {
     margin: 0 0 12px 0;
     line-height: 1.4;
     padding-bottom: 12px;
+    text-align: center;
     border-bottom: 1px solid #EEEEEE;
 }
 
@@ -2131,6 +2132,7 @@ body {
     flex-direction: column;
     gap: 0;
     padding-bottom: 12px;
+    align-items: center;
     border-bottom: 1px solid #EEEEEE;
 }
 
@@ -2142,6 +2144,7 @@ body {
     margin: 0;
     white-space: pre-wrap;
     word-wrap: break-word;
+    text-align: center;
 }
 
 /* 记事卡片底部区域 */
@@ -2210,13 +2213,25 @@ body {
     padding: 0;
     border-radius: 0;
     font-size: 18px;
-    transition: all 0.2s ease;
+    /* 完全禁用transition，防止悬停时的任何动画效果 */
+    transition: none !important;
 }
 
+/* 记事页面桃心图标保持固定，完全禁用悬停动画 */
 .item-card.reflection-card .btn-frequent:hover {
-    background: transparent;
-    transform: scale(1.1);
-    box-shadow: none;
+    background: transparent !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* 桃心图标本身也完全禁用动画 */
+.item-card.reflection-card .btn-frequent .icon-heart {
+    transition: none !important;
+}
+
+.item-card.reflection-card .btn-frequent:hover .icon-heart {
+    transform: none !important;
+    transition: none !important;
 }
 
 .item-card.reflection-card .btn-frequent.active {
@@ -2463,7 +2478,8 @@ body {
     background: rgba(255, 215, 0, 0.1);
 }
 
-.btn-frequent:hover {
+/* 通用的收藏按钮悬停效果 - 排除记事卡片 */
+.btn-frequent:not(.item-card.reflection-card .btn-frequent):hover {
     background: rgba(255, 215, 0, 0.2);
 }
 
@@ -2570,6 +2586,60 @@ body {
 .close-btn:hover {
     background: var(--bg-light);
     color: var(--text-dark);
+}
+
+/* 内容对齐按钮样式 */
+.alignment-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.alignment-btn {
+    background: #F5F5F5;
+    border: 1px solid #DDDDDD;
+    border-radius: 6px;
+    padding: 6px 10px;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.alignment-btn:hover {
+    background: #E8E8E8;
+    border-color: #CCCCCC;
+}
+
+.alignment-btn.active {
+    background: #87CEEB;
+    border-color: #7EC8E3;
+    color: white;
+}
+
+/* 记事卡片左对齐样式 - 标题保持居中 */
+.item-card.reflection-card[data-align="left"] .item-title {
+    text-align: center !important;
+    align-self: center !important;
+}
+
+/* 只有内容文本左对齐 */
+.item-card.reflection-card[data-align="left"] .item-text {
+    text-align: left !important;
+    align-self: flex-start !important;
+    width: 100%;
+}
+
+.item-card.reflection-card[data-align="center"] .item-text {
+    text-align: center !important;
+    align-self: center !important;
+    width: 100%;
+}
+
+/* 居中对齐时内容区域也居中 */
+.item-card.reflection-card[data-align="center"] .item-content {
+    align-items: center !important;
 }
 
 .modal-body {

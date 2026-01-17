@@ -4,6 +4,7 @@ let currentPage = 1;
 let pageSize = 5;
 let totalPages = 1;
 let totalItems = 0;
+let currentAlignment = 'center';  // 当前选择的对齐方式
 
 // ==================== 页面加载 ====================
 document.addEventListener('DOMContentLoaded', function() {
@@ -116,7 +117,7 @@ function renderReflectionCard(item) {
     }
 
     return `
-        <div class="item-card reflection-card frequent" data-id="${item.id}">
+        <div class="item-card reflection-card frequent" data-id="${item.id}" data-align="${item.content_align || 'center'}">
             <div class="item-content">
                 <h3 class="item-title">${escapeHtml(title) || '无标题'}</h3>
                 <p class="item-text">${escapeHtml(content) || '无内容'}</p>
@@ -140,6 +141,19 @@ function renderReflectionCard(item) {
             </div>
         </div>
     `;
+}
+
+// ==================== 设置内容对齐方式 ====================
+function setContentAlignment(align) {
+    currentAlignment = align;
+
+    // 更新按钮状态
+    document.querySelectorAll('.alignment-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.align === align) {
+            btn.classList.add('active');
+        }
+    });
 }
 
 // ==================== 格式化日期时间 ====================
@@ -192,12 +206,19 @@ function updatePagination() {
 // ==================== 模态框操作 ====================
 function showAddModal(type) {
     currentEditId = null;
+    currentAlignment = 'center';  // 重置为居中对齐
 
     document.getElementById('modalTitle').textContent = '添加复盘记事';
     document.getElementById('reflectionEditFields').style.display = 'block';
     document.getElementById('itemTitle').value = '';
     document.getElementById('itemContent').value = '';
     document.getElementById('isCommonFrequent').checked = true; // 默认标记为常用收藏
+
+    // 显示对齐按钮
+    const alignmentButtons = document.getElementById('alignmentButtons');
+    if (alignmentButtons) alignmentButtons.style.display = 'flex';
+    // 重置对齐按钮状态
+    setContentAlignment('center');
 
     document.getElementById('itemModal').classList.add('show');
 }
@@ -225,6 +246,14 @@ async function editItem(id) {
             document.getElementById('itemContent').value = data.content.substring(firstNewlineIndex + 1);
         }
         document.getElementById('isCommonFrequent').checked = data.is_common_frequent || false;
+
+        // 显示对齐按钮
+        const alignmentButtons = document.getElementById('alignmentButtons');
+        if (alignmentButtons) alignmentButtons.style.display = 'flex';
+        // 设置对齐方式（从数据库读取，默认居中）
+        const itemAlignment = data.content_align || 'center';
+        currentAlignment = itemAlignment;
+        setContentAlignment(itemAlignment);
 
         document.getElementById('itemModal').classList.add('show');
     } catch (error) {
@@ -255,7 +284,8 @@ async function saveItem() {
 
     const data = {
         content: content,
-        is_common_frequent: isCommonFrequent
+        is_common_frequent: isCommonFrequent,
+        content_align: currentAlignment  // 添加对齐方式
     };
 
     try {
