@@ -433,7 +433,7 @@ body {
 
 /* 统计区域 - 渐变黄白背景 */
 #accounting-tab .stats-area {
-    background: linear-gradient(180deg, #FFF9E6 0%, #FFFFFF 100%);
+    background: linear-gradient(180deg, #FFFCF0 0%, #FFFFFF 100%);
     margin: 0 0 0 0;
     border-radius: 0;
     box-shadow: none;
@@ -805,16 +805,16 @@ body {
 
 /* 日期提示在上 - 往上移动，减小字体和间距 */
 .memos-nav-center .date-hint {
-    font-size: 10px;
-    color: #AAAAAA;
+    font-size: 18px;
+    color: #333333;
     text-align: center;
     opacity: 1 !important;
     visibility: visible !important;
-    font-weight: 400;
+    font-weight: 700;
     margin-bottom: -6px;
     line-height: 1;
     position: absolute;
-    top: -10px;
+    top: -16px;
 }
 
 /* 更多按钮在右侧 */
@@ -1301,7 +1301,7 @@ body {
     display: flex;
     align-items: center;
     /* 渐变淡黄色背景 */
-    background: linear-gradient(180deg, #FFFEF5 0%, #FFFAF0 50%, #FFFFFF 100%) !important;
+    background: linear-gradient(180deg, #FFFEFA 0%, #FFFCF8 50%, #FFFFFF 100%) !important;
     /* 移除金丝边框 */
     border: none;
     border-radius: 12px !important;
@@ -1593,12 +1593,16 @@ body {
 
 /* 中间区域的日期提示样式 - 水平布局时与进度信息同行 */
 .memos-nav-center .date-hint {
-    font-size: 14px;
-    color: #666666;
+    font-size: 10px;
+    color: #AAAAAA;
     text-align: center;
     opacity: 1 !important;
     visibility: visible !important;
-    font-weight: 500;
+    font-weight: 400;
+    margin-bottom: -6px;
+    line-height: 1;
+    position: absolute;
+    top: -16px;
 }
 
 .date-picker-btn {
@@ -1763,7 +1767,7 @@ body {
 .item-card.memo-card .memo-card-footer {
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items: flex-start;
     margin-top: 6px;
     padding-top: 0;
     border-top: none;
@@ -1806,7 +1810,7 @@ body {
     display: flex;
     gap: 4px;
     justify-content: flex-end;
-    align-items: center;
+    align-items: flex-start;
 }
 
 /* 待完成卡片收藏按钮 - 金黄色 */
@@ -2916,7 +2920,7 @@ body {
         border-radius: 10px !important;
         min-height: 65px;
         /* 渐变淡黄色背景 */
-        background: linear-gradient(180deg, #FFFEF5 0%, #FFFAF0 50%, #FFFFFF 100%) !important;
+        background: linear-gradient(180deg, #FFFEFA 0%, #FFFCF8 50%, #FFFFFF 100%) !important;
         /* 凸出立体阴影效果 */
         box-shadow:
             0 1px 2px rgba(0, 0, 0, 0.05),
@@ -3218,7 +3222,7 @@ body {
         border-radius: 10px !important;
         min-height: 62px;
         /* 渐变淡黄色背景 */
-        background: linear-gradient(180deg, #FFFEF5 0%, #FFFAF0 50%, #FFFFFF 100%) !important;
+        background: linear-gradient(180deg, #FFFEFA 0%, #FFFCF8 50%, #FFFFFF 100%) !important;
         /* 凸出立体阴影效果 */
         box-shadow:
             0 1px 2px rgba(0, 0, 0, 0.05),
@@ -3702,5 +3706,18 @@ body {
 
 .html-content u {
     text-decoration: underline;
+}
+
+/* ==================== 待完成页面（frequents）专用样式 ==================== */
+/* 创建时间与内容文字对齐 - 必须放在所有其他memo-times规则之后才能生效 */
+#frequents-list .item-card.memo-card .memo-times,
+#frequents-list .item-card.memo-card .memo-card-footer .memo-times {
+    margin-left: 28px !important; /* 复选框宽度20px + 间距8px，使创建时间与内容文字对齐 */
+}
+
+/* 待完成主列表创建时间与内容文字对齐 */
+#memos-list .item-card.memo-card .memo-times,
+#memos-list .item-card.memo-card .memo-card-footer .memo-times {
+    margin-left: 28px !important; /* 复选框宽度20px + 间距8px，使创建时间与内容文字对齐 */
 }
 
