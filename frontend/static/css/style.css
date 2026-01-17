@@ -680,6 +680,20 @@ body {
     position: relative;
     display: flex;
     align-items: center;
+    gap: 12px;
+    width: 100%;
+}
+
+.reflections-header-left .frequent-btn:first-child {
+    /* 反思收藏按钮 - 左对齐 */
+    margin-right: auto;
+}
+
+.reflections-header-left .frequent-btn:last-child {
+    /* 常用收藏按钮 - 居中稍偏右 */
+    position: absolute;
+    left: 54%;
+    transform: translateX(-50%);
 }
 
 .reflections-header-right {
