@@ -657,11 +657,12 @@ body {
     display: block;
 }
 
-/* 记事页面顶部header - 去掉白色背景框，让按钮悬浮 */
+/* 记事页面顶部header - 透明背景，与页面统一渐变 */
 .reflections-page-header {
     position: relative;
     height: auto;
     min-height: 40px;
+    /* 透明背景，让下方的渐变背景透过来 */
     background: transparent;
     border-radius: 0;
     box-shadow: none;
@@ -669,7 +670,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 15px;
+    padding: 15px 15px 5px 15px;
     /* 确保与下方卡片宽度对齐 */
     max-width: 600px;
     margin-left: auto;
@@ -1451,11 +1452,25 @@ body {
 
 /* ==================== 复盘记事页面样式 ==================== */
 
-/* 记事标签页特殊布局 - 白色背景 */
+/* 记事标签页特殊布局 - 从上往下的渐变橙色背景（包括数据区域） */
 #reflections-tab .tab-content-scrollable {
-    background: linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 100%);
+    background: linear-gradient(180deg, #FFF0E0 0%, #FFFAF5 100%);
     /* 确保顶部有固定空间，避免被导航栏覆盖 */
-    padding-top: 20px;
+    padding-top: 0;
+}
+
+/* 反思收藏页面 - 从上往下的渐变橙色背景（包括数据区域） */
+#reflection-frequents-tab .tab-content-scrollable {
+    background: linear-gradient(180deg, #FFF0E0 0%, #FFFAF5 100%);
+    /* 确保顶部有固定空间，避免被导航栏覆盖 */
+    padding-top: 0;
+}
+
+/* 常用收藏页面 - 从上往下的渐变橙色背景（包括数据区域） */
+#common-frequents-tab .tab-content-scrollable {
+    background: linear-gradient(180deg, #FFF0E0 0%, #FFFAF5 100%);
+    /* 确保顶部有固定空间，避免被导航栏覆盖 */
+    padding-top: 0;
 }
 
 /* ==================== 待完成页面样式 v6.3 ==================== */
@@ -1972,21 +1987,23 @@ body {
     padding: 0 15px;
 }
 
-/* 记事卡片样式 */
+/* 记事卡片样式 - 金丝细边框 */
 .item-card.reflection-card {
     background: #FFFFFF;
     border-radius: 8px;
     padding: 16px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
     cursor: default;
     display: flex;
     flex-direction: column;
+    /* 金丝细边框 */
+    border: 1.5px solid #FFD700;
 }
 
 /* 相邻记事卡片之间的分隔线 - 已移除 */
 #reflections-list .item-card.reflection-card:not(:first-child) {
-    margin-top: 20px;
+    margin-top: 10px;
     position: relative;
 }
 
