@@ -475,10 +475,16 @@ function updateMemosDateNav() {
 
     if (dateHint) {
         if (isToday) {
-            dateHint.textContent = `${new Date().getFullYear()}年${new Date().getMonth() + 1}月${new Date().getDate()}日`;
+            const year = new Date().getFullYear();
+            const month = new Date().getMonth() + 1;
+            const day = new Date().getDate();
+            dateHint.textContent = `${year}年${month}月${day}日`;
         } else {
             const date = new Date(state.createdDate + 'T00:00:00');
-            dateHint.textContent = `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            dateHint.textContent = `${year}年${month}月${day}日`;
         }
     }
 

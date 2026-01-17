@@ -665,15 +665,14 @@ body {
     background: transparent;
     border-radius: 0;
     box-shadow: none;
-    margin: 0 0 15px 0;
+    margin: 0 auto 15px auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 5px 15px;
+    padding: 5px 20px;
     /* 确保与下方卡片宽度对齐 */
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
+    max-width: 580px;
+    width: 100%;
 }
 
 .reflections-header-left {
@@ -799,14 +798,18 @@ body {
     justify-content: center;
     gap: -4px;
     min-width: 0;
-    height: 36px;
+    height: 50px;
     position: relative;
 }
 
-/* 日期提示在上 - 往上移动，减小字体和间距 */
+/* 日期提示在上 - 艺术字体整体样式 */
 .memos-nav-center .date-hint {
-    font-size: 18px;
-    color: #333333;
+    font-size: 26px;
+    /* 使用深色渐变，更清晰 */
+    background: linear-gradient(135deg, #D32F2F, #F57C00, #F9A825);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     text-align: center;
     opacity: 1 !important;
     visibility: visible !important;
@@ -814,7 +817,12 @@ body {
     margin-bottom: -6px;
     line-height: 1;
     position: absolute;
-    top: -16px;
+    top: -26px;
+    /* 艺术字体 */
+    font-family: 'Brush Script MT', 'Comic Sans MS', 'YouYuan', '幼圆', 'Segoe UI', 'Roboto', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', cursive, sans-serif;
+    letter-spacing: 1px;
+    /* 增强阴影效果，使文字更突出 */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15);
 }
 
 /* 更多按钮在右侧 */
@@ -1518,6 +1526,16 @@ body {
     background: linear-gradient(180deg, #FFF0E0 0%, #FFFAF5 100%);
     /* 确保顶部有固定空间，避免被导航栏覆盖 */
     padding-top: 0;
+    /* 添加居中对齐 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 记事页面的内容容器 - 居中并限制最大宽度 */
+#reflections-tab .tab-content-scrollable > * {
+    width: 100%;
+    max-width: 580px;
 }
 
 /* 反思收藏页面 - 从上往下的渐变橙色背景（包括数据区域） */
@@ -1538,9 +1556,9 @@ body {
 
 /* 待完成标签页特殊布局 - 顶部渐变淡绿色背景 */
 #memos-tab .tab-content-scrollable {
-    background: linear-gradient(180deg, #F0FFF4 0%, #F0FFF4 55px, #FFFFFF 55px, #FFFFFF 100%);
+    background: linear-gradient(180deg, #F0FFF4 0%, #F0FFF4 85px, #FFFFFF 85px, #FFFFFF 100%);
     /* 确保顶部有固定空间，避免被导航栏覆盖 */
-    padding-top: 15px;
+    padding-top: 20px;
 }
 
 /* 待完成操作栏样式（日期选择 + 导出） - 已移除，合并到导航栏 */
@@ -1596,7 +1614,7 @@ body {
 /* 中间区域的日期提示样式 - 水平布局时与进度信息同行 */
 .memos-nav-center .date-hint {
     font-size: 10px;
-    color: #AAAAAA;
+    color: #1a1a1a;
     text-align: center;
     opacity: 1 !important;
     visibility: visible !important;
@@ -2065,7 +2083,7 @@ body {
 
 /* 记事标签页的列表容器 */
 #reflections-tab .items-list {
-    padding: 0 15px;
+    padding: 0 20px;
 }
 
 /* 记事卡片样式 - 金丝细边框 */
@@ -2269,12 +2287,14 @@ body {
 #reflections-pagination {
     background: #FFFFFF;
     border-radius: 8px;
-    padding: 16px;
-    margin-bottom: 0;
+    padding: 16px 20px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 12px;
+    max-width: 580px;
+    width: 100%;
 }
 
 #reflections-pagination .pagination {
