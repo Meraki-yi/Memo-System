@@ -660,8 +660,7 @@ body {
 /* 记事页面顶部header - 透明背景，与页面统一渐变 */
 .reflections-page-header {
     position: relative;
-    height: auto;
-    min-height: 40px;
+    height: 50px;
     /* 透明背景，让下方的渐变背景透过来 */
     background: transparent;
     border-radius: 0;
@@ -670,7 +669,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 15px 5px 15px;
+    padding: 5px 15px;
     /* 确保与下方卡片宽度对齐 */
     max-width: 600px;
     margin-left: auto;
@@ -681,26 +680,37 @@ body {
     position: relative;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 12px;
     width: 100%;
 }
 
+/* 反思收藏按钮 - 左对齐，与三个点按钮对称 */
 .reflections-header-left .frequent-btn:first-child {
-    /* 反思收藏按钮 - 左对齐 */
-    margin-right: auto;
-}
-
-.reflections-header-left .frequent-btn:last-child {
-    /* 常用收藏按钮 - 居中稍偏右 */
     position: absolute;
-    left: 54%;
-    transform: translateX(-50%);
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
-.reflections-header-right {
-    position: relative;
-    display: flex;
-    align-items: center;
+/* 反思收藏按钮hover效果 */
+.reflections-header-left .frequent-btn:first-child:hover {
+    background: #E8E8E8 !important;
+    transform: translateY(-50%) scale(1.05);
+}
+
+/* 常用收藏按钮 - 居中显示，略微向右调整视觉居中 */
+.reflections-header-left .frequent-btn:last-child {
+    position: absolute;
+    left: calc(50% + 3px);
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* 常用收藏按钮hover时保持居中定位 */
+.reflections-header-left .frequent-btn:last-child:hover {
+    background: #E8E8E8 !important;
+    transform: translate(calc(-50% - 3px), -50%) scale(1.05);
 }
 
 /* 待完成页面顶部header - 与记事页面保持一致的布局 */
@@ -764,24 +774,34 @@ body {
 /* 导航栏中的操作区域 - 上方 */
 .memos-nav-actions {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     width: 100%;
     padding-bottom: 12px;
     border-bottom: 1px solid #E0E0E0;
     position: relative;
+    gap: 12px;
 }
 
-/* 日期按钮绝对定位在左侧 */
+/* 日期按钮在左侧 */
 .memos-nav-actions > .date-picker-btn {
-    position: absolute;
-    left: 0;
+    flex-shrink: 0;
 }
 
-/* 更多按钮绝对定位在右侧 */
+/* 中间区域：日期提示 + 完成进度 */
+.memos-nav-center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-width: 0;
+}
+
+/* 更多按钮在右侧 */
 .memos-nav-actions .header-more-wrapper {
-    position: absolute;
-    right: 0;
+    flex-shrink: 0;
 }
 
 /* 已完成数量 - 红色高亮 */
@@ -801,10 +821,10 @@ body {
     letter-spacing: 2px;
 }
 
-/* 已完成数量 - 艺术高亮 */
+/* 已完成数量 - 与整体大小一致 */
 .memos-completion-info .completed-count {
-    font-size: 32px !important;
-    font-weight: 800 !important;
+    font-size: 28px !important;
+    font-weight: 700 !important;
     color: #FF5252 !important;
 }
 
@@ -840,6 +860,13 @@ body {
 .memos-nav-bar .date-picker-btn.compact {
     flex: 0 0 auto;
     padding: 6px 12px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* 浅粉色线框 */
+    border: 1.5px solid #FFB6C1;
+    border-radius: 8px;
 }
 
 .memos-nav-bar .date-picker-btn.compact .date-nav-center {
@@ -851,6 +878,8 @@ body {
 
 .memos-nav-bar .date-picker-btn.compact .current-date-display {
     font-size: 15px;
+    font-weight: 600;
+    color: #2E7D32;
 }
 
 .memos-nav-bar .date-picker-btn.compact .date-hint {
@@ -1213,12 +1242,16 @@ body {
     transform: rotate(-90deg);
 }
 
-/* 日期分组明细区域 */
+/* 日期分组明细区域 - 白色背景 */
 .day-details {
     overflow: hidden;
     transition: max-height 0.3s ease, opacity 0.3s ease;
     max-height: 2000px;
     opacity: 1;
+    background: #FFFFFF;
+    padding: 4px 0;
+    margin: 0 -4px;
+    border-radius: 0 0 8px 8px;
 }
 
 .day-details.collapsed {
@@ -1237,19 +1270,24 @@ body {
     font-size: 0.9rem;
 }
 
-/* 记账记录卡片 - 金丝细边框设计 */
-.accounting-record-card {
-    padding: 14px 16px;
-    margin-bottom: 12px;
-    min-height: 72px;
+/* 记账记录卡片 - 凸出立体设计 */
+.item-card.accounting-record-card {
+    padding: 16px;
+    margin-bottom: 2px;
+    min-height: 70px;
     display: flex;
     align-items: center;
-    /* 非常淡的粉色渐变背景（从上到下） */
-    background: linear-gradient(180deg, #FFFAFB 0%, #FFF8F9 100%);
-    /* 金丝细边框 */
-    border: 1.5px solid #FFD700;
-    border-radius: 16px !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+    /* 渐变淡黄色背景 */
+    background: linear-gradient(180deg, #FFFEF5 0%, #FFFAF0 50%, #FFFFFF 100%) !important;
+    /* 移除金丝边框 */
+    border: none;
+    border-radius: 12px !important;
+    /* 凸出立体阴影效果 */
+    box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.05),
+        0 2px 4px rgba(0, 0, 0, 0.08),
+        0 4px 8px rgba(0, 0, 0, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
     cursor: pointer;
     position: relative;
 }
@@ -1262,7 +1300,7 @@ body {
 .accounting-record-main {
     display: flex;
     align-items: flex-start;
-    gap: 12px;
+    gap: 8px;
     width: 100%;
 }
 
@@ -1276,7 +1314,7 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 4px;
     min-width: 0;
 }
 
@@ -1375,27 +1413,25 @@ body {
     box-shadow: var(--shadow-md);
 }
 
-/* 记事标签页的常用按钮 - 与待完成常用按钮保持一致的绿白渐变设计 */
+/* 记事标签页的常用按钮 - 图标按钮样式，与三个点按钮对称 */
 #reflections-tab .frequent-btn.add-btn {
-    width: auto;
-    min-width: 100px;
+    width: 36px;
     height: 36px;
-    background: linear-gradient(135deg, #90EE90, #F0FFF0) !important;
-    color: #2E7D32;
+    background: #F5F5F5 !important;
     border: none;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    padding: 0 16px;
-    gap: 4px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    padding: 0;
+    gap: 0;
     justify-content: center;
 }
 
-#reflections-tab .frequent-btn.add-btn:hover {
-    filter: brightness(1.05);
-    box-shadow: 0 2px 8px rgba(144, 238, 144, 0.5) !important;
-    background: linear-gradient(135deg, #7FE87F, #E8FFF0) !important;
+/* 隐藏收藏按钮的文字 */
+#reflections-tab .frequent-btn.add-btn .icon {
+    color: #666666;
 }
+
+/* 收藏按钮hover效果 - 已在reflections-header-left中定义 */
 
 .export-btn {
     background: var(--secondary-color);
@@ -1436,8 +1472,8 @@ body {
 }
 
 /* 为记账记录卡片添加间距 */
-#accounting-tab .accounting-record-card:not(:first-child) {
-    margin-top: 8px;
+#accounting-tab .item-card.accounting-record-card:not(:first-child) {
+    margin-top: 2px;
 }
 
 .item-card {
@@ -1532,12 +1568,14 @@ body {
     color: #333333;
 }
 
-.date-hint {
+/* 中间区域的日期提示样式 */
+.memos-nav-center .date-hint {
     font-size: 12px;
     color: #666666;
-    display: block;
+    text-align: center;
     opacity: 1 !important;
     visibility: visible !important;
+    font-weight: 500;
 }
 
 .date-picker-btn {
@@ -1611,21 +1649,26 @@ body {
     padding: 0 15px;
 }
 
-/* 待完成卡片样式 - 金丝细边框设计 */
+/* 待完成卡片样式 - 凸出立体设计 */
 .item-card.memo-card {
-    /* 非常淡的粉色渐变背景（从上到下） */
-    background: linear-gradient(180deg, #FFFAFB 0%, #FFF8F9 100%);
-    border-radius: 16px !important;
-    padding: 16px;
-    margin-bottom: 12px;
-    min-height: 72px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+    /* 更浅的渐变粉色背景 */
+    background: linear-gradient(180deg, #FFF5F7 0%, #FFFAFC 50%, #FFFFFF 100%);
+    border-radius: 12px !important;
+    padding: 10px;
+    margin-bottom: 2px;
+    min-height: 60px;
+    /* 凸出立体阴影效果 */
+    box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.05),
+        0 2px 4px rgba(0, 0, 0, 0.08),
+        0 4px 8px rgba(0, 0, 0, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
     cursor: default;
     display: flex;
     flex-direction: column;
     position: relative;
-    /* 金丝细边框 */
-    border: 1.5px solid #FFD700;
+    /* 移除金丝边框 */
+    border: none;
 }
 
 /* 移除卡片分隔线 - 改为独立的圆角卡片 */
@@ -1651,20 +1694,20 @@ body {
 
 /* 相邻待完成卡片之间的间距 */
 #memos-list .item-card.memo-card:not(:first-child) {
-    margin-top: 8px;
+    margin-top: 2px;
     position: relative;
 }
 
 #memos-list .item-card.memo-card:not(:last-child) {
-    margin-bottom: 8px;
+    margin-bottom: 2px;
 }
 
 /* 待完成卡片内容区域 - 保持简洁设计，与记一笔页面一致 */
 .item-card.memo-card .item-content {
     display: flex;
     align-items: flex-start;
-    gap: 12px;
-    padding-bottom: 12px;
+    gap: 8px;
+    padding-bottom: 6px;
     border-bottom: none;
     margin-bottom: 0;
 }
@@ -1689,8 +1732,8 @@ body {
 
 .item-card.memo-card.completed {
     opacity: 0.7;
-    /* 完成后移除金丝边框 */
-    border: 1.5px solid #E0E0E0;
+    /* 完成后改为浅灰色背景，保持凸出效果 */
+    background: #F5F5F5;
 }
 
 /* 待完成卡片底部区域 - 保持简洁设计，与记一笔页面一致 */
@@ -1698,7 +1741,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    margin-top: 12px;
+    margin-top: 6px;
     padding-top: 0;
     border-top: none;
 }
@@ -1707,7 +1750,7 @@ body {
 .item-card.memo-card .memo-times {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
 }
 
 .item-card.memo-card .memo-times .time {
@@ -1738,7 +1781,7 @@ body {
 /* 待完成卡片操作按钮 */
 .item-card.memo-card .item-actions {
     display: flex;
-    gap: 8px;
+    gap: 4px;
     justify-content: flex-end;
     align-items: center;
 }
@@ -1922,10 +1965,19 @@ body {
 
 /* 响应式优化 - 移动端 */
 @media (max-width: 768px) {
-    /* 待完成卡片在移动端的优化 */
+    /* 待完成卡片在移动端的优化 - 紧凑样式 */
     .item-card.memo-card {
-        padding: 14px;
-        margin-bottom: 16px;
+        padding: 8px;
+        margin-bottom: 4px;
+    }
+
+    .item-card.memo-card .item-content {
+        gap: 6px;
+        padding-bottom: 4px;
+    }
+
+    .item-card.memo-card .memo-card-footer {
+        margin-top: 4px;
     }
 
     .item-card.memo-card .item-text {
@@ -1938,14 +1990,14 @@ body {
     }
 
     .item-card.memo-card .item-actions {
-        gap: 6px;
+        gap: 3px;
     }
 
     .item-card.memo-card .btn-frequent,
     .item-card.memo-card .btn-edit,
     .item-card.memo-card .btn-delete {
         font-size: 16px;
-        padding: 3px;
+        padding: 2px;
     }
 
     #memos-tab .add-btn,
@@ -2832,18 +2884,28 @@ body {
         padding: 0 12px;
     }
 
-    /* 记账记录卡片 - 贴边显示，适配安全区 */
-    .accounting-record-card {
-        padding: 14px 12px;
-        padding-left: calc(12px + env(safe-area-inset-left, 0));
-        padding-right: calc(12px + env(safe-area-inset-right, 0));
-        margin-bottom: 10px;
-        border-radius: 14px !important;
+    /* 记账记录卡片 - 凸出立体设计，适配安全区 */
+    .item-card.accounting-record-card {
+        padding: 14px;
+        padding-left: calc(14px + env(safe-area-inset-left, 0));
+        padding-right: calc(14px + env(safe-area-inset-right, 0));
+        margin-bottom: 2px;
+        border-radius: 10px !important;
+        min-height: 65px;
+        /* 渐变淡黄色背景 */
+        background: linear-gradient(180deg, #FFFEF5 0%, #FFFAF0 50%, #FFFFFF 100%) !important;
+        /* 凸出立体阴影效果 */
+        box-shadow:
+            0 1px 2px rgba(0, 0, 0, 0.05),
+            0 2px 4px rgba(0, 0, 0, 0.08),
+            0 3px 6px rgba(0, 0, 0, 0.10),
+            inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+        border: none;
     }
 
     /* 移动端记账记录卡片间距 */
-    #accounting-tab .accounting-record-card:not(:first-child) {
-        margin-top: 6px;
+    #accounting-tab .item-card.accounting-record-card:not(:first-child) {
+        margin-top: 2px;
     }
 
     /* 记账记录卡片分隔线 - 已移除 */
@@ -2910,14 +2972,24 @@ body {
         font-size: 11px;
     }
 
-    /* 移动端记事页面header优化 - 贴边显示，适配安全区 */
+    /* 移动端记事页面header优化 - 保持与桌面端相同的布局，适配安全区 */
     .reflections-page-header {
         margin: 0 0 12px 0;
-        padding: 0 12px;
+        padding: 5px 12px;
         padding-left: calc(12px + env(safe-area-inset-left, 0));
         padding-right: calc(12px + env(safe-area-inset-right, 0));
-        min-height: 36px;
+        height: 50px;
         max-width: 100%;
+    }
+
+    /* 移动端反思收藏按钮 - 左对齐，适配安全区 */
+    .reflections-header-left .frequent-btn:first-child {
+        left: calc(12px + env(safe-area-inset-left, 0));
+    }
+
+    /* 移动端三个点按钮 - 右对齐，适配安全区 */
+    .reflections-header-right {
+        right: calc(12px + env(safe-area-inset-right, 0));
     }
 
     /* 移动端记事列表 - 贴边显示 */
@@ -2961,6 +3033,16 @@ body {
 
     .memos-nav-actions {
         padding-top: 10px;
+        gap: 8px;
+    }
+
+    /* 移动端中间区域样式优化 */
+    .memos-nav-center {
+        gap: 2px;
+    }
+
+    .memos-nav-center .date-hint {
+        font-size: 11px;
     }
 
     /* 移动端待完成列表 - 保持内边距 */
@@ -2968,14 +3050,22 @@ body {
         padding: 0 12px;
     }
 
-    /* 移动端待完成卡片 - 可爱圆角设计，适配安全区 */
+    /* 移动端待完成卡片 - 凸出立体设计，适配安全区 */
     .item-card.memo-card {
-        padding: 14px;
-        padding-left: calc(14px + env(safe-area-inset-left, 0) - 12px);
-        padding-right: calc(14px + env(safe-area-inset-right, 0) - 12px);
-        margin-bottom: 10px;
-        border-radius: 14px !important;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06) !important;
+        padding: 8px;
+        padding-left: calc(8px + env(safe-area-inset-left, 0) - 12px);
+        padding-right: calc(8px + env(safe-area-inset-right, 0) - 12px);
+        margin-bottom: 2px;
+        border-radius: 10px !important;
+        /* 更浅的渐变粉色背景 */
+        background: linear-gradient(180deg, #FFF5F7 0%, #FFFAFC 50%, #FFFFFF 100%) !important;
+        /* 凸出立体阴影效果 */
+        box-shadow:
+            0 1px 2px rgba(0, 0, 0, 0.05),
+            0 2px 4px rgba(0, 0, 0, 0.08),
+            0 3px 6px rgba(0, 0, 0, 0.10),
+            inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+        border: none;
     }
 
     /* 移动端待完成卡片分隔线 - 移除 */
@@ -2985,11 +3075,11 @@ body {
 
     /* 移动端卡片间距调整 */
     #memos-list .item-card.memo-card:not(:first-child) {
-        margin-top: 6px;
+        margin-top: 2px;
     }
 
     #memos-list .item-card.memo-card:not(:last-child) {
-        margin-bottom: 6px;
+        margin-bottom: 2px;
     }
 
     /* 移动端分页组件 - 适配安全区 */
@@ -3100,18 +3190,28 @@ body {
         padding: 0 10px;
     }
 
-    /* 小屏幕记账记录卡片 - 贴边显示，适配安全区 */
-    .accounting-record-card {
-        padding: 12px 10px;
-        padding-left: calc(10px + env(safe-area-inset-left, 0));
-        padding-right: calc(10px + env(safe-area-inset-right, 0));
-        margin-bottom: 8px;
-        border-radius: 12px !important;
+    /* 小屏幕记账记录卡片 - 凸出立体设计，适配安全区 */
+    .item-card.accounting-record-card {
+        padding: 12px;
+        padding-left: calc(12px + env(safe-area-inset-left, 0));
+        padding-right: calc(12px + env(safe-area-inset-right, 0));
+        margin-bottom: 2px;
+        border-radius: 10px !important;
+        min-height: 62px;
+        /* 渐变淡黄色背景 */
+        background: linear-gradient(180deg, #FFFEF5 0%, #FFFAF0 50%, #FFFFFF 100%) !important;
+        /* 凸出立体阴影效果 */
+        box-shadow:
+            0 1px 2px rgba(0, 0, 0, 0.05),
+            0 2px 3px rgba(0, 0, 0, 0.08),
+            0 3px 5px rgba(0, 0, 0, 0.10),
+            inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+        border: none;
     }
 
     /* 小屏幕记账记录卡片间距 */
-    #accounting-tab .accounting-record-card:not(:first-child) {
-        margin-top: 5px;
+    #accounting-tab .item-card.accounting-record-card:not(:first-child) {
+        margin-top: 2px;
     }
 
     /* 小屏幕记账记录卡片分隔线 - 已移除 */
@@ -3143,14 +3243,24 @@ body {
         display: none;
     }
 
-    /* 小屏幕记事页面header优化 - 贴边显示，适配安全区 */
+    /* 小屏幕记事页面header优化 - 保持与桌面端相同的布局，适配安全区 */
     .reflections-page-header {
         margin: 0 0 10px 0;
-        padding: 0 10px;
+        padding: 5px 10px;
         padding-left: calc(10px + env(safe-area-inset-left, 0));
         padding-right: calc(10px + env(safe-area-inset-right, 0));
-        min-height: 36px;
+        height: 50px;
         max-width: 100%;
+    }
+
+    /* 小屏幕反思收藏按钮 - 左对齐，适配安全区 */
+    .reflections-header-left .frequent-btn:first-child {
+        left: calc(10px + env(safe-area-inset-left, 0));
+    }
+
+    /* 小屏幕三个点按钮 - 右对齐，适配安全区 */
+    .reflections-header-right {
+        right: calc(10px + env(safe-area-inset-right, 0));
     }
 
     /* 小屏幕记事列表 - 贴边显示 */
@@ -3204,6 +3314,16 @@ body {
 
     .memos-nav-actions {
         padding-top: 8px;
+        gap: 6px;
+    }
+
+    /* 小屏幕中间区域样式优化 */
+    .memos-nav-center {
+        gap: 2px;
+    }
+
+    .memos-nav-center .date-hint {
+        font-size: 10px;
     }
 
     .memos-export-btn {
@@ -3216,14 +3336,22 @@ body {
         padding: 0 10px;
     }
 
-    /* 小屏幕待完成卡片 - 可爱圆角设计，适配安全区 */
+    /* 小屏幕待完成卡片 - 凸出立体设计，适配安全区 */
     .item-card.memo-card {
-        padding: 12px;
-        padding-left: calc(12px + env(safe-area-inset-left, 0) - 10px);
-        padding-right: calc(12px + env(safe-area-inset-right, 0) - 10px);
-        margin-bottom: 8px;
-        border-radius: 12px !important;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.06) !important;
+        padding: 8px;
+        padding-left: calc(8px + env(safe-area-inset-left, 0) - 10px);
+        padding-right: calc(8px + env(safe-area-inset-right, 0) - 10px);
+        margin-bottom: 2px;
+        border-radius: 10px !important;
+        /* 更浅的渐变粉色背景 */
+        background: linear-gradient(180deg, #FFF5F7 0%, #FFFAFC 50%, #FFFFFF 100%) !important;
+        /* 凸出立体阴影效果 */
+        box-shadow:
+            0 1px 2px rgba(0, 0, 0, 0.05),
+            0 2px 3px rgba(0, 0, 0, 0.08),
+            0 3px 5px rgba(0, 0, 0, 0.10),
+            inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+        border: none;
     }
 
     /* 小屏幕待完成卡片分隔线 - 移除 */
@@ -3233,11 +3361,11 @@ body {
 
     /* 小屏幕卡片间距调整 */
     #memos-list .item-card.memo-card:not(:first-child) {
-        margin-top: 5px;
+        margin-top: 2px;
     }
 
     #memos-list .item-card.memo-card:not(:last-child) {
-        margin-bottom: 5px;
+        margin-bottom: 2px;
     }
 
     /* 小屏幕分页组件 - 适配安全区 */

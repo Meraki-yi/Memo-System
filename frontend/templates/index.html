@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>待完成系统</title>
-    <link rel="stylesheet" href="/static/css/style.css?v=10.8">
+    <link rel="stylesheet" href="/static/css/style.css?v=10.15">
 </head>
 <body>
     <div class="app-container">
@@ -127,13 +127,11 @@
                     <div class="tab-content-scrollable">
                         <div class="content-header reflections-page-header">
                             <div class="reflections-header-left">
-                                <button class="add-btn frequent-btn" onclick="goToReflectionFrequents()">
+                                <button class="add-btn frequent-btn" onclick="goToReflectionFrequents()" title="反思收藏">
                                     <span class="icon">⭐</span>
-                                    反思收藏
                                 </button>
-                                <button class="add-btn frequent-btn" onclick="goToCommonFrequents()">
+                                <button class="add-btn frequent-btn" onclick="goToCommonFrequents()" title="常用收藏">
                                     <span class="icon">💝</span>
-                                    常用收藏
                                 </button>
                             </div>
                             <div class="reflections-header-right header-more-wrapper">
@@ -185,14 +183,16 @@
                             <div class="memos-nav-actions">
                                 <!-- 日期选择器 -->
                                 <button class="date-picker-btn compact" onclick="showDatePicker()" title="选择日期">
-                                    <div class="date-nav-center">
-                                        <div class="current-date-display" id="memos-current-date">今天</div>
-                                        <div class="date-hint" id="memos-date-hint">2026年1月16日</div>
-                                    </div>
+                                    <div class="current-date-display" id="memos-current-date">今天</div>
                                 </button>
-                                <div class="memos-completion-info" id="memos-completion-info">
-                                    今天已完成 0/0
+                                <!-- 中间区域：日期提示 + 完成进度 -->
+                                <div class="memos-nav-center">
+                                    <div class="date-hint" id="memos-date-hint">2026年1月16日</div>
+                                    <div class="memos-completion-info" id="memos-completion-info">
+                                        今天已完成 0/0
+                                    </div>
                                 </div>
+                                <!-- 右侧：更多菜单 -->
                                 <div class="header-more-wrapper">
                                     <button class="more-btn memos-more-btn" onclick="toggleMemosMoreMenu()">
                                         <span class="icon">⋯</span>
