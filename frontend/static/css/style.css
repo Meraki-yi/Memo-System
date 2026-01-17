@@ -25,6 +25,7 @@
     --radius-md: 12px;
     --radius-lg: 20px;
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --btn-gradient: linear-gradient(135deg, #FFB6C1, #FFC0CB);
 }
 
 body {
@@ -1577,9 +1578,10 @@ body {
     padding: 0 15px;
 }
 
-/* 待完成卡片样式 - 可爱圆角设计 */
+/* 待完成卡片样式 - 金丝细边框设计 */
 .item-card.memo-card {
-    background: #FFFFFF;
+    /* 浅粉色渐变背景（从上到下） */
+    background: linear-gradient(180deg, #FFF5F7 0%, #FAFAFA 100%);
     border-radius: 16px !important;
     padding: 16px;
     margin-bottom: 12px;
@@ -1590,7 +1592,8 @@ body {
     flex-direction: column;
     transition: all 0.3s ease;
     position: relative;
-    border: 2px solid #F0F0F0;
+    /* 金丝细边框 */
+    border: 1.5px solid #FFD700;
 }
 
 /* 移除卡片分隔线 - 改为独立的圆角卡片 */
@@ -1624,11 +1627,11 @@ body {
     margin-bottom: 8px;
 }
 
-/* 待完成卡片hover效果 - 轻微上浮，更可爱 */
+/* 待完成卡片hover效果 - 轻微上浮，金丝边框更亮 */
 .item-card.memo-card:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.25) !important;
     transform: translateY(-2px);
-    border-color: #FFE066;
+    border-color: #FFC700;
 }
 
 /* 待完成卡片内容区域 - 保持简洁设计，与记一笔页面一致 */
@@ -1661,6 +1664,8 @@ body {
 
 .item-card.memo-card.completed {
     opacity: 0.7;
+    /* 完成后移除金丝边框 */
+    border: 1.5px solid #E0E0E0;
 }
 
 /* 待完成卡片底部区域 - 保持简洁设计，与记一笔页面一致 */
@@ -2372,7 +2377,8 @@ body {
 }
 
 .modal-content {
-    background: var(--bg-white);
+    /* 从上往下的渐变淡绿色背景 */
+    background: linear-gradient(180deg, #F0FFF0 0%, #E8F5E9 50%, #FFFFFF 100%);
     padding: 0;
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-lg);
@@ -2487,7 +2493,7 @@ body {
 }
 
 .btn-primary {
-    background: var(--primary-gradient);
+    background: var(--btn-gradient);
     color: var(--text-dark);
 }
 

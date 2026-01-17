@@ -1109,7 +1109,6 @@ function showAddModal(type) {
 
     if (type === 'memo') {
         isCompleted.checked = false;
-        isFrequent.checked = false;
         reflectionEditFields.style.display = 'none';
         memoEditFields.style.display = 'block';
         document.getElementById('itemMemoContent').value = '';
@@ -1220,7 +1219,6 @@ async function saveItem() {
 
     // 获取完成状态（仅待完成）
     const isCompleted = document.getElementById('isCompleted').checked;
-    const isFrequent = document.getElementById('isFrequent').checked;
 
     try {
         let response;
