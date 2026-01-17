@@ -2086,7 +2086,7 @@ body {
 
 /* 记事标签页的列表容器 */
 #reflections-tab .items-list {
-    padding: 0 20px;
+    padding: 0 15px;
 }
 
 /* 记事卡片样式 - 金丝细边框 */
@@ -2095,6 +2095,7 @@ body {
     border-radius: 8px;
     padding: 16px;
     margin-bottom: 10px;
+    margin-left: 8px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
     cursor: default;
     display: flex;
@@ -3114,16 +3115,14 @@ body {
         right: calc(12px + env(safe-area-inset-right, 0));
     }
 
-    /* 移动端记事列表 - 贴边显示 */
+    /* 移动端记事列表 - 保持与其他页面一致的边距 */
     #reflections-tab .items-list {
-        padding: 0;
+        padding: 0 12px;
     }
 
     /* 移动端记事卡片 - 调整内边距，适配安全区 */
     .item-card.reflection-card {
         padding: 14px 12px;
-        padding-left: calc(12px + env(safe-area-inset-left, 0));
-        padding-right: calc(12px + env(safe-area-inset-right, 0));
         margin-bottom: 0;
         border-radius: 0;
     }
