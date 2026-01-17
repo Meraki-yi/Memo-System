@@ -4,7 +4,7 @@
 处理应用中的所有页面路由
 """
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
@@ -23,13 +23,6 @@ async def read_app(request: Request):
     """主应用页面"""
     check_auth(request)
     return templates.TemplateResponse("index.html", {"request": request})
-
-
-@router.get("/frequents", response_class=HTMLResponse)
-async def read_frequents(request: Request):
-    """常用待完成页面"""
-    check_auth(request)
-    return templates.TemplateResponse("frequents.html", {"request": request})
 
 
 @router.get("/reflection-frequents", response_class=HTMLResponse)

@@ -804,12 +804,9 @@ body {
 
 /* 日期提示在上 - 艺术字体整体样式 */
 .memos-nav-center .date-hint {
-    font-size: 26px;
-    /* 使用深色渐变，更清晰 */
-    background: linear-gradient(135deg, #D32F2F, #F57C00, #F9A825);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    font-size: 18px;
+    /* 使用纯粉色 */
+    color: #FFB6C1;
     text-align: center;
     opacity: 1 !important;
     visibility: visible !important;
@@ -1613,16 +1610,22 @@ body {
 
 /* 中间区域的日期提示样式 - 水平布局时与进度信息同行 */
 .memos-nav-center .date-hint {
-    font-size: 10px;
-    color: #1a1a1a;
+    font-size: 18px;
+    /* 使用纯粉色 */
+    color: #FFB6C1;
     text-align: center;
     opacity: 1 !important;
     visibility: visible !important;
-    font-weight: 400;
+    font-weight: 700;
     margin-bottom: -6px;
     line-height: 1;
     position: absolute;
-    top: -16px;
+    top: -26px;
+    /* 艺术字体 */
+    font-family: 'Brush Script MT', 'Comic Sans MS', 'YouYuan', '幼圆', 'Segoe UI', 'Roboto', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', cursive, sans-serif;
+    letter-spacing: 1px;
+    /* 增强阴影效果，使文字更突出 */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15);
 }
 
 .date-picker-btn {

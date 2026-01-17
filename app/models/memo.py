@@ -25,7 +25,6 @@ class Memo(Base):
     id = Column(Integer, primary_key=True, index=True)
     content = Column(Text, nullable=False)
     is_completed = Column(Boolean, default=False)
-    is_frequent = Column(Boolean, default=False)  # 是否标记为常用
     # 创建日期：事项归属的唯一日期，创建后不可更改
     created_date = Column(Date, nullable=False, index=True, default=lambda: date.today())
     created_at = Column(DateTime, nullable=False, default=lambda: datetime.now(LOCAL_TZ))

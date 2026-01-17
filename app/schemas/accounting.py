@@ -40,13 +40,6 @@ class DailyRecordCreate(BaseModel):
     note: Optional[str] = None
 
 
-class DailyRecordUpdate(BaseModel):
-    """更新记账记录"""
-    amount: Optional[Decimal] = None
-    record_date: Optional[str] = None
-    note: Optional[str] = None
-
-
 class TemplateCreate(BaseModel):
     """创建记账模板"""
     name: str

@@ -14,7 +14,6 @@ from fastapi.responses import Response
 from sqlalchemy.orm import Session
 from datetime import datetime, date, timedelta
 from typing import Optional
-from decimal import Decimal
 from collections import defaultdict
 import csv
 from io import StringIO
@@ -26,13 +25,11 @@ from app.schemas import (
     CategoryUpdate,
     SubCategoryUpdate,
     DailyRecordCreate,
-    DailyRecordUpdate,
     TemplateCreate
 )
 from app.core.database import get_db
 from app.core.security import check_auth
 from app.utils import format_amount_float, escape_sql_string
-from app.services import AccountingService
 
 
 router = APIRouter(tags=["记账"])

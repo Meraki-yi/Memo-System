@@ -13,7 +13,6 @@ from .accounting import (
     CategoryUpdate,
     SubCategoryUpdate,
     DailyRecordCreate,
-    DailyRecordUpdate,
     TemplateCreate
 )
 
@@ -28,6 +27,5 @@ __all__ = [
     "CategoryUpdate",
     "SubCategoryUpdate",
     "DailyRecordCreate",
-    "DailyRecordUpdate",
     "TemplateCreate",
 ]

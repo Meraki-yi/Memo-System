@@ -8,7 +8,7 @@
 from fastapi import APIRouter, HTTPException, Depends, Request, Query
 from fastapi.responses import Response
 from sqlalchemy.orm import Session
-from datetime import datetime, date, timedelta
+from datetime import datetime, date
 from zoneinfo import ZoneInfo
 import csv
 from io import StringIO
@@ -79,7 +79,6 @@ async def get_memos(
                     "id": m.id,
                     "content": m.content,
                     "is_completed": m.is_completed,
-                    "is_frequent": m.is_frequent,
                     "created_date": m.created_date.isoformat(),
                     "created_at": m.created_at.isoformat(),
                     "updated_at": m.updated_at.isoformat()
@@ -138,7 +137,6 @@ async def create_memo(
     db_memo = Memo(
         content=memo.content,
         is_completed=memo.is_completed if memo.is_completed is not None else False,
-        is_frequent=memo.is_frequent if memo.is_frequent is not None else False,
         created_date=created_date  # 事项归属于创建日期，不可更改
     )
     db.add(db_memo)
@@ -148,58 +146,9 @@ async def create_memo(
         "id": db_memo.id,
         "content": db_memo.content,
         "is_completed": db_memo.is_completed,
-        "is_frequent": db_memo.is_frequent,
         "created_date": db_memo.created_date.isoformat(),
         "created_at": db_memo.created_at.isoformat(),
         "updated_at": db_memo.updated_at.isoformat()
-    }
-
-
-@router.get("/api/memos/frequents")
-async def get_frequent_memos(
-    request: Request,
-    page: int = 1,
-    page_size: int = 5,
-    db: Session = Depends(get_db)
-):
-    """获取常用待完成列表（分页）"""
-    check_auth(request)
-    # 计算常用待完成总数
-    total = db.query(Memo).filter(Memo.is_frequent == True).count()
-    # 计算总页数
-    total_pages = (total + page_size - 1) // page_size if total > 0 else 1
-    # 分页查询 - 按创建时间排序
-    offset = (page - 1) * page_size
-    # 先获取排序后的常用待完成ID列表
-    frequent_memo_ids_query = db.query(Memo.id).filter(Memo.is_frequent == True).order_by(Memo.created_at.desc()).offset(offset).limit(page_size)
-    memo_ids = [id[0] for id in frequent_memo_ids_query.all()]
-    # 再根据ID列表获取完整数据
-    if memo_ids:
-        memos = db.query(Memo).filter(Memo.id.in_(memo_ids)).all()
-        # 按原始ID顺序排序
-        memos_dict = {m.id: m for m in memos}
-        memos = [memos_dict[id] for id in memo_ids]
-    else:
-        memos = []
-    return {
-        "items": [
-            {
-                "id": m.id,
-                "content": m.content,
-                "is_completed": m.is_completed,
-                "is_frequent": m.is_frequent,
-                "created_date": m.created_date.isoformat(),
-                "created_at": m.created_at.isoformat(),
-                "updated_at": m.updated_at.isoformat()
-            }
-            for m in memos
-        ],
-        "pagination": {
-            "page": page,
-            "page_size": page_size,
-            "total": total,
-            "total_pages": total_pages
-        }
     }
 
 
@@ -219,7 +168,6 @@ async def get_memo(
         "id": db_memo.id,
         "content": db_memo.content,
         "is_completed": db_memo.is_completed,
-        "is_frequent": db_memo.is_frequent,
         "created_date": db_memo.created_date.isoformat(),
         "created_at": db_memo.created_at.isoformat(),
         "updated_at": db_memo.updated_at.isoformat()
@@ -243,8 +191,6 @@ async def update_memo(
         db_memo.content = memo.content
     if memo.is_completed is not None:
         db_memo.is_completed = memo.is_completed
-    if memo.is_frequent is not None:
-        db_memo.is_frequent = memo.is_frequent
     # 注意：不允许修改 created_date，事项归属日期在创建时确定后不可变更
 
     db_memo.updated_at = datetime.now(LOCAL_TZ)
@@ -254,7 +200,6 @@ async def update_memo(
         "id": db_memo.id,
         "content": db_memo.content,
         "is_completed": db_memo.is_completed,
-        "is_frequent": db_memo.is_frequent,
         "created_date": db_memo.created_date.isoformat(),
         "created_at": db_memo.created_at.isoformat(),
         "updated_at": db_memo.updated_at.isoformat()
@@ -324,9 +269,8 @@ async def export_memos_sql(request: Request, db: Session = Depends(get_db)):
 
     for memo in memos:
         insert_statements.append(
-            f"INSERT INTO memos (id, content, is_completed, is_frequent, created_date, created_at, updated_at) VALUES "
+            f"INSERT INTO memos (id, content, is_completed, created_date, created_at, updated_at) VALUES "
             f"({memo.id}, {escape_sql_string(memo.content)}, {1 if memo.is_completed else 0}, "
-            f"{1 if memo.is_frequent else 0}, "
             f"'{memo.created_date.isoformat()}', "
             f"'{memo.created_at.strftime('%Y-%m-%d %H:%M:%S')}', '{memo.updated_at.strftime('%Y-%m-%d %H:%M:%S')}');"
         )

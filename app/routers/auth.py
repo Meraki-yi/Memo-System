@@ -4,7 +4,7 @@
 处理用户登录、登出等认证相关操作
 """
 
-from fastapi import APIRouter, HTTPException, Depends, status, Request
+from fastapi import APIRouter, HTTPException, status, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
