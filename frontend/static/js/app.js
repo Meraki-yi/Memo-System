@@ -984,8 +984,8 @@ function renderRecentRecords(records) {
                         ${canCollapse ? `<span class="collapse-icon">▼</span>` : ''}
                     </div>
                     <div class="day-header-right">
-                        <span style="color: #FF5252;">收 ¥${dayIncome.toFixed(2)}</span>
-                        <span style="color: #4CAF50;">支 ¥${dayExpense.toFixed(2)}</span>
+                        <span style="color: #FF5252;">收 ${dayIncome.toFixed(2)}</span>
+                        <span style="color: #4CAF50;">支 ${dayExpense.toFixed(2)}</span>
                     </div>
                 </div>
                 <div class="day-details ${isCollapsed ? 'collapsed' : ''}" id="${groupId}">
@@ -997,7 +997,7 @@ function renderRecentRecords(records) {
                                     <div class="accounting-record-header">
                                         <span class="accounting-record-category">${item.category_name} · ${item.subcategory_name}</span>
                                         <span class="accounting-record-amount ${item.record_type}">
-                                            ${item.record_type === 'income' ? '+' : '-'}¥${item.amount.toFixed(2)}
+                                            ${item.record_type === 'income' ? '+' : '-'}${item.amount.toFixed(2)}
                                         </span>
                                     </div>
                                     <div class="accounting-record-note">${item.note || ''}</div>
