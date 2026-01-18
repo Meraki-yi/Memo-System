@@ -1028,7 +1028,7 @@ body {
 }
 
 .week-card-label {
-    font-size: 12px;
+    font-size: 14px;
     opacity: 0.9;
     margin-bottom: 4px;
     color: #666;
@@ -1083,10 +1083,24 @@ body {
 }
 
 .month-entrance-label {
-    font-size: 14px;
+    font-size: 18px;
     color: #666;
     margin-bottom: 2px;
     text-align: center;
+}
+
+.month-entrance-card.income .month-entrance-label {
+    color: #D32F2F;
+    font-weight: 600;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    text-shadow: 1px 1px 2px rgba(211, 47, 47, 0.1);
+}
+
+.month-entrance-card.expense .month-entrance-label {
+    color: #388E3C;
+    font-weight: 600;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    text-shadow: 1px 1px 2px rgba(56, 142, 60, 0.1);
 }
 
 .month-entrance-amount {
