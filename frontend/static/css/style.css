@@ -513,7 +513,7 @@ body {
     padding: 15px 15px 8px 15px;
     gap: 12px;
     flex-shrink: 0;
-    background: linear-gradient(180deg, #FFF9E6 0%, #FFFFFF 100%);
+    background: transparent;
     /* 固定在容器顶部 */
     position: sticky;
     top: 0;
@@ -530,7 +530,7 @@ body {
     left: 54%;
     transform: translateX(-50%);
     height: 50px;
-    background: linear-gradient(180deg, #FFF9E6 0%, #FFFFFF 100%);
+    background: transparent;
     border: none;
     border-radius: 0;
     display: flex;
@@ -999,7 +999,7 @@ body {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     /* 确保卡片不会被压缩 */
     flex-shrink: 0;
 }
@@ -1013,17 +1013,17 @@ body {
 }
 
 .week-card.income {
-    background: #FFF5F5;
+    background: transparent;
     color: #D32F2F;
 }
 
 .week-card.expense {
-    background: #F5FDF5;
+    background: transparent;
     color: #388E3C;
 }
 
 .week-card.net {
-    background: #F5F9FF;
+    background: transparent;
     color: #1976D2;
 }
 
@@ -1075,11 +1075,11 @@ body {
 }
 
 .month-entrance-card.income {
-    background: #F8F9FA;
+    background: transparent;
 }
 
 .month-entrance-card.expense {
-    background: #F8F9FA;
+    background: transparent;
 }
 
 .month-entrance-label {
