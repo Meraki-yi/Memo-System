@@ -435,7 +435,7 @@ body {
 #accounting-tab .stats-area {
     /* 图片背景 + 从上到下的浅黄色渐变遮罩 */
     background:
-        linear-gradient(180deg, rgba(255, 252, 240, 0.5) 0%, rgba(255, 255, 255, 0.8) 100%),
+        linear-gradient(180deg, rgba(255, 252, 240, 0.7) 0%, rgba(255, 255, 255, 0.9) 100%),
         url('/static/images/6.jpg') center/cover no-repeat;
     margin: 0 0 0 8px;
     border-radius: 0;
@@ -2974,10 +2974,12 @@ body {
         display: inline;
     }
 
-    /* 移动端统计区域 - 白色直角框风格，移除左右内边距，适配安全区 */
+    /* 移动端统计区域 - 保持背景图，适配安全区 */
     #accounting-tab .stats-area {
         position: relative;
-        background: var(--bg-white);
+        background:
+            linear-gradient(180deg, rgba(255, 252, 240, 0.7) 0%, rgba(255, 255, 255, 0.9) 100%),
+            url('/static/images/6.jpg') center/cover no-repeat;
         padding-left: env(safe-area-inset-left, 0);
         padding-right: env(safe-area-inset-right, 0);
     }
@@ -3295,10 +3297,12 @@ body {
         display: inline;
     }
 
-    /* 小屏幕统计区域 - 白色直角框风格，贴边显示，适配安全区 */
+    /* 小屏幕统计区域 - 保持背景图，贴边显示，适配安全区 */
     #accounting-tab .stats-area {
         position: relative;
-        background: var(--bg-white);
+        background:
+            linear-gradient(180deg, rgba(255, 252, 240, 0.7) 0%, rgba(255, 255, 255, 0.9) 100%),
+            url('/static/images/6.jpg') center/cover no-repeat;
         padding-left: env(safe-area-inset-left, 0);
         padding-right: env(safe-area-inset-right, 0);
     }
@@ -3352,14 +3356,21 @@ body {
         padding: 0 12px;
     }
 
+    .week-calendar-icon .week-year {
+        font-size: 1rem;
+        font-weight: 700;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
     .week-calendar-icon .week-date-range {
-        font-size: 0.7rem;
-        font-weight: 500;
+        font-size: 0.85rem;
+        font-weight: 700;
         font-family: 'Trebuchet MS', 'Helvetica Neue', 'Arial', sans-serif;
         transform: translateX(-12px);
         display: inline-block;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.3px;
         font-variant-numeric: tabular-nums;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
     }
 
     .item-meta {

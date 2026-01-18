@@ -29,7 +29,10 @@ RUN pip install --upgrade pip && \
 COPY . .
 
 # 创建静态文件和模板目录（确保存在）
-RUN mkdir -p frontend/static frontend/templates
+RUN mkdir -p frontend/static frontend/templates frontend/static/images
+
+# 复制images到静态资源目录
+RUN if [ -d "images" ]; then mkdir -p frontend/static/images && cp -r images/* frontend/static/images/; fi
 
 # 暴露端口
 EXPOSE 8000
