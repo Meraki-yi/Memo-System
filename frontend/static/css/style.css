@@ -560,11 +560,15 @@ body {
 
 .week-calendar-icon .week-date-range {
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 500;
     color: #333;
     text-align: center;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.8px;
     line-height: 1.2;
+    font-family: 'Trebuchet MS', 'Helvetica Neue', 'Arial', sans-serif;
+    transform: translateX(-20px);
+    display: inline-block;
+    font-variant-numeric: tabular-nums;
 }
 
 /* 周报header左侧区域 - 放置年份按钮 */
@@ -3322,6 +3326,12 @@ body {
 
     .week-calendar-icon .week-date-range {
         font-size: 0.7rem;
+        font-weight: 500;
+        font-family: 'Trebuchet MS', 'Helvetica Neue', 'Arial', sans-serif;
+        transform: translateX(-12px);
+        display: inline-block;
+        letter-spacing: 0.5px;
+        font-variant-numeric: tabular-nums;
     }
 
     .item-meta {
