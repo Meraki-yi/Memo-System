@@ -10,7 +10,8 @@
       "Bash(findstr:*)",
       "Bash(python:*)",
       "Bash(mkdir:*)",
-      "Bash(pip install:*)"
+      "Bash(pip install:*)",
+      "Bash(dir:*)"
     ]
   }
 }

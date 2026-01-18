@@ -431,9 +431,12 @@ body {
     flex-direction: column;
 }
 
-/* 统计区域 - 渐变黄白背景 */
+/* 统计区域 - 图片背景 + 浅黄色渐变滤镜 */
 #accounting-tab .stats-area {
-    background: linear-gradient(180deg, #FFFCF0 0%, #FFFFFF 100%);
+    /* 图片背景 + 从上到下的浅黄色渐变遮罩 */
+    background:
+        linear-gradient(180deg, rgba(255, 252, 240, 0.5) 0%, rgba(255, 255, 255, 0.8) 100%),
+        url('/static/images/6.jpg') center/cover no-repeat;
     margin: 0 0 0 8px;
     border-radius: 0;
     box-shadow: none;
@@ -550,18 +553,19 @@ body {
 /* 移除日历图标顶部装饰条 */
 
 .week-calendar-icon .week-year {
-    font-size: 16px;
-    font-weight: 600;
-    color: #666;
+    font-size: 20px;
+    font-weight: 700;
+    color: #000000;
     text-align: center;
     letter-spacing: 0.3px;
     line-height: 1.2;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .week-calendar-icon .week-date-range {
-    font-size: 16px;
-    font-weight: 500;
-    color: #333;
+    font-size: 20px;
+    font-weight: 700;
+    color: #FFB6C1;
     text-align: center;
     letter-spacing: 0.8px;
     line-height: 1.2;
@@ -569,6 +573,7 @@ body {
     transform: translateX(-20px);
     display: inline-block;
     font-variant-numeric: tabular-nums;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 /* 周报header左侧区域 - 放置年份按钮 */
@@ -1028,18 +1033,21 @@ body {
 }
 
 .week-card-label {
-    font-size: 14px;
+    font-size: 18px;
+    font-weight: 700;
     opacity: 0.9;
     margin-bottom: 4px;
-    color: #666;
+    color: #000000;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .week-card-amount {
     font-size: 22px;
-    font-weight: 300;
+    font-weight: 700;
     font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
     letter-spacing: -0.5px;
     font-variant-numeric: tabular-nums;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 /* 月入口模块 */
@@ -1091,16 +1099,16 @@ body {
 
 .month-entrance-card.income .month-entrance-label {
     color: #D32F2F;
-    font-weight: 600;
+    font-weight: 700;
     font-family: 'Georgia', 'Times New Roman', serif;
-    text-shadow: 1px 1px 2px rgba(211, 47, 47, 0.1);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .month-entrance-card.expense .month-entrance-label {
     color: #388E3C;
-    font-weight: 600;
+    font-weight: 700;
     font-family: 'Georgia', 'Times New Roman', serif;
-    text-shadow: 1px 1px 2px rgba(56, 142, 60, 0.1);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .month-entrance-amount {
