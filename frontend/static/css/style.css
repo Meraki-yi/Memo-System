@@ -450,9 +450,9 @@ body {
 #accounting-tab .stats-area {
     /* 图片背景 + 从上到下的浅黄色渐变遮罩 */
     background:
-        linear-gradient(180deg, rgba(255, 252, 240, 0.7) 0%, rgba(255, 255, 255, 0.9) 100%),
+        linear-gradient(180deg, rgba(255, 252, 240, 0.5) 0%, rgba(255, 255, 255, 0.7) 100%),
         url('/static/images/6.jpg') center/cover no-repeat;
-    margin: 0 0 0 8px;
+    margin: 0;
     border-radius: 0;
     box-shadow: none;
     border: none;
@@ -528,7 +528,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 15px 15px 8px 15px;
+    padding: 15px 0 8px 0;
     gap: 12px;
     flex-shrink: 0;
     background: transparent;
@@ -594,7 +594,7 @@ body {
 /* 周报header左侧区域 - 放置年份按钮 */
 .section-header-left {
     position: absolute;
-    left: 15px;
+    left: 10px;
     top: 50%;
     transform: translateY(-50%);
     z-index: 2;
@@ -603,7 +603,7 @@ body {
 /* 周报header右侧区域 - 放置更多按钮 */
 .section-header-right {
     position: absolute;
-    right: 15px;
+    right: 10px;
     top: 50%;
     transform: translateY(-50%);
     z-index: 2;
@@ -1010,7 +1010,7 @@ body {
 /* 周报内容区域 - 随页面滚动，内容自动向上推移 */
 .week-report-scrollable {
     /* 不再设置flex: 1和overflow-y，让内容随页面自然滚动 */
-    padding: 0 15px 15px 15px;
+    padding: 0 0 15px 0;
     /* 确保最小高度 */
     min-height: 0;
 }
@@ -1019,7 +1019,7 @@ body {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
-    margin-bottom: 5px;
+    margin: 0 10px 5px 10px;
     /* 确保卡片不会被压缩 */
     flex-shrink: 0;
 }
@@ -1034,17 +1034,17 @@ body {
 
 .week-card.income {
     background: transparent;
-    color: #D32F2F;
+    color: #C62828;
 }
 
 .week-card.expense {
     background: transparent;
-    color: #388E3C;
+    color: #2E7D32;
 }
 
 .week-card.net {
     background: transparent;
-    color: #1976D2;
+    color: #1565C0;
 }
 
 .week-card-label {
@@ -1076,7 +1076,7 @@ body {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
-    padding: 0 0 15px 0;
+    padding: 0 10px 15px 10px;
     flex-shrink: 0;
 }
 
@@ -1186,7 +1186,7 @@ body {
 .add-record-btn {
     background: #87CEEB;
     border: none;
-    padding: 6px 12px;
+    padding: 6px 16px;
     border-radius: 6px;
     font-size: 13px;
     font-weight: 400;
@@ -1261,8 +1261,6 @@ body {
     user-select: none;
     transition: none;
     border: none;
-    border-left: 3px solid #FFD700;
-    border-right: 3px solid #FFD700;
 }
 
 .day-header:hover {
@@ -2993,7 +2991,7 @@ body {
     #accounting-tab .stats-area {
         position: relative;
         background:
-            linear-gradient(180deg, rgba(255, 252, 240, 0.7) 0%, rgba(255, 255, 255, 0.9) 100%),
+            linear-gradient(180deg, rgba(255, 252, 240, 0.5) 0%, rgba(255, 255, 255, 0.7) 100%),
             url('/static/images/6.jpg') center/cover no-repeat;
         padding-left: env(safe-area-inset-left, 0);
         padding-right: env(safe-area-inset-right, 0);
@@ -3004,11 +3002,9 @@ body {
         /* 移除max-height，让内容自然撑开 */
     }
 
-    /* 移动端周报内容区域 - 贴边显示，适配安全区 */
+    /* 移动端周报内容区域 - 移除左右内边距，使背景图覆盖到边缘 */
     .week-report-scrollable {
         padding: 0 0 15px 0;
-        padding-left: env(safe-area-inset-left, 0);
-        padding-right: env(safe-area-inset-right, 0);
         /* 随页面滚动，不需要特殊处理 */
     }
 
@@ -3316,7 +3312,7 @@ body {
     #accounting-tab .stats-area {
         position: relative;
         background:
-            linear-gradient(180deg, rgba(255, 252, 240, 0.7) 0%, rgba(255, 255, 255, 0.9) 100%),
+            linear-gradient(180deg, rgba(255, 252, 240, 0.5) 0%, rgba(255, 255, 255, 0.7) 100%),
             url('/static/images/6.jpg') center/cover no-repeat;
         padding-left: env(safe-area-inset-left, 0);
         padding-right: env(safe-area-inset-right, 0);
@@ -3327,11 +3323,9 @@ body {
         /* 移除max-height，让内容自然撑开 */
     }
 
-    /* 小屏幕周报内容区域 - 贴边显示，适配安全区 */
+    /* 小屏幕周报内容区域 - 移除左右内边距，使背景图覆盖到边缘 */
     .week-report-scrollable {
         padding: 0 0 15px 0;
-        padding-left: env(safe-area-inset-left, 0);
-        padding-right: env(safe-area-inset-right, 0);
     }
 
     /* 小屏幕记账记录列表 - 贴边显示 */
