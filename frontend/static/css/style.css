@@ -3092,7 +3092,7 @@ body {
 @media (max-width: 768px) {
     .app-main {
         padding: 0;
-        padding-top: 54px;
+        padding-top: 44px; /* 只保留标签栏高度，移除额外间距 */
         padding-bottom: 78px;
         /* 适配全面屏安全区 */
         padding-left: env(safe-area-inset-left, 0);
@@ -3108,7 +3108,7 @@ body {
 
     /* 移动端标签页高度调整 - 适配安全区 */
     .tab-content.active {
-        height: calc(100vh - 114px - env(safe-area-inset-top, 0) - env(safe-area-inset-bottom, 0));
+        height: calc(100vh - 122px - env(safe-area-inset-top, 0) - env(safe-area-inset-bottom, 0));
     }
 
     /* 移动端底部栏调整 - 适配安全区，增加高度以容纳记录数 */
@@ -3414,7 +3414,7 @@ body {
 @media (max-width: 480px) {
     .app-main {
         padding: 0;
-        padding-top: 50px; /* tabs(44) + 间距(6) */
+        padding-top: 44px; /* 只保留标签栏高度，移除额外间距 */
         padding-bottom: 66px;
         /* 适配全面屏安全区 */
         padding-left: env(safe-area-inset-left, 0);
@@ -3430,7 +3430,7 @@ body {
 
     /* 小屏幕标签页高度调整 - 适配安全区 */
     .tab-content.active {
-        height: calc(100vh - 108px - env(safe-area-inset-top, 0) - env(safe-area-inset-bottom, 0));
+        height: calc(100vh - 110px - env(safe-area-inset-top, 0) - env(safe-area-inset-bottom, 0));
     }
 
     /* 小屏幕底部栏 - 保持垂直布局，两行居中对齐，适配安全区 */
