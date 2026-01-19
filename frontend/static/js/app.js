@@ -1493,6 +1493,87 @@ function closeExportModal() {
     document.getElementById('exportModal').classList.remove('show');
 }
 
+// 迁移待完成事项到下一天
+async function migrateMemosToNextDay() {
+    // 关闭更多菜单
+    toggleMemosMoreMenu();
+
+    const state = paginationState.memos;
+    const currentDate = state.createdDate;
+
+    // 计算下一天日期用于显示
+    const currentDateObj = new Date(currentDate + 'T00:00:00');
+    const nextDateObj = new Date(currentDateObj);
+    nextDateObj.setDate(nextDateObj.getDate() + 1);
+    const nextDateStr = formatDateString(nextDateObj);
+
+    // 格式化日期显示
+    const formatDateDisplay = (dateStr) => {
+        const date = new Date(dateStr + 'T00:00:00');
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+        const weekDays = ['日', '一', '二', '三', '四', '五', '六'];
+        const weekDay = weekDays[date.getDay()];
+        return `${month}月${day}日（周${weekDay}）`;
+    };
+
+    const currentDateDisplay = formatDateDisplay(currentDate);
+    const nextDateDisplay = formatDateDisplay(nextDateStr);
+
+    // 显示确认对话框
+    const confirmed = confirm(
+        `确认要将「${currentDateDisplay}」的未完成待完成事项迁移到「${nextDateDisplay}」吗？\n\n` +
+        `注意：\n` +
+        `• 只迁移未完成的待完成事项\n` +
+        `• 已完成的事项不会迁移\n` +
+        `• 迁移后，这些事项将在「${nextDateDisplay}」显示\n` +
+        `• 迁移后，「${currentDateDisplay}」将不再显示这些事项`
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+        showToast('正在迁移...', 'info');
+
+        // 调用后端迁移API
+        const response = await fetch(`${API_BASE}/memos/migrate?from_date=${currentDate}`, {
+            method: 'POST',
+            ...getAuthOptions()
+        });
+
+        if (!response.ok) {
+            if (response.status === 401) {
+                window.location.href = '/';
+                return;
+            }
+            const errorData = await response.json();
+            throw new Error(errorData.detail || '迁移失败');
+        }
+
+        const result = await response.json();
+
+        if (result.migrated_count === 0) {
+            showToast('当前日期没有需要迁移的未完成待完成事项', 'info');
+            return;
+        }
+
+        // 迁移成功，刷新当前日期的数据
+        showToast(result.message, 'success');
+
+        // 重新加载当前日期的数据
+        await loadMemosData();
+
+        // 刷新可用日期列表
+        await loadAvailableDates();
+
+    } catch (error) {
+        console.error('迁移待完成失败:', error);
+        showToast(error.message || '迁移失败，请稍后重试', 'error');
+    }
+}
+
 // 导出当前标签页数据（显示格式选择弹窗）
 async function exportCurrentTabData() {
     showExportModal();

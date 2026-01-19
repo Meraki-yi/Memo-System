@@ -256,6 +256,77 @@ async def export_memos_csv(request: Request, db: Session = Depends(get_db)):
     )
 
 
+@router.post("/api/memos/migrate")
+async def migrate_memos_to_next_day(
+    request: Request,
+    from_date: str | None = Query(None, description="源日期 (YYYY-MM-DD)，未指定则使用今天"),
+    db: Session = Depends(get_db)
+):
+    """
+    将指定日期的未完成待完成事项迁移到下一天
+
+    迁移规则：
+    - 只迁移未完成的待完成事项（is_completed = False）
+    - 将事项的 created_date 修改为下一天
+    - 保留事项的其他属性（内容、创建时间等）
+    - 迁移后的事项不会在原日期显示
+
+    参数：
+    - from_date: 源日期，格式为 YYYY-MM-DD。如果未指定，默认使用今天
+    """
+    check_auth(request)
+    try:
+        # 解析源日期
+        if from_date:
+            try:
+                source_date = date.fromisoformat(from_date)
+            except ValueError:
+                raise HTTPException(status_code=400, detail="日期格式无效，请使用 YYYY-MM-DD 格式")
+        else:
+            source_date = date.today()
+
+        # 计算下一天
+        from datetime import timedelta
+        next_day = source_date + timedelta(days=1)
+
+        # 查询源日期下所有未完成的待完成事项
+        uncompleted_memos = db.query(Memo).filter(
+            Memo.created_date == source_date,
+            Memo.is_completed == False
+        ).all()
+
+        if not uncompleted_memos:
+            return {
+                "message": "没有需要迁移的待完成事项",
+                "migrated_count": 0,
+                "from_date": source_date.isoformat(),
+                "to_date": next_day.isoformat()
+            }
+
+        # 批量更新创建日期为下一天
+        migrated_count = 0
+        for memo in uncompleted_memos:
+            memo.created_date = next_day
+            memo.updated_at = datetime.now(LOCAL_TZ)
+            migrated_count += 1
+
+        db.commit()
+
+        return {
+            "message": f"成功迁移 {migrated_count} 条待完成事项到 {next_day.isoformat()}",
+            "migrated_count": migrated_count,
+            "from_date": source_date.isoformat(),
+            "to_date": next_day.isoformat()
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        db.rollback()
+        import traceback
+        error_detail = traceback.format_exc()
+        raise HTTPException(status_code=500, detail=f"迁移待完成失败: {str(e)}\n{error_detail}")
+
+
 @router.get("/api/memos/export/sql")
 async def export_memos_sql(request: Request, db: Session = Depends(get_db)):
     """导出待完成为SQL文件"""

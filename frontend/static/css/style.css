@@ -328,6 +328,21 @@ body {
     font-size: 1.1rem;
 }
 
+/* 迁移按钮样式 - 蓝色主题，突出显示 */
+.more-menu-item.migrate-btn {
+    color: #2196F3;
+    font-weight: 500;
+    background: linear-gradient(135deg, rgba(33, 150, 243, 0.05), rgba(33, 150, 243, 0.02));
+}
+
+.more-menu-item.migrate-btn:hover {
+    background: linear-gradient(135deg, rgba(33, 150, 243, 0.15), rgba(33, 150, 243, 0.08));
+}
+
+.more-menu-item.migrate-btn .icon {
+    color: #2196F3;
+}
+
 .app-main {
     flex: 1;
     padding: 15px;
@@ -1734,8 +1749,8 @@ body {
 
 /* 待完成卡片样式 - 凸出立体设计 */
 .item-card.memo-card {
-    /* 更浅的渐变粉色背景 */
-    background: linear-gradient(180deg, #FFF5F7 0%, #FFFAFC 50%, #FFFFFF 100%);
+    /* 渐淡黄色背景 */
+    background: linear-gradient(180deg, #FFFDF5 0%, #FFFEFA 50%, #FFFFFF 100%);
     border-radius: 12px !important;
     padding: 10px;
     margin-bottom: 2px;
@@ -3190,8 +3205,8 @@ body {
         padding-right: calc(8px + env(safe-area-inset-right, 0) - 12px);
         margin-bottom: 2px;
         border-radius: 10px !important;
-        /* 更浅的渐变粉色背景 */
-        background: linear-gradient(180deg, #FFF5F7 0%, #FFFAFC 50%, #FFFFFF 100%) !important;
+        /* 渐淡黄色背景 */
+        background: linear-gradient(180deg, #FFFDF5 0%, #FFFEFA 50%, #FFFFFF 100%) !important;
         /* 凸出立体阴影效果 */
         box-shadow:
             0 1px 2px rgba(0, 0, 0, 0.05),
@@ -3487,8 +3502,8 @@ body {
         padding-right: calc(8px + env(safe-area-inset-right, 0) - 10px);
         margin-bottom: 2px;
         border-radius: 10px !important;
-        /* 更浅的渐变粉色背景 */
-        background: linear-gradient(180deg, #FFF5F7 0%, #FFFAFC 50%, #FFFFFF 100%) !important;
+        /* 渐淡黄色背景 */
+        background: linear-gradient(180deg, #FFFDF5 0%, #FFFEFA 50%, #FFFFFF 100%) !important;
         /* 凸出立体阴影效果 */
         box-shadow:
             0 1px 2px rgba(0, 0, 0, 0.05),
