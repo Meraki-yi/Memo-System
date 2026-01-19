@@ -345,12 +345,14 @@ body {
 
 .app-main {
     flex: 1;
-    padding: 15px;
+    padding: 0;
+    padding-left: 15px;
+    padding-right: 15px;
     max-width: 600px;
     margin: 0 auto;
     width: 100%;
     /* 固定布局，为标签栏和底部栏留出空间 */
-    padding-top: 54px; /* tabs(44px) + 间距(10px) */
+    padding-top: 44px; /* tabs(44px) - 移除间距，让内容直接相连 */
     padding-bottom: 82px; /* 为固定底部栏留出空间(72px + 10px) */
     /* 禁止app-main滚动 - 滚动仅在tab-content-scrollable中 */
     overflow: hidden;
@@ -417,9 +419,9 @@ body {
     display: flex;
     flex-direction: column;
     /* 使用固定高度，内部scrollable区域滚动 */
-    height: calc(100vh - 114px); /* 减去tabs(44px) + padding+b-bottom(70px) */
-    /* 添加从浅蓝色到白色的背景渐变，与标签栏衔接 */
-    background: linear-gradient(180deg, #F0F8FF 0%, #FFFFFF 15%);
+    height: calc(100vh - 126px); /* 调整高度计算：减去tabs(44px) + padding-bottom(82px) */
+    /* 移除顶部渐变背景，让内容直接与导航栏相连 */
+    background: transparent;
 }
 
 /* 标签页内容可滚动区域 - 唯一的滚动上下文 */
@@ -3548,14 +3550,15 @@ body {
     }
 
     .week-calendar-icon .week-date-range {
-        font-size: 0.85rem;
+        font-size: 1rem;
         font-weight: 700;
         font-family: 'Trebuchet MS', 'Helvetica Neue', 'Arial', sans-serif;
         transform: translateX(-12px);
         display: inline-block;
-        letter-spacing: 0.3px;
+        letter-spacing: 0.1px;
         font-variant-numeric: tabular-nums;
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        white-space: nowrap;
     }
 
     .item-meta {
