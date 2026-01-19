@@ -1520,17 +1520,39 @@ async function migrateMemosToNextDay() {
     const currentDateDisplay = formatDateDisplay(currentDate);
     const nextDateDisplay = formatDateDisplay(nextDateStr);
 
-    // 显示确认对话框
-    const confirmed = confirm(
-        `确认要将「${currentDateDisplay}」的未完成待完成事项迁移到「${nextDateDisplay}」吗？\n\n` +
-        `注意：\n` +
-        `• 只迁移未完成的待完成事项\n` +
-        `• 已完成的事项不会迁移\n` +
-        `• 迁移后，这些事项将在「${nextDateDisplay}」显示\n` +
-        `• 迁移后，「${currentDateDisplay}」将不再显示这些事项`
-    );
+    // 保存迁移所需数据到全局变量
+    window.migrateData = {
+        currentDate: currentDate,
+        nextDateStr: nextDateStr,
+        currentDateDisplay: currentDateDisplay,
+        nextDateDisplay: nextDateDisplay
+    };
 
-    if (!confirmed) {
+    // 显示迁移确认模态框
+    showMigrateModal();
+}
+
+// 显示迁移确认模态框
+function showMigrateModal() {
+    const modal = document.getElementById('migrateModal');
+    modal.classList.add('show');
+}
+
+// 关闭迁移确认模态框
+function closeMigrateModal() {
+    const modal = document.getElementById('migrateModal');
+    modal.classList.remove('show');
+}
+
+// 确认迁移
+async function confirmMigrate() {
+    // 关闭模态框
+    closeMigrateModal();
+
+    const data = window.migrateData;
+    if (!data) {
+        console.error('迁移数据未找到');
+        showToast('迁移失败，请重试', 'error');
         return;
     }
 
@@ -1538,7 +1560,7 @@ async function migrateMemosToNextDay() {
         showToast('正在迁移...', 'info');
 
         // 调用后端迁移API
-        const response = await fetch(`${API_BASE}/memos/migrate?from_date=${currentDate}`, {
+        const response = await fetch(`${API_BASE}/memos/migrate?from_date=${data.currentDate}`, {
             method: 'POST',
             ...getAuthOptions()
         });
@@ -1571,6 +1593,9 @@ async function migrateMemosToNextDay() {
     } catch (error) {
         console.error('迁移待完成失败:', error);
         showToast(error.message || '迁移失败，请稍后重试', 'error');
+    } finally {
+        // 清除临时数据
+        window.migrateData = null;
     }
 }
 

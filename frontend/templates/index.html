@@ -387,6 +387,23 @@
     <!-- Toast提示 -->
     <div class="toast" id="toast"></div>
 
+    <!-- 迁移数据确认模态框 -->
+    <div class="modal" id="migrateModal">
+        <div class="modal-content migrate-modal">
+            <div class="modal-header">
+                <h3>数据迁移</h3>
+                <button class="close-btn" onclick="closeMigrateModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="migrateModalMessage">是否将未完成任务迁至下一天？</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" onclick="closeMigrateModal()">取消</button>
+                <button class="btn btn-primary" onclick="confirmMigrate()">确定</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Loading遮罩 -->
     <div class="loading-overlay" id="loading">
         <div class="spinner"></div>

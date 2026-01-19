@@ -428,7 +428,7 @@ body {
     /* 自适应剩余高度，确保是唯一滚动区域 */
     flex: 1;
     /* 移除max-height，使用flex自动填充 */
-    padding-right: 5px;
+    padding-right: 0;
     padding-bottom: 90px; /* 底部留出空间，确保最后一条记录不被底部导航栏遮挡（72px导航栏 + 18px间距） */
     /* 确保滚动行为流畅 */
     -webkit-overflow-scrolling: touch;
@@ -2756,6 +2756,182 @@ body {
     background: #FF1744;
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
+}
+
+/* ==================== 迁移数据模态框专用样式（待完成页面） ==================== */
+/* 迁移模态框内容 - 渐变浅绿色背景，与待完成页面其他弹窗一致 */
+.modal-content.migrate-modal {
+    background: linear-gradient(180deg, #F0FFF0 0%, #E8F5E9 50%, #FFFFFF 100%);
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+/* 迁移模态框头部 */
+.modal-content.migrate-modal .modal-header {
+    background: linear-gradient(180deg, rgba(144, 238, 144, 0.15) 0%, rgba(232, 245, 233, 0.1) 100%);
+    border-bottom: 1px solid #C8E6C9;
+    padding: 18px 24px;
+}
+
+/* 迁移模态框标题 */
+.modal-content.migrate-modal .modal-header h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #2E7D32;
+}
+
+/* 迁移模态框内容区 */
+.modal-content.migrate-modal .modal-body {
+    padding: 24px;
+    text-align: center;
+}
+
+/* 迁移模态框消息文字 */
+.modal-content.migrate-modal .modal-body p {
+    font-size: 1rem;
+    color: #424242;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* 迁移模态框底部按钮区 */
+.modal-content.migrate-modal .modal-footer {
+    padding: 16px 24px 20px 24px;
+    border-top: 1px solid #C8E6C9;
+    justify-content: center;
+    gap: 20px;
+}
+
+/* 迁移模态框的取消按钮 - 灰色 */
+.modal-content.migrate-modal .btn-cancel {
+    background: #E0E0E0;
+    color: #616161;
+    padding: 10px 28px;
+    min-width: 90px;
+}
+
+.modal-content.migrate-modal .btn-cancel:hover {
+    background: #D6D6D6;
+    color: #424242;
+}
+
+/* 迁移模态框的确定按钮 - 蓝色 */
+.modal-content.migrate-modal .btn-primary {
+    background: #2196F3;
+    color: #FFFFFF;
+    padding: 10px 28px;
+    min-width: 90px;
+}
+
+.modal-content.migrate-modal .btn-primary:hover {
+    background: #1976D2;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(33, 150, 243, 0.3);
+}
+
+/* ==================== 迁移数据模态框移动端优化 ==================== */
+@media (max-width: 768px) {
+    /* 模态框在移动端占满宽度，留出适当边距 */
+    .modal-content.migrate-modal {
+        width: calc(100% - 32px);
+        max-width: 400px;
+        margin: 0 16px;
+        border-radius: 20px;
+    }
+
+    /* 头部优化 - 减小padding，适应小米13等手机 */
+    .modal-content.migrate-modal .modal-header {
+        padding: 16px 20px;
+    }
+
+    /* 标题字体大小适配 */
+    .modal-content.migrate-modal .modal-header h3 {
+        font-size: 1.1rem;
+    }
+
+    /* 关闭按钮大小适配 */
+    .modal-content.migrate-modal .modal-header .close-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 1.4rem;
+    }
+
+    /* 内容区优化 - 增加padding让文字有呼吸空间 */
+    .modal-content.migrate-modal .modal-body {
+        padding: 28px 24px;
+    }
+
+    /* 消息文字适配 - 字体稍大，更易阅读 */
+    .modal-content.migrate-modal .modal-body p {
+        font-size: 1.05rem;
+        line-height: 1.7;
+    }
+
+    /* 底部按钮区优化 */
+    .modal-content.migrate-modal .modal-footer {
+        padding: 16px 20px 24px 20px;
+        gap: 16px;
+    }
+
+    /* 按钮适配移动端 - 增大点击区域 */
+    .modal-content.migrate-modal .btn-cancel,
+    .modal-content.migrate-modal .btn-primary {
+        padding: 12px 32px;
+        font-size: 1rem;
+        min-width: 100px;
+        border-radius: 10px;
+    }
+
+    /* 移除hover效果，移动端使用active效果 */
+    .modal-content.migrate-modal .btn-cancel:active {
+        background: #CCCCCC;
+        transform: scale(0.98);
+    }
+
+    .modal-content.migrate-modal .btn-primary:active {
+        background: #1565C0;
+        transform: scale(0.98);
+        box-shadow: 0 2px 6px rgba(33, 150, 243, 0.4);
+    }
+}
+
+/* 小屏手机特别优化（如小米13等） */
+@media (max-width: 420px) {
+    .modal-content.migrate-modal {
+        width: calc(100% - 24px);
+        margin: 0 12px;
+        border-radius: 18px;
+    }
+
+    .modal-content.migrate-modal .modal-header {
+        padding: 14px 18px;
+    }
+
+    .modal-content.migrate-modal .modal-header h3 {
+        font-size: 1.05rem;
+    }
+
+    .modal-content.migrate-modal .modal-body {
+        padding: 24px 20px;
+    }
+
+    .modal-content.migrate-modal .modal-body p {
+        font-size: 1rem;
+        line-height: 1.65;
+    }
+
+    .modal-content.migrate-modal .modal-footer {
+        padding: 14px 18px 20px 18px;
+        gap: 14px;
+    }
+
+    .modal-content.migrate-modal .btn-cancel,
+    .modal-content.migrate-modal .btn-primary {
+        padding: 11px 28px;
+        font-size: 0.98rem;
+        min-width: 95px;
+    }
 }
 
 /* Toast提示样式 */
