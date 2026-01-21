@@ -1021,13 +1021,13 @@ body {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
-    margin: 10px 10px 5px 10px;
+    margin: -10px 10px 5px 10px;
     /* 确保卡片不会被压缩 */
     flex-shrink: 0;
 }
 
 .week-card {
-    padding: 12px 8px;
+    padding: 20px 8px 12px 8px;
     border-radius: 0;
     text-align: center;
     transition: none;
@@ -1082,12 +1082,12 @@ body {
     flex-shrink: 0;
     width: calc(100% - 20px);
     margin-left: 10px;
-    margin-top: 20px;
+    margin-top: 15px;
 }
 
 .month-entrance-card {
     background: #F8F9FA;
-    padding: 12px 8px;
+    padding: 16px 8px 12px 8px;
     border-radius: 12px;
     cursor: pointer;
     transition: none;
@@ -3218,11 +3218,11 @@ body {
 
     .week-report-cards {
         gap: 8px;
-        margin: 5px 10px 5px 10px;
+        margin: -10px 10px 5px 10px;
     }
 
     .week-card {
-        padding: 10px 6px;
+        padding: 16px 6px 10px 6px;
     }
 
     .week-card-amount {
@@ -3233,11 +3233,11 @@ body {
         gap: 8px;
         width: calc(100% - 20px);
         margin-left: 10px;
-        margin-top: 20px;
+        margin-top: 15px;
     }
 
     .month-entrance-card {
-        padding: 10px 6px;
+        padding: 14px 6px 10px 6px;
         border: 1.5px solid #B8860B;
         border-radius: 12px;
     }
@@ -3806,13 +3806,13 @@ body {
     .month-entrance-cards {
         width: calc(100% - 20px);
         margin-left: 10px;
-        margin-top: 20px;
+        margin-top: 15px;
     }
 
     .month-entrance-card {
         border: 1.5px solid #B8860B;
         border-radius: 10px;
-        padding: 10px 6px;
+        padding: 14px 6px 10px 6px;
     }
 }
 
