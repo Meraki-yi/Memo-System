@@ -530,7 +530,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 15px 0 8px 0;
+    padding: 30px 0 8px 0;
     gap: 12px;
     flex-shrink: 0;
     background: transparent;
@@ -1021,7 +1021,7 @@ body {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
-    margin: 0 10px 5px 10px;
+    margin: 10px 10px 5px 10px;
     /* 确保卡片不会被压缩 */
     flex-shrink: 0;
 }
@@ -1082,6 +1082,7 @@ body {
     flex-shrink: 0;
     width: calc(100% - 20px);
     margin-left: 10px;
+    margin-top: 20px;
 }
 
 .month-entrance-card {
@@ -1188,11 +1189,11 @@ body {
 
 /* 移除旧的nav-btn样式，使用pagination-btn统一样式 */
 
-/* 记一笔按钮样式 - 淡蓝色纯色 */
+/* 记一笔按钮样式 - 淡蓝色纯色，更长更方便点击 */
 .add-record-btn {
     background: #87CEEB;
     border: none;
-    padding: 8px 16px;
+    padding: 8px 24px;
     border-radius: 6px;
     font-size: 13px;
     font-weight: 400;
@@ -1204,7 +1205,7 @@ body {
     gap: 4px;
     color: #FFFFFF;
     white-space: nowrap;
-    min-width: 140px;
+    min-width: 160px;
     height: auto;
 }
 
@@ -2110,14 +2111,6 @@ body {
         height: 32px;
         font-size: 13px;
         padding: 0 12px;
-    }
-
-    /* 待完成页面底部导航栏的添加按钮 */
-    #memos-pagination .add-btn {
-        padding: 5px 8px;
-        font-size: 11px;
-        width: auto;
-        min-width: 90px;
     }
 }
 
@@ -3144,20 +3137,43 @@ body {
         gap: 8px;
     }
 
+    /* 移动端分页按钮 - 记一笔页面的按钮需要更小 */
+    #accounting-pagination .pagination-btn {
+        padding: 6px 10px;
+        font-size: 11px;
+        min-width: 65px;
+    }
+
+    /* 移动端分页按钮 - 待完成页面的按钮需要更小 */
+    #memos-pagination .pagination-btn {
+        padding: 7px 10px;
+        font-size: 11px;
+        min-width: 65px;
+    }
+
     .nav-btn,
     .pagination-btn {
         padding: 5px 8px;
         font-size: 11px;
     }
 
+    /* 移动端记一笔按钮 - 更长更方便点击 */
     .add-record-btn {
-        padding: 5px 8px;
-        font-size: 12px;
+        padding: 10px 24px;
+        font-size: 13px;
         color: #FFFFFF;
         width: auto;
-        min-width: 90px;
+        min-width: 130px;
         height: auto;
         gap: 3px;
+    }
+
+    /* 移动端待完成页面添加按钮 - 更长更方便点击 */
+    #memos-pagination .add-btn {
+        padding: 10px 20px;
+        font-size: 12px;
+        width: auto;
+        min-width: 120px;
     }
 
     .add-record-btn .icon {
@@ -3202,6 +3218,7 @@ body {
 
     .week-report-cards {
         gap: 8px;
+        margin: 5px 10px 5px 10px;
     }
 
     .week-card {
@@ -3216,6 +3233,7 @@ body {
         gap: 8px;
         width: calc(100% - 20px);
         margin-left: 10px;
+        margin-top: 20px;
     }
 
     .month-entrance-card {
@@ -3428,6 +3446,25 @@ body {
         padding-left: calc(16px + env(safe-area-inset-left, 0));
         padding-right: calc(16px + env(safe-area-inset-right, 0));
     }
+
+    /* 移动端记事页面分页信息优化 - 确保记录数显示 */
+    #reflections-pagination .pagination-info {
+        font-size: 0.75rem;
+        gap: 4px;
+        flex-wrap: nowrap;
+        white-space: nowrap;
+        display: flex;
+        justify-content: center;
+    }
+
+    #reflections-pagination .pagination-items {
+        display: inline;
+    }
+
+    #reflections-pagination .pagination-items span {
+        font-weight: 400;
+        color: #999999;
+    }
 }
 
 @media (max-width: 480px) {
@@ -3471,18 +3508,33 @@ body {
         gap: 8px;
     }
 
+    /* 小屏幕分页按钮 - 记一笔页面的按钮需要更小 */
+    #accounting-pagination .pagination-btn {
+        padding: 5px 8px;
+        font-size: 10px;
+        min-width: 55px;
+    }
+
+    /* 小屏幕分页按钮 - 待完成页面的按钮需要更小 */
+    #memos-pagination .pagination-btn {
+        padding: 6px 8px;
+        font-size: 10px;
+        min-width: 55px;
+    }
+
     .nav-btn,
     .pagination-btn {
         padding: 4px 6px;
         font-size: 10px;
     }
 
+    /* 小屏幕记一笔按钮 - 更长更方便点击 */
     .add-record-btn {
-        padding: 4px 6px;
-        font-size: 11px;
+        padding: 8px 18px;
+        font-size: 12px;
         color: #FFFFFF;
         width: auto;
-        min-width: 80px;
+        min-width: 110px;
         height: auto;
         gap: 2px;
     }
@@ -3491,12 +3543,12 @@ body {
         color: #FFFFFF;
     }
 
-    /* 待完成页面底部导航栏的添加按钮 */
+    /* 小屏幕待完成页面添加按钮 - 更长更方便点击 */
     #memos-pagination .add-btn {
-        padding: 4px 6px;
-        font-size: 10px;
+        padding: 8px 16px;
+        font-size: 11px;
         width: auto;
-        min-width: 80px;
+        min-width: 105px;
     }
 
     .bottom-bar-info .pagination-info,
@@ -3601,11 +3653,6 @@ body {
 
     .btn {
         width: 100%;
-    }
-
-    /* 分页信息隐藏 */
-    .pagination-items {
-        display: none;
     }
 
     /* 小屏幕记事页面header优化 - 保持与桌面端相同的布局，适配安全区 */
@@ -3736,10 +3783,30 @@ body {
         padding-right: calc(16px + env(safe-area-inset-right, 0));
     }
 
+    /* 小屏幕记事页面分页信息优化 - 确保记录数显示 */
+    #reflections-pagination .pagination-info {
+        font-size: 0.65rem;
+        gap: 3px;
+        flex-wrap: nowrap;
+        white-space: nowrap;
+        display: flex;
+        justify-content: center;
+    }
+
+    #reflections-pagination .pagination-items {
+        display: inline;
+    }
+
+    #reflections-pagination .pagination-items span {
+        font-weight: 400;
+        color: #999999;
+    }
+
     /* 小屏幕本月收入/本月支出卡片 - 添加深金色细边框和圆角 */
     .month-entrance-cards {
         width: calc(100% - 20px);
         margin-left: 10px;
+        margin-top: 20px;
     }
 
     .month-entrance-card {
