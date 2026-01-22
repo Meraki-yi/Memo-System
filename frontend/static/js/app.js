@@ -1090,11 +1090,11 @@ function renderItems(items) {
                             <span class="time">更新: ${updatedFull}</span>
                         </div>
                         <div class="item-actions" onclick="event.stopPropagation()">
-                            <button class="btn-icon btn-frequent ${item.is_frequent ? 'active' : ''}" onclick="toggleReflectionFrequent(${item.id}, 'reflection')" title="${item.is_frequent ? '取消反思收藏' : '添加到反思收藏'}">
-                                <span class="icon-star">${item.is_frequent ? '⭐' : '☆'}</span>
+                            <button class="btn-icon btn-frequent btn-frequent-star ${item.is_frequent ? 'active' : ''}" onclick="toggleReflectionFrequent(${item.id}, 'reflection')" title="${item.is_frequent ? '取消反思收藏' : '添加到反思收藏'}">
+                                <span class="icon-text">${item.is_frequent ? '反思' : '反思'}</span>
                             </button>
-                            <button class="btn-icon btn-frequent ${item.is_common_frequent ? 'active' : ''}" onclick="toggleReflectionFrequent(${item.id}, 'common')" title="${item.is_common_frequent ? '取消常用收藏' : '添加到常用收藏'}">
-                                <span class="icon-heart">${item.is_common_frequent ? '💝' : '♡'}</span>
+                            <button class="btn-icon btn-frequent btn-frequent-heart ${item.is_common_frequent ? 'active' : ''}" onclick="toggleReflectionFrequent(${item.id}, 'common')" title="${item.is_common_frequent ? '取消常用收藏' : '添加到常用收藏'}">
+                                <span class="icon-text">${item.is_common_frequent ? '常用' : '常用'}</span>
                             </button>
                             <button class="btn-icon btn-edit" onclick="editItem(${item.id})" title="编辑">
                                 <span>✏️</span>

@@ -710,7 +710,7 @@ body {
     width: 100%;
 }
 
-/* 反思收藏按钮 - 左对齐，与三个点按钮对称 */
+/* 反思收藏按钮 - 左对齐，与数据框左边对齐（15px边距） */
 .reflections-header-left .frequent-btn:first-child {
     position: absolute;
     left: 15px;
@@ -721,18 +721,18 @@ body {
 /* 反思收藏按钮hover效果 */
 .reflections-header-left .frequent-btn:first-child:hover {
     background: #E8E8E8 !important;
-    transform: translateY(-50%) scale(1.05);
+    transform: translateY(-50%);
 }
 
 /* 常用收藏按钮 - 居中显示 */
 .reflections-header-left .frequent-btn:last-child {
     position: absolute;
-    left: calc(50% + 22px);
+    left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
 }
 
-/* 常用收藏按钮 - 悬停和点击时都保持不动 */
+/* 常用收藏按钮 - 悬停和点击时都保持居中 */
 .reflections-header-left .frequent-btn:last-child:hover,
 .reflections-header-left .frequent-btn:last-child:active {
     background: #E8E8E8 !important;
@@ -1494,24 +1494,24 @@ body {
     box-shadow: var(--shadow-md);
 }
 
-/* 记事标签页的常用按钮 - 图标按钮样式，与三个点按钮对称 */
+/* 记事标签页的常用按钮 - 文字按钮样式 */
 #reflections-tab .frequent-btn.add-btn {
-    width: 36px;
+    /* 调整宽度以容纳文字 */
+    width: auto;
+    min-width: 70px;
     height: 36px;
     background: #F5F5F5 !important;
     /* 细红线边框 */
     border: 1.5px solid #FF4444;
     /* 矩形圆角 */
     border-radius: 8px;
-    font-size: 1.2rem;
-    padding: 0;
+    font-size: 13px;
+    padding: 0 10px;
     gap: 0;
     justify-content: center;
-}
-
-/* 隐藏收藏按钮的文字 */
-#reflections-tab .frequent-btn.add-btn .icon {
+    /* 文字样式 */
     color: #666666;
+    font-weight: 500;
 }
 
 /* 收藏按钮hover效果 - 已在reflections-header-left中定义 */
@@ -2259,40 +2259,63 @@ body {
     box-shadow: none;
 }
 
-/* 记事卡片收藏按钮 - 黄色 */
+/* 记事卡片收藏按钮 - 文字按钮样式 */
 .item-card.reflection-card .btn-frequent {
-    color: #CCCCCC;
+    color: #999999;
     background: transparent;
     width: auto;
+    min-width: 50px;
     height: auto;
-    padding: 0;
-    border-radius: 0;
-    font-size: 18px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    border: 1px solid #E0E0E0;
+}
+
+.item-card.reflection-card .btn-frequent:hover {
+    background: #F5F5F5;
+    border-color: #CCCCCC;
 }
 
 .item-card.reflection-card .btn-frequent.active {
-    color: #FFD700;
+    color: #FF6B6B;
+    background: rgba(255, 107, 107, 0.1);
+    border-color: #FF6B6B;
+}
+
+/* 反思收藏按钮（星星）特定样式 */
+.item-card.reflection-card .btn-frequent-star {
+    color: #999999;
     background: transparent;
 }
 
-/* 星星图标样式 */
-.item-card.reflection-card .btn-frequent .icon-star {
-    filter: grayscale(100%) brightness(0.5);
+.item-card.reflection-card .btn-frequent-star:hover {
+    background: #FFF9E6;
+    border-color: #FFD700;
 }
 
-.item-card.reflection-card .btn-frequent.active .icon-star {
-    filter: grayscale(0%) brightness(1);
+.item-card.reflection-card .btn-frequent-star.active {
+    color: #FFA500;
+    background: rgba(255, 165, 0, 0.1);
+    border-color: #FFA500;
 }
 
-/* 爱心图标样式 - 使用filter实现空心/实心效果 */
-.item-card.reflection-card .btn-frequent .icon-heart {
-    filter: grayscale(100%) brightness(0.4);
-    opacity: 0.5;
+/* 常用收藏按钮（桃心）特定样式 */
+.item-card.reflection-card .btn-frequent-heart {
+    color: #999999;
+    background: transparent;
 }
 
-.item-card.reflection-card .btn-frequent.active .icon-heart {
-    filter: grayscale(0%) brightness(1);
-    opacity: 1;
+.item-card.reflection-card .btn-frequent-heart:hover {
+    background: #FFE6F0;
+    border-color: #FF69B4;
+}
+
+.item-card.reflection-card .btn-frequent-heart.active {
+    color: #FF1493;
+    background: rgba(255, 20, 147, 0.1);
+    border-color: #FF1493;
 }
 
 /* 记事卡片删除按钮 - 红色 */
@@ -3347,9 +3370,29 @@ body {
         width: 100%;
     }
 
-    /* 移动端反思收藏按钮 - 左对齐，适配安全区 */
+    /* 移动端记事页面header中的收藏按钮样式 */
+    #reflections-tab .frequent-btn.add-btn {
+        min-width: 65px;
+        height: 32px;
+        font-size: 12px;
+        padding: 0 8px;
+    }
+
+    /* 移动端反思收藏按钮 - 左对齐，与数据框左边对齐（12px边距） */
     .reflections-header-left .frequent-btn:first-child {
-        left: calc(20px + env(safe-area-inset-left, 0));
+        left: calc(12px + env(safe-area-inset-left, 0));
+    }
+
+    /* 移动端常用收藏按钮 - 居中显示 */
+    .reflections-header-left .frequent-btn:last-child {
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    /* 移动端常用收藏按钮hover效果 - 保持居中 */
+    .reflections-header-left .frequent-btn:last-child:hover,
+    .reflections-header-left .frequent-btn:last-child:active {
+        transform: translate(-50%, -50%) !important;
     }
 
     /* 移动端三个点按钮 - 右对齐，适配安全区 */
@@ -3367,6 +3410,13 @@ body {
         padding: 14px 12px;
         margin-bottom: 0;
         border-radius: 0;
+    }
+
+    /* 移动端记事卡片中的收藏按钮样式 */
+    .item-card.reflection-card .btn-frequent {
+        min-width: 45px;
+        font-size: 11px;
+        padding: 3px 6px;
     }
 
     /* 移动端待完成页面header优化 - 贴边显示，适配安全区 */
@@ -3666,9 +3716,29 @@ body {
         width: 100%;
     }
 
-    /* 小屏幕反思收藏按钮 - 左对齐，适配安全区 */
+    /* 小屏幕记事页面header中的收藏按钮样式 */
+    #reflections-tab .frequent-btn.add-btn {
+        min-width: 60px;
+        height: 30px;
+        font-size: 11px;
+        padding: 0 6px;
+    }
+
+    /* 小屏幕反思收藏按钮 - 左对齐，与数据框左边对齐（0边距，贴边显示） */
     .reflections-header-left .frequent-btn:first-child {
-        left: calc(20px + env(safe-area-inset-left, 0));
+        left: calc(10px + env(safe-area-inset-left, 0));
+    }
+
+    /* 小屏幕常用收藏按钮 - 居中显示 */
+    .reflections-header-left .frequent-btn:last-child {
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    /* 小屏幕常用收藏按钮hover效果 - 保持居中 */
+    .reflections-header-left .frequent-btn:last-child:hover,
+    .reflections-header-left .frequent-btn:last-child:active {
+        transform: translate(-50%, -50%) !important;
     }
 
     /* 小屏幕三个点按钮 - 右对齐，适配安全区 */
@@ -3688,6 +3758,13 @@ body {
         padding-right: calc(10px + env(safe-area-inset-right, 0));
         margin-bottom: 0;
         border-radius: 0;
+    }
+
+    /* 小屏幕记事卡片中的收藏按钮样式 */
+    .item-card.reflection-card .btn-frequent {
+        min-width: 40px;
+        font-size: 10px;
+        padding: 2px 5px;
     }
 
     /* 小屏幕待完成页面header优化 - 贴边显示，适配安全区 */
