@@ -724,15 +724,16 @@ body {
     transform: translateY(-50%);
 }
 
-/* 常用收藏按钮 - 居中显示 */
+/* 常用收藏按钮 - 从屏幕中心向右偏移，更靠近"待完成"标签 */
 .reflections-header-left .frequent-btn:last-child {
     position: absolute;
-    left: 50%;
+    /* 在屏幕中心基础上向右偏移20px */
+    left: calc(50% + 20px);
     top: 50%;
     transform: translate(-50%, -50%);
 }
 
-/* 常用收藏按钮 - 悬停和点击时都保持居中 */
+/* 常用收藏按钮 - 悬停和点击时都保持位置 */
 .reflections-header-left .frequent-btn:last-child:hover,
 .reflections-header-left .frequent-btn:last-child:active {
     background: #E8E8E8 !important;
@@ -3383,13 +3384,13 @@ body {
         left: calc(12px + env(safe-area-inset-left, 0));
     }
 
-    /* 移动端常用收藏按钮 - 居中显示 */
+    /* 移动端常用收藏按钮 - 从中心向右偏移32px */
     .reflections-header-left .frequent-btn:last-child {
-        left: 50%;
+        left: calc(50% + 32px);
         transform: translate(-50%, -50%);
     }
 
-    /* 移动端常用收藏按钮hover效果 - 保持居中 */
+    /* 移动端常用收藏按钮hover效果 - 保持位置 */
     .reflections-header-left .frequent-btn:last-child:hover,
     .reflections-header-left .frequent-btn:last-child:active {
         transform: translate(-50%, -50%) !important;
@@ -3729,13 +3730,13 @@ body {
         left: calc(10px + env(safe-area-inset-left, 0));
     }
 
-    /* 小屏幕常用收藏按钮 - 居中显示 */
+    /* 小屏幕常用收藏按钮 - 从中心向右偏移27px */
     .reflections-header-left .frequent-btn:last-child {
-        left: 50%;
+        left: calc(50% + 27px);
         transform: translate(-50%, -50%);
     }
 
-    /* 小屏幕常用收藏按钮hover效果 - 保持居中 */
+    /* 小屏幕常用收藏按钮hover效果 - 保持位置 */
     .reflections-header-left .frequent-btn:last-child:hover,
     .reflections-header-left .frequent-btn:last-child:active {
         transform: translate(-50%, -50%) !important;
