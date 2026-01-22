@@ -164,7 +164,7 @@ function renderCategoryDetail(data) {
                 </div>
                 <div class="date-group-records">
                     ${records.map(record => `
-                        <div class="record-card">
+                        <div class="record-card" onclick="editRecord(${record.id})">
                             <div class="record-first-line">
                                 <span class="record-subcategory-name">${record.subcategory_name}</span>
                                 <span class="record-amount">¥${record.amount.toFixed(2)}</span>
@@ -198,4 +198,9 @@ function formatDate(date) {
     const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
     const weekDay = weekDays[date.getDay()];
     return `${month}月${day}日 ${weekDay}`;
+}
+
+// 编辑记录 - 跳转到记账页面
+function editRecord(recordId) {
+    window.location.href = `/accounting?edit=${recordId}`;
 }

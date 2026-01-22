@@ -187,11 +187,16 @@ body {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    transition: none;
+    transition: background-color 0.2s ease;
+    cursor: pointer;
 }
 
 .record-card:hover {
-    box-shadow: none;
+    background-color: #F8F8F8;
+}
+
+.record-card:active {
+    background-color: #EEEEEE;
 }
 
 .record-first-line {
