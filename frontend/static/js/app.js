@@ -757,36 +757,18 @@ async function loadAccountingData() {
         state.totalItems = recordsData.pagination.total;
         state.currentPage = recordsData.pagination.page;
 
-        // 根据周日所在月份计算月收入/支出
+        // 计算当前真实月份的收入/支出汇总（"本月"指的是当月1日到当月最后一天）
         let summary;
-        if (recordsData.week_info && recordsData.week_info.end_date) {
-            // 获取周日的日期，计算该月的汇总
-            const sundayDate = new Date(recordsData.week_info.end_date + 'T00:00:00');
-            const monthStart = new Date(sundayDate.getFullYear(), sundayDate.getMonth(), 1);
-            const monthEnd = new Date(sundayDate.getFullYear(), sundayDate.getMonth() + 1, 0);
-            const monthStartStr = formatDateToLocal(monthStart);
-            const monthEndStr = formatDateToLocal(monthEnd);
-
-            // 请求该月的汇总数据
-            const summaryResponse = await fetch(`${ACCOUNTING_API_BASE}/summary?start_date=${monthStartStr}&end_date=${monthEndStr}`, getAuthOptions());
-            if (summaryResponse.ok) {
-                summary = await summaryResponse.json();
-            } else {
-                // 如果请求失败，使用默认值
-                summary = { total_income: 0, total_expense: 0, net_amount: 0 };
-            }
+        const today = new Date();
+        const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+        const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0); // 当月最后一天
+        const monthStartStr = formatDateToLocal(monthStart);
+        const monthEndStr = formatDateToLocal(monthEnd);
+        const summaryResponse = await fetch(`${ACCOUNTING_API_BASE}/summary?start_date=${monthStartStr}&end_date=${monthEndStr}`, getAuthOptions());
+        if (summaryResponse.ok) {
+            summary = await summaryResponse.json();
         } else {
-            // 如果没有周信息，使用当前月份
-            const today = new Date();
-            const todayStr = formatDateToLocal(today);
-            const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-            const monthStartStr = formatDateToLocal(monthStart);
-            const summaryResponse = await fetch(`${ACCOUNTING_API_BASE}/summary?start_date=${monthStartStr}&end_date=${todayStr}`, getAuthOptions());
-            if (summaryResponse.ok) {
-                summary = await summaryResponse.json();
-            } else {
-                summary = { total_income: 0, total_expense: 0, net_amount: 0 };
-            }
+            summary = { total_income: 0, total_expense: 0, net_amount: 0 };
         }
 
         // 渲染统计数据（周报 + 月入口）
@@ -842,19 +824,8 @@ function renderStatsArea(summary, records, weekInfo) {
         }
     }
 
-    // 保存当前周周日所在月份的日期范围，用于跳转时传递
+    // 保存当前周分页状态，用于返回时恢复
     if (weekInfo && weekInfo.end_date) {
-        const sundayDate = new Date(weekInfo.end_date + 'T00:00:00');
-        const monthStart = new Date(sundayDate.getFullYear(), sundayDate.getMonth(), 1);
-        const monthEnd = new Date(sundayDate.getFullYear(), sundayDate.getMonth() + 1, 0);
-        const monthStartStr = formatDateToLocal(monthStart);
-        const monthEndStr = formatDateToLocal(monthEnd);
-
-        // 保存到全局变量，供跳转函数使用
-        window.currentMonthStart = monthStartStr;
-        window.currentMonthEnd = monthEndStr;
-
-        // 保存当前周分页状态，用于返回时恢复
         const state = paginationState.accounting;
         sessionStorage.setItem('memoSystem_weekPage', state.currentPage.toString());
     }
@@ -871,15 +842,19 @@ function renderStatsArea(summary, records, weekInfo) {
 
 // 跳转到分类收入统计页面
 function goToIncomeStats() {
-    const startDate = window.currentMonthStart || formatDateToLocal(new Date(new Date().getFullYear(), new Date().getMonth(), 1));
-    const endDate = window.currentMonthEnd || formatDateToLocal(new Date());
+    // 使用当前真实的月份（当月1日到当月最后一天）
+    const today = new Date();
+    const startDate = formatDateToLocal(new Date(today.getFullYear(), today.getMonth(), 1));
+    const endDate = formatDateToLocal(new Date(today.getFullYear(), today.getMonth() + 1, 0));
     window.location.href = `/income-stats?start=${startDate}&end=${endDate}`;
 }
 
 // 跳转到分类支出统计页面
 function goToExpenseStats() {
-    const startDate = window.currentMonthStart || formatDateToLocal(new Date(new Date().getFullYear(), new Date().getMonth(), 1));
-    const endDate = window.currentMonthEnd || formatDateToLocal(new Date());
+    // 使用当前真实的月份（当月1日到当月最后一天）
+    const today = new Date();
+    const startDate = formatDateToLocal(new Date(today.getFullYear(), today.getMonth(), 1));
+    const endDate = formatDateToLocal(new Date(today.getFullYear(), today.getMonth() + 1, 0));
     window.location.href = `/category-stats?start=${startDate}&end=${endDate}`;
 }
 

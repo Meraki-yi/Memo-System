@@ -34,8 +34,8 @@ class Settings(BaseSettings):
     ALLOWED_HEADERS: list = ["*"]
 
     # 文件路径配置
-    STATIC_DIR: str = "frontend/static"
-    TEMPLATES_DIR: str = "frontend/templates"
+    STATIC_DIR: str = "d:/Notes/memo-system/frontend/static"
+    TEMPLATES_DIR: str = "d:/Notes/memo-system/frontend/templates"
 
     model_config = SettingsConfigDict(
         env_file=".env",
