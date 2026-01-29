@@ -1,3 +1,5 @@
+import os
+from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -33,9 +35,23 @@ class Settings(BaseSettings):
     ALLOWED_METHODS: list = ["*"]
     ALLOWED_HEADERS: list = ["*"]
 
-    # 文件路径配置
-    STATIC_DIR: str = "d:/Notes/memo-system/frontend/static"
-    TEMPLATES_DIR: str = "d:/Notes/memo-system/frontend/templates"
+    @property
+    def STATIC_DIR(self) -> str:
+        """静态文件目录（支持本地和Docker环境）"""
+        # 如果设置了环境变量，使用环境变量
+        if os.environ.get("STATIC_DIR"):
+            return os.environ.get("STATIC_DIR")
+        # 否则使用相对路径
+        return "frontend/static"
+
+    @property
+    def TEMPLATES_DIR(self) -> str:
+        """模板文件目录（支持本地和Docker环境）"""
+        # 如果设置了环境变量，使用环境变量
+        if os.environ.get("TEMPLATES_DIR"):
+            return os.environ.get("TEMPLATES_DIR")
+        # 否则使用相对路径
+        return "frontend/templates"
 
     model_config = SettingsConfigDict(
         env_file=".env",
