@@ -245,6 +245,28 @@ function updatePeriodDisplay() {
     periodDisplayEl.textContent = `${currentYear}年${currentMonth}月`;
 }
 
+// 更新URL参数
+function updateURLParams() {
+    const startDate = new Date(currentYear, currentMonth - 1, 1);
+    const endDate = new Date(currentYear, currentMonth, 0);
+
+    const startDateStr = formatDateToString(startDate);
+    const endDateStr = formatDateToString(endDate);
+
+    // 构建新的URL
+    const url = new URL(window.location.href);
+    url.searchParams.set('start', startDateStr);
+    url.searchParams.set('end', endDateStr);
+
+    // 如果有fromYear参数，保留它
+    if (fromYear) {
+        url.searchParams.set('year', fromYear);
+    }
+
+    // 更新URL但不刷新页面
+    window.history.replaceState({}, '', url);
+}
+
 // 切换时间周期
 function changePeriod(delta) {
     currentMonth += delta;
@@ -257,6 +279,13 @@ function changePeriod(delta) {
         currentMonth = 12;
         currentYear--;
     }
+
+    // 清除自定义日期范围，使用新的年月计算日期
+    customStartDate = null;
+    customEndDate = null;
+
+    // 更新URL参数
+    updateURLParams();
 
     // 重新加载数据
     loadCategoryStats();

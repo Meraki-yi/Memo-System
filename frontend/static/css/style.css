@@ -413,6 +413,10 @@ body {
     display: none;
     /* 确保标签页内容容器不滚动 */
     overflow: hidden;
+    /* 确保不超出视口宽度 */
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .tab-content.active {
@@ -427,6 +431,7 @@ body {
 /* 标签页内容可滚动区域 - 唯一的滚动上下文 */
 .tab-content-scrollable {
     overflow-y: auto;
+    overflow-x: hidden;
     /* 自适应剩余高度，确保是唯一滚动区域 */
     flex: 1;
     /* 移除max-height，使用flex自动填充 */
@@ -443,9 +448,20 @@ body {
 }
 
 /* 记账标签页特殊布局：固定统计区 */
+#accounting-tab {
+    /* 确保不超出视口宽度 */
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
 #accounting-tab .tab-content-scrollable {
     display: flex;
     flex-direction: column;
+    /* 确保不超出视口宽度 */
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 /* 统计区域 - 图片背景 + 浅黄色渐变滤镜 */
@@ -1547,12 +1563,20 @@ body {
     gap: 20px;
     /* 确保列表不破坏滚动上下文 */
     overflow: visible;
+    /* 确保不超出容器宽度 */
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 /* 记账标签下的列表卡片排列 */
 #accounting-tab .items-list {
     gap: 0;
     padding: 0 15px;
+    /* 确保不超出容器宽度 */
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 /* 为记账记录卡片添加间距 */
@@ -3260,11 +3284,10 @@ body {
             url('/static/images/6.jpg') center/cover no-repeat;
         padding-left: env(safe-area-inset-left, 0);
         padding-right: env(safe-area-inset-right, 0);
-    }
-
-    /* 移动端周报模块 - 移除固定高度和左右内边距 */
-    .week-report-section {
-        /* 移除max-height，让内容自然撑开 */
+        /* 确保不超出容器宽度 */
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
     }
 
     /* 移动端周报内容区域 - 移除左右内边距，使背景图覆盖到边缘 */
@@ -3303,6 +3326,10 @@ body {
     #accounting-tab .items-list {
         gap: 0;
         padding: 0 12px;
+        /* 确保不超出容器宽度 */
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
     }
 
     /* 记账记录卡片 - 凸出立体设计，适配安全区 */
@@ -3691,11 +3718,10 @@ body {
             url('/static/images/6.jpg') center/cover no-repeat;
         padding-left: env(safe-area-inset-left, 0);
         padding-right: env(safe-area-inset-right, 0);
-    }
-
-    /* 小屏幕周报模块 - 移除固定高度和左右内边距 */
-    .week-report-section {
-        /* 移除max-height，让内容自然撑开 */
+        /* 确保不超出容器宽度 */
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
     }
 
     /* 小屏幕周报内容区域 - 移除左右内边距，使背景图覆盖到边缘 */
@@ -3707,6 +3733,10 @@ body {
     #accounting-tab .items-list {
         gap: 0;
         padding: 0 10px;
+        /* 确保不超出容器宽度 */
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
     }
 
     /* 小屏幕记账记录卡片 - 凸出立体设计，适配安全区 */
