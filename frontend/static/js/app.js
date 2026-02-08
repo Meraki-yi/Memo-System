@@ -40,6 +40,9 @@ let weekDataCache = {
     net: 0
 };
 
+// 当前周的开始日期（用于确定点击"本月收入/支出"时跳转到哪个月份）
+let currentWeekStartDate = null;
+
 // 日期分组折叠状态管理
 const dateGroupCollapseState = {
     // 格式: { 'YYYY-MM-DD': boolean }
@@ -824,6 +827,13 @@ function renderStatsArea(summary, records, weekInfo) {
         }
     }
 
+    // 保存当前周的开始日期（用于确定点击"本月收入/支出"时跳转到哪个月份）
+    if (weekInfo && weekInfo.start_date) {
+        currentWeekStartDate = weekInfo.start_date;
+    } else {
+        currentWeekStartDate = null;
+    }
+
     // 保存当前周分页状态，用于返回时恢复
     if (weekInfo && weekInfo.end_date) {
         const state = paginationState.accounting;
@@ -842,19 +852,33 @@ function renderStatsArea(summary, records, weekInfo) {
 
 // 跳转到分类收入统计页面
 function goToIncomeStats() {
-    // 使用当前真实的月份（当月1日到当月最后一天）
-    const today = new Date();
-    const startDate = formatDateToLocal(new Date(today.getFullYear(), today.getMonth(), 1));
-    const endDate = formatDateToLocal(new Date(today.getFullYear(), today.getMonth() + 1, 0));
+    // 使用当前周开始日期所在月份（当月1日到当月最后一天）
+    let targetDate;
+    if (currentWeekStartDate) {
+        // 使用当前周开始日期（周一）所在月份
+        targetDate = new Date(currentWeekStartDate + 'T00:00:00');
+    } else {
+        // 如果没有周信息，使用当前真实月份
+        targetDate = new Date();
+    }
+    const startDate = formatDateToLocal(new Date(targetDate.getFullYear(), targetDate.getMonth(), 1));
+    const endDate = formatDateToLocal(new Date(targetDate.getFullYear(), targetDate.getMonth() + 1, 0));
     window.location.href = `/income-stats?start=${startDate}&end=${endDate}`;
 }
 
 // 跳转到分类支出统计页面
 function goToExpenseStats() {
-    // 使用当前真实的月份（当月1日到当月最后一天）
-    const today = new Date();
-    const startDate = formatDateToLocal(new Date(today.getFullYear(), today.getMonth(), 1));
-    const endDate = formatDateToLocal(new Date(today.getFullYear(), today.getMonth() + 1, 0));
+    // 使用当前周开始日期所在月份（当月1日到当月最后一天）
+    let targetDate;
+    if (currentWeekStartDate) {
+        // 使用当前周开始日期（周一）所在月份
+        targetDate = new Date(currentWeekStartDate + 'T00:00:00');
+    } else {
+        // 如果没有周信息，使用当前真实月份
+        targetDate = new Date();
+    }
+    const startDate = formatDateToLocal(new Date(targetDate.getFullYear(), targetDate.getMonth(), 1));
+    const endDate = formatDateToLocal(new Date(targetDate.getFullYear(), targetDate.getMonth() + 1, 0));
     window.location.href = `/category-stats?start=${startDate}&end=${endDate}`;
 }
 
