@@ -3,7 +3,7 @@ let currentTab = 'accounting';  // 默认显示记账标签
 let currentEditItem = null;
 let deleteItemId = null;
 let deleteItemType = null;
-let currentAlignment = 'center';  // 当前选择的对齐方式
+let currentAlignment = 'left';  // 当前选择的对齐方式
 
 // 分页状态管理 - 每个标签页独立的分页状态
 const paginationState = {
@@ -1128,7 +1128,7 @@ function setContentAlignment(align) {
 // 显示添加模态框
 function showAddModal(type) {
     currentEditItem = null;
-    currentAlignment = 'center';  // 重置为居中对齐
+    currentAlignment = 'left';  // 重置为居中对齐
     document.getElementById('modalTitle').textContent =
         type === 'reflection' ? '添加记事' : '添加待完成';
 
@@ -1153,7 +1153,7 @@ function showAddModal(type) {
         // 记事显示对齐按钮
         if (alignmentButtons) alignmentButtons.style.display = 'flex';
         // 重置对齐按钮状态
-        setContentAlignment('center');
+        setContentAlignment('left');
     }
 
     // 保存当前操作类型，用于saveItem判断
