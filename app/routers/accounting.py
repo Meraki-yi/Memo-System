@@ -38,7 +38,7 @@ router = APIRouter(tags=["记账"])
 # ==================== 类目管理 ====================
 
 @router.get("/api/accounting/categories")
-async def get_categories(request: Request, db: Session = Depends(get_db)):
+def get_categories(request: Request, db: Session = Depends(get_db)):
     """获取所有类目，按类型分组"""
     check_auth(request)
     categories = db.query(Category).order_by(Category.record_type, Category.sort_order).all()
@@ -69,7 +69,7 @@ async def get_categories(request: Request, db: Session = Depends(get_db)):
 
 
 @router.post("/api/accounting/categories")
-async def create_category(request: Request, category: CategoryCreate, db: Session = Depends(get_db)):
+def create_category(request: Request, category: CategoryCreate, db: Session = Depends(get_db)):
     """创建一级类目"""
     check_auth(request)
     db_category = Category(
@@ -89,7 +89,7 @@ async def create_category(request: Request, category: CategoryCreate, db: Sessio
 
 
 @router.post("/api/accounting/subcategories")
-async def create_subcategory(request: Request, subcategory: SubCategoryCreate, db: Session = Depends(get_db)):
+def create_subcategory(request: Request, subcategory: SubCategoryCreate, db: Session = Depends(get_db)):
     """创建二级类目"""
     check_auth(request)
     db_subcategory = SubCategory(
@@ -107,7 +107,7 @@ async def create_subcategory(request: Request, subcategory: SubCategoryCreate, d
 
 
 @router.delete("/api/accounting/subcategories/{subcategory_id}")
-async def delete_subcategory(request: Request, subcategory_id: int, db: Session = Depends(get_db)):
+def delete_subcategory(request: Request, subcategory_id: int, db: Session = Depends(get_db)):
     """删除二级类目（需要先删除关联的记录）"""
     check_auth(request)
     try:
@@ -134,7 +134,7 @@ async def delete_subcategory(request: Request, subcategory_id: int, db: Session 
 
 
 @router.delete("/api/accounting/categories/{category_id}")
-async def delete_category(request: Request, category_id: int, db: Session = Depends(get_db)):
+def delete_category(request: Request, category_id: int, db: Session = Depends(get_db)):
     """删除一级类目（需要先删除所有二级类目和记录）"""
     check_auth(request)
     try:
@@ -173,7 +173,7 @@ async def delete_category(request: Request, category_id: int, db: Session = Depe
 
 
 @router.put("/api/accounting/categories/{category_id}")
-async def rename_category(request: Request, category_id: int, category_data: CategoryUpdate, db: Session = Depends(get_db)):
+def rename_category(request: Request, category_id: int, category_data: CategoryUpdate, db: Session = Depends(get_db)):
     """重命名一级类目"""
     check_auth(request)
     try:
@@ -198,7 +198,7 @@ async def rename_category(request: Request, category_id: int, category_data: Cat
 
 
 @router.put("/api/accounting/subcategories/{subcategory_id}")
-async def rename_subcategory(request: Request, subcategory_id: int, subcategory_data: SubCategoryUpdate, db: Session = Depends(get_db)):
+def rename_subcategory(request: Request, subcategory_id: int, subcategory_data: SubCategoryUpdate, db: Session = Depends(get_db)):
     """重命名二级类目"""
     check_auth(request)
     try:
@@ -224,7 +224,7 @@ async def rename_subcategory(request: Request, subcategory_id: int, subcategory_
 # ==================== 记账记录管理 ====================
 
 @router.get("/api/accounting/records")
-async def get_records(
+def get_records(
     request: Request,
     start_date: Optional[str] = None,
     end_date: Optional[str] = None,
@@ -406,7 +406,7 @@ async def get_records(
 
 
 @router.post("/api/accounting/records")
-async def create_record(request: Request, record: DailyRecordCreate, db: Session = Depends(get_db)):
+def create_record(request: Request, record: DailyRecordCreate, db: Session = Depends(get_db)):
     """创建记账记录"""
     check_auth(request)
 
@@ -439,7 +439,7 @@ async def create_record(request: Request, record: DailyRecordCreate, db: Session
 
 
 @router.get("/api/accounting/records/{record_id}")
-async def get_record(request: Request, record_id: int, db: Session = Depends(get_db)):
+def get_record(request: Request, record_id: int, db: Session = Depends(get_db)):
     """获取单条记账记录的详细信息"""
     check_auth(request)
     record = db.query(DailyRecord).filter(DailyRecord.id == record_id).first()
@@ -465,7 +465,7 @@ async def get_record(request: Request, record_id: int, db: Session = Depends(get
 
 
 @router.put("/api/accounting/records/{record_id}")
-async def update_record(request: Request, record_id: int, record: DailyRecordCreate, db: Session = Depends(get_db)):
+def update_record(request: Request, record_id: int, record: DailyRecordCreate, db: Session = Depends(get_db)):
     """更新记账记录"""
     check_auth(request)
     db_record = db.query(DailyRecord).filter(DailyRecord.id == record_id).first()
@@ -495,7 +495,7 @@ async def update_record(request: Request, record_id: int, record: DailyRecordCre
 
 
 @router.delete("/api/accounting/records/{record_id}")
-async def delete_record(request: Request, record_id: int, db: Session = Depends(get_db)):
+def delete_record(request: Request, record_id: int, db: Session = Depends(get_db)):
     """删除记账记录"""
     check_auth(request)
     db_record = db.query(DailyRecord).filter(DailyRecord.id == record_id).first()
@@ -509,7 +509,7 @@ async def delete_record(request: Request, record_id: int, db: Session = Depends(
 # ==================== 模板管理 ====================
 
 @router.get("/api/accounting/templates")
-async def get_templates(request: Request, db: Session = Depends(get_db)):
+def get_templates(request: Request, db: Session = Depends(get_db)):
     """获取模板列表"""
     check_auth(request)
     templates = db.query(RecordTemplate).order_by(RecordTemplate.created_at.desc()).all()
@@ -535,7 +535,7 @@ async def get_templates(request: Request, db: Session = Depends(get_db)):
 
 
 @router.post("/api/accounting/templates")
-async def create_template(request: Request, template: TemplateCreate, db: Session = Depends(get_db)):
+def create_template(request: Request, template: TemplateCreate, db: Session = Depends(get_db)):
     """创建模板"""
     check_auth(request)
     db_template = RecordTemplate(
@@ -556,7 +556,7 @@ async def create_template(request: Request, template: TemplateCreate, db: Sessio
 
 
 @router.delete("/api/accounting/templates/{template_id}")
-async def delete_template(request: Request, template_id: int, db: Session = Depends(get_db)):
+def delete_template(request: Request, template_id: int, db: Session = Depends(get_db)):
     """删除模板"""
     check_auth(request)
     db_template = db.query(RecordTemplate).filter(RecordTemplate.id == template_id).first()
@@ -570,7 +570,7 @@ async def delete_template(request: Request, template_id: int, db: Session = Depe
 # ==================== 统计分析 ====================
 
 @router.get("/api/accounting/summary")
-async def get_summary(
+def get_summary(
     request: Request,
     start_date: Optional[str] = None,
     end_date: Optional[str] = None,
@@ -598,7 +598,7 @@ async def get_summary(
 
 
 @router.get("/api/accounting/daily-summary")
-async def get_daily_summary(
+def get_daily_summary(
     request: Request,
     start_date: Optional[str] = None,
     end_date: Optional[str] = None,
@@ -649,7 +649,7 @@ async def get_daily_summary(
 
 
 @router.get("/api/accounting/category-stats")
-async def get_category_stats(
+def get_category_stats(
     request: Request,
     start_date: str,
     end_date: str,
@@ -713,7 +713,7 @@ async def get_category_stats(
 
 
 @router.get("/api/accounting/category-detail/{category_id}")
-async def get_category_detail(
+def get_category_detail(
     request: Request,
     category_id: int,
     start_date: str,
@@ -768,7 +768,7 @@ async def get_category_detail(
 # ==================== 数据导出 ====================
 
 @router.get("/api/accounting/export/csv")
-async def export_accounting_csv(request: Request, db: Session = Depends(get_db)):
+def export_accounting_csv(request: Request, db: Session = Depends(get_db)):
     """导出记账记录为CSV文件"""
     check_auth(request)
     records = db.query(DailyRecord).order_by(DailyRecord.record_date.desc(), DailyRecord.created_at.desc()).all()
@@ -809,7 +809,7 @@ async def export_accounting_csv(request: Request, db: Session = Depends(get_db))
 
 
 @router.get("/api/accounting/export/sql")
-async def export_accounting_sql(request: Request, db: Session = Depends(get_db)):
+def export_accounting_sql(request: Request, db: Session = Depends(get_db)):
     """导出记账记录为SQL文件"""
     check_auth(request)
 

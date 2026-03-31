@@ -33,7 +33,7 @@ def get_latest_date_with_memos(db: Session) -> date | None:
 
 
 @router.get("/api/memos")
-async def get_memos(
+def get_memos(
     request: Request,
     created_date: str | None = Query(None, description="创建日期 (YYYY-MM-DD)"),
     page: int = 1,
@@ -103,7 +103,7 @@ async def get_memos(
 
 
 @router.get("/api/memos/dates")
-async def get_memo_dates(
+def get_memo_dates(
     request: Request,
     db: Session = Depends(get_db)
 ):
@@ -123,7 +123,7 @@ async def get_memo_dates(
 
 
 @router.post("/api/memos")
-async def create_memo(
+def create_memo(
     request: Request,
     memo: MemoCreate,
     db: Session = Depends(get_db)
@@ -153,7 +153,7 @@ async def create_memo(
 
 
 @router.get("/api/memos/{memo_id}")
-async def get_memo(
+def get_memo(
     request: Request,
     memo_id: int,
     db: Session = Depends(get_db)
@@ -175,7 +175,7 @@ async def get_memo(
 
 
 @router.put("/api/memos/{memo_id}")
-async def update_memo(
+def update_memo(
     request: Request,
     memo_id: int,
     memo: MemoUpdate,
@@ -207,7 +207,7 @@ async def update_memo(
 
 
 @router.delete("/api/memos/{memo_id}")
-async def delete_memo(
+def delete_memo(
     request: Request,
     memo_id: int,
     db: Session = Depends(get_db)
@@ -224,7 +224,7 @@ async def delete_memo(
 
 
 @router.get("/api/memos/export/csv")
-async def export_memos_csv(request: Request, db: Session = Depends(get_db)):
+def export_memos_csv(request: Request, db: Session = Depends(get_db)):
     """导出待完成为CSV文件"""
     check_auth(request)
     # 按创建日期和更新时间排序
@@ -257,7 +257,7 @@ async def export_memos_csv(request: Request, db: Session = Depends(get_db)):
 
 
 @router.post("/api/memos/migrate")
-async def migrate_memos_to_next_day(
+def migrate_memos_to_next_day(
     request: Request,
     from_date: str | None = Query(None, description="源日期 (YYYY-MM-DD)，未指定则使用今天"),
     db: Session = Depends(get_db)
@@ -328,7 +328,7 @@ async def migrate_memos_to_next_day(
 
 
 @router.get("/api/memos/export/sql")
-async def export_memos_sql(request: Request, db: Session = Depends(get_db)):
+def export_memos_sql(request: Request, db: Session = Depends(get_db)):
     """导出待完成为SQL文件"""
     check_auth(request)
 

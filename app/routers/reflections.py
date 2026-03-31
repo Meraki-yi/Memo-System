@@ -26,7 +26,7 @@ LOCAL_TZ = ZoneInfo("Asia/Shanghai")
 
 
 @router.get("/api/reflections")
-async def get_reflections(
+def get_reflections(
     request: Request,
     page: int = 1,
     page_size: int = 5,
@@ -68,7 +68,7 @@ async def get_reflections(
 
 
 @router.post("/api/reflections")
-async def create_reflection(
+def create_reflection(
     request: Request,
     reflection: ReflectionCreate,
     db: Session = Depends(get_db)
@@ -96,7 +96,7 @@ async def create_reflection(
 
 
 @router.get("/api/reflections/frequents")
-async def get_frequent_reflections(
+def get_frequent_reflections(
     request: Request,
     page: int = 1,
     page_size: int = 5,
@@ -144,7 +144,7 @@ async def get_frequent_reflections(
 
 
 @router.get("/api/reflections/common-frequents")
-async def get_common_frequent_reflections(
+def get_common_frequent_reflections(
     request: Request,
     page: int = 1,
     page_size: int = 5,
@@ -192,7 +192,7 @@ async def get_common_frequent_reflections(
 
 
 @router.get("/api/reflections/{reflection_id}")
-async def get_reflection(
+def get_reflection(
     request: Request,
     reflection_id: int,
     db: Session = Depends(get_db)
@@ -215,7 +215,7 @@ async def get_reflection(
 
 
 @router.put("/api/reflections/{reflection_id}")
-async def update_reflection(
+def update_reflection(
     request: Request,
     reflection_id: int,
     reflection: ReflectionUpdate,
@@ -254,7 +254,7 @@ async def update_reflection(
 
 
 @router.delete("/api/reflections/{reflection_id}")
-async def delete_reflection(
+def delete_reflection(
     request: Request,
     reflection_id: int,
     db: Session = Depends(get_db)
@@ -271,7 +271,7 @@ async def delete_reflection(
 
 
 @router.get("/api/reflections/export/csv")
-async def export_reflections_csv(request: Request, db: Session = Depends(get_db)):
+def export_reflections_csv(request: Request, db: Session = Depends(get_db)):
     """导出记事为CSV文件"""
     check_auth(request)
     # 按更新时间排序
@@ -302,7 +302,7 @@ async def export_reflections_csv(request: Request, db: Session = Depends(get_db)
 
 
 @router.get("/api/reflections/export/sql")
-async def export_reflections_sql(request: Request, db: Session = Depends(get_db)):
+def export_reflections_sql(request: Request, db: Session = Depends(get_db)):
     """导出记事为SQL文件"""
     check_auth(request)
 
