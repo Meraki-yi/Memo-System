@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     DEBUG: bool = False
     HOST: str = "0.0.0.0"
     PORT: int = 8000
-    APP_PORT: int = 7361
+    APP_PORT: int = 8000
 
     # 安全配置
     ACCESS_PASSWORD: str = ""
