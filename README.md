@@ -200,6 +200,9 @@ MYSQL_PASSWORD=your_password
 # 访问密码
 ACCESS_PASSWORD=your_secret_password
 
+# Session密钥
+SESSION_SECRET=your_random_secret_key
+
 # 应用配置
 APP_NAME=Memo System
 VERSION=1.0.0
@@ -347,6 +350,7 @@ server {
 ## 🔒 安全注意事项
 
 - ✅ 务必修改默认的 `ACCESS_PASSWORD`
+- ✅ 务必修改默认的 `SESSION_SECRET`
 - ✅ 使用强密码作为数据库密码
 - ✅ 在生产环境中使用 HTTPS
 - ✅ 定期备份数据库
@@ -431,14 +435,7 @@ MIT License - 详见 [LICENSE](LICENSE) 文件
 
 ## 👥 作者
 
-- 项目维护者 - [Your Name]
+欢迎贡献代码和提出建议！
 
-## 🙏 致谢
-
-- FastAPI 框架
-- SQLAlchemy ORM
-- 所有贡献者
-
----
 
 **注意**: 本项目仅供学习和个人使用，请勿用于生产环境而不进行适当的安全加固。

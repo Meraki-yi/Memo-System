@@ -52,7 +52,7 @@ MAX_AGE = 7 * 24 * 60 * 60  # 7天
 # 添加Session中间件
 app.add_middleware(
     SessionMiddleware,
-    secret_key="session-secret-key",
+    secret_key=settings.SESSION_SECRET,
     max_age=MAX_AGE,
     https_only=False  # 本地开发环境，不需要HTTPS
 )

@@ -16,6 +16,7 @@ class Settings(BaseSettings):
 
     # 安全配置
     ACCESS_PASSWORD: str = ""
+    SESSION_SECRET: str = "change-this-secret-in-production"
 
     # 数据库配置
     MYSQL_HOST: str = "localhost"

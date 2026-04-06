@@ -49,6 +49,7 @@ services:
       VERSION: ${VERSION:-1.0.0}
       DEBUG: ${DEBUG:-False}
       ACCESS_PASSWORD: ${ACCESS_PASSWORD:-}
+      SESSION_SECRET: ${SESSION_SECRET:-change-this-secret}
       ALLOWED_ORIGINS: '["*"]'
       ALLOWED_METHODS: '["*"]'
       ALLOWED_HEADERS: '["*"]'
