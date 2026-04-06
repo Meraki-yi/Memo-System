@@ -435,6 +435,8 @@ MIT License - 详见 [LICENSE](LICENSE) 文件
 
 ## 👥 作者
 
+- 项目维护者 - Meraki-yi
+
 欢迎贡献代码和提出建议！
 
 
